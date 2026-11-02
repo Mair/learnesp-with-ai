@@ -1,0 +1,27 @@
+{
+  "name": "learn-esp32-v2",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "remotion studio",
+    "list": "remotion compositions",
+    "typecheck": "tsc --noEmit",
+    "upgrade": "remotion upgrade",
+    "vo": "node --disable-warning=ExperimentalWarning scripts/vo.ts",
+    "stills": "node scripts/stills.mjs",
+    "pwm:audio": "node --disable-warning=ExperimentalWarning scripts/pwm-audio.ts",
+    "pwm": "npm run pwm:audio && remotion render PWM out/pwm.mp4"
+  },
+  "dependencies": {
+    "@remotion/cli": "^4.0.535",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "remotion": "^4.0.535"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "typescript": "^5.9.2"
+  }
+}
