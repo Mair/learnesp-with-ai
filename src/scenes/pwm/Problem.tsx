@@ -1,7 +1,9 @@
 /**
  * 1 · THE PROBLEM
  * "Say you want to dim a light. Or change the pitch of a sound."
- * "But an ESP32 pin is digital. 3.3 V, or zero. Nothing in between."
+ * "But a digital output pin has only two levels. 3.3 V, or zero. Nothing in between."
+ *   (scoped to a digital OUTPUT on purpose: the original ESP32 has an 8-bit DAC
+ *   on GPIO 25/26, S2 on 17/18. GPIO 2, shown here, has none)
  * "So how do you get something in between?"
  */
 import React from 'react';
@@ -123,10 +125,10 @@ export const Problem: React.FC = () => {
                   <div style={{ fontSize: 28, color: C.muted, height: 36 }}>
                     {rejected ? (
                       <span style={{ color: '#ff5470' }}>
-                        ✕ a digital pin has no "in between"
+                        ✕ a digital output has no "in between"
                       </span>
                     ) : t >= P.high - 0.2 ? (
-                      'digital: one or the other'
+                      'digital output: one or the other'
                     ) : null}
                   </div>
                 </div>

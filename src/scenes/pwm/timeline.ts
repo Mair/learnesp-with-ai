@@ -60,10 +60,10 @@ export const PROBLEM = {
   pitchHz: [440, 659.25] as const,
   /** cross to the pin */
   pinIn: 4.6,
-  high: 8.58, // "Three point three volts" 5.2+3.38
-  low: 10.42, // "or zero" 5.2+5.22
-  tryMid: 11.31, // "Nothing in between" 5.2+6.11
-  reject: 11.9,
+  high: 8.88, // "Three point three volts" 5.2+3.68
+  low: 10.62, // "or zero" 5.2+5.42
+  tryMid: 11.51, // "Nothing in between" 5.2+6.31
+  reject: 12.1,
   question: 12.6,
 };
 
@@ -558,7 +558,7 @@ export const VOICE = 'en-US-AndrewMultilingualNeural';
 
 export const VO: VoLine[] = [
   { id: 'p1', scene: 'problem', at: 0.6, text: 'Say you want to dim a light. Or change the pitch of a sound.' },
-  { id: 'p2', scene: 'problem', at: 5.2, text: 'But an ESP32 pin is digital. Three point three volts, or zero. Nothing in between.' },
+  { id: 'p2', scene: 'problem', at: 5.2, text: 'But a digital output pin has only two levels. Three point three volts, or zero. Nothing in between.' },
   { id: 'p3', scene: 'problem', at: 12.6, text: 'So how do you get something in between?' },
 
   {

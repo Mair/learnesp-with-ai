@@ -4,6 +4,7 @@ Sources: arduino-esp32 `master` (3.3), ESP-IDF `release/v5.5`. Raw files fetched
 
 | Fact (as said or shown) | Source |
 |---|---|
+| "A digital output pin has only two levels": scoped to digital *output* because some ESP32 pins aren't limited to two. The original ESP32 has an 8-bit DAC on GPIO 25/26, ESP32-S2 on GPIO 17/18; S3/C3/C6 have none. GPIO 2 (used throughout) has no DAC | ESP32 / ESP32-S2 datasheets & TRM, DAC chapter; `SOC_DAC_SUPPORTED` in `soc_caps.h` |
 | `ledcAttach(pin, freq, resolution)` picks a free channel + timer; returns `false` if it can't (no free timer, resolution 0 or > `SOC_LEDC_TIMER_BIT_WIDTH`, timer config fails) | `cores/esp32/esp32-hal-ledc.c` — `ledcAttach`, `ledcAttachChannel` |
 | Channel output goes high at `hpoint = 0` and low when the counter reaches the duty → pin ON while counter < duty | `esp32-hal-ledc.c` (`ledc_channel.hpoint = 0`); TRM LEDC chapter |
 | Max resolution 20 bits on ESP32, 14 on S2/S3/C3 | `SOC_LEDC_TIMER_BIT_WIDTH` in `components/soc/<target>/include/soc/soc_caps.h` (20 / 14 / 14 / 14) |

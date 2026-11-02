@@ -1,7 +1,7 @@
 /**
  * PWM — Module 01's explainer.
  *
- *   1 problem   dim a light / change a pitch — but a pin is only 3.3 V or 0 V
+ *   1 problem   dim a light / change a pitch — but a digital output is only 3.3 V or 0 V
  *   2 answer    switch it really fast: PWM
  *   2½ setup    ledcAttach(pin, frequency, resolution): period, counter, steps, clock budget
  *   2¾ write    ledcWrite(pin, duty): the duty is a time, the line across the counter
