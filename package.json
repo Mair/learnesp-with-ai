@@ -11,7 +11,9 @@
     "vo": "node --disable-warning=ExperimentalWarning scripts/vo.ts",
     "stills": "node scripts/stills.mjs",
     "pwm:audio": "node --disable-warning=ExperimentalWarning scripts/pwm-audio.ts",
-    "pwm": "npm run pwm:audio && remotion render PWM out/pwm.mp4"
+    "pwm": "npm run pwm:audio && remotion render PWM out/pwm.mp4",
+    "gpio:audio": "node --disable-warning=ExperimentalWarning scripts/gpio-audio.ts",
+    "gpio": "npm run gpio:audio && remotion render GPIO out/gpio.mp4"
   },
   "dependencies": {
     "@remotion/cli": "^4.0.535",

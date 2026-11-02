@@ -6,7 +6,7 @@ description: Make a narrated, animated ESP32 explainer video (Remotion + synthes
 An **explainer** teaches one peripheral the way the PWM video does: every number the learner types is pulled apart until they can *see* what it does to the pin, every claim is checked against the real source, and picture, narration and sound are all driven by one timeline.
 
 **Project:** `/home/mairs/projects/learnesp32.com/Learn-ESP32-v-2` (a git repo — start from a clean tree and commit at each approved milestone).
-**Reference implementation — read before building, copy its patterns:**
+**Reference implementation — read before building, copy its *visual* patterns (its code is legacy Arduino; don't copy its API):**
 
 | File | What it shows |
 |---|---|
@@ -25,7 +25,7 @@ Standards live in three files — load each at the step that points to it:
 ## Steps
 
 ### 1. Research
-List every Arduino-ESP32 call the learner will type for this topic, then read each one's real implementation down to the register writes: `arduino-esp32` (`cores/esp32/esp32-hal-*.c`, master), ESP-IDF (`components/esp_driver_*/src/*.c`, `components/hal/esp32/include/hal/*_ll.h`, `release/v5.5`), and the ESP32 TRM for limits. Fetch raw files; work every number through the real code path (integer division, clamps, max values, defaults).
+**Pure ESP-IDF only — no Arduino** (see the project's `AGENTS.md`): code lives in `void app_main(void)`, waits are `vTaskDelay(pdMS_TO_TICKS(ms))`, errors are `esp_err_t` / `ESP_ERROR_CHECK`. List every ESP-IDF call the learner will type for this topic, then read each one's real implementation down to the register writes: ESP-IDF (`components/esp_driver_*/src/*.c`, `components/hal/esp32/include/hal/*_ll.h`, FreeRTOS in `components/freertos/`, Kconfig defaults, `release/v5.5`), the official examples (`examples/`), and the ESP32 datasheet / TRM for limits. Never cite arduino-esp32. Fetch raw files; work every number through the real code path (integer division, clamps, max values, defaults).
 Write `src/scenes/<slug>/FACTS.md`: each fact, the file/line or doc it came from, and any surprise ("rounds 12.17 down → 2.76 s", "255 is bumped to 256 = fully on").
 **Done when** every number and claim you intend to put on screen or in the VO has a source line in `FACTS.md`.
 

@@ -1,6 +1,7 @@
 import React from 'react';
 import { AbsoluteFill, Composition } from 'remotion';
 import { Backdrop, Grade } from './components/Backdrop';
+import { GPIO, GPIO_FRAMES } from './scenes/GPIO';
 import { PWM, PWM_FRAMES } from './scenes/PWM';
 
 const W = 1920;
@@ -31,6 +32,20 @@ export const RemotionRoot: React.FC = () => (
         </Stage>
       )}
       durationInFrames={PWM_FRAMES}
+      fps={FPS}
+      width={W}
+      height={H}
+    />
+
+    {/* GPIO (pure ESP-IDF): circuit → gpio_reset_pin → gpio_set_direction → gpio_set_level → blink → vTaskDelay → current → under the hood */}
+    <Composition
+      id="GPIO"
+      component={() => (
+        <Stage floor={false}>
+          <GPIO />
+        </Stage>
+      )}
+      durationInFrames={GPIO_FRAMES}
       fps={FPS}
       width={W}
       height={H}

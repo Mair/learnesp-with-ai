@@ -2,17 +2,19 @@
 
 ## The arc
 
+Every explainer is **pure ESP-IDF** — `app_main`, driver APIs, `vTaskDelay(pdMS_TO_TICKS(ms))`, no Arduino (the PWM video's Arduino calls are legacy; its *structure* still applies).
+
 Every explainer follows the arc the PWM video used (310 s):
 
 | # | Scene | Job | PWM video |
 |---|---|---|---|
 | 1 | **Problem** | the thing you want, and why the obvious approach can't do it | dim a light — but a pin is only 3.3 V or 0 V |
 | 2 | **Answer** | the idea in one image, then its name | switch it fast → P·W·M lands letter by letter |
-| 3 | **One Explainer per call** | each call the learner types, in the order they type it; every argument pulled apart | `ledcAttach`, `ledcWrite`, … |
+| 3 | **One Explainer per call** | each call the learner types, in the order they type it; every argument pulled apart | `ledc_timer_config`, `ledc_set_duty`, … |
 | 4 | **Demo** | real code runs, the hardware responds on the same frame (`CodeToHardware`), slowed if needed | knob 1: duty → brightness, slowed 500× |
 | 5 | **Deeper calls** | any call that hides machinery gets its own Explainer after the demo that used it | `ledcFade` |
 | 6 | **Second knob** | the other dimension, contrasted with the first | frequency → pitch, on a speaker |
-| 7 | **Under the hood** | descend the real call path: sketch → Arduino core → ESP-IDF API doc → HAL register writes → silicon | `ledcWrite` → `ledc_update_duty` → `duty_start = 1` |
+| 7 | **Under the hood** | descend the real call path: `app_main` → ESP-IDF driver (+ its API doc) → HAL register writes → silicon | `ledc_update_duty` → `ledc_ll_set_duty_start` → `duty_start = 1` |
 | 8 | **Payoff** | one spoken line, then a 3–4 item recap | "That's PWM." |
 
 Mapping a new topic means finding its problem, its one-image answer, its calls, and its two knobs. For **A-to-D conversion** a plausible arc (verify every call in step 1) is: problem — a sensor gives a smooth voltage but the CPU only knows numbers → answer — sample it, chop it into steps → Explainers for the resolution / attenuation / read calls → demo: a potentiometer turning while the number tracks → second knob: attenuation (input range) vs resolution (step size) → under the hood: `esp32-hal-adc.c` → `adc_oneshot_read` → SAR conversion → payoff.
@@ -39,11 +41,12 @@ Apply every point to **every argument of every call** and every concept a scene 
 - Never claim more than `FACTS.md` supports; say "about" when rounding.
 
 ### `text` vs `say`
-`text` is the script as written (code names in code form: `ledcWrite`, `ledc_update_duty`). `say` is what the TTS reads — set it whenever they differ:
+`text` is the script as written (code names in code form: `gpio_set_level`, `ledc_update_duty`). `say` is what the TTS reads — set it whenever they differ:
 
 | Write in `say` | For |
 |---|---|
-| `LED-C write`, `LED-C fade with interrupt` | `ledcWrite`, `ledcFadeWithInterrupt` (spelled letters "L E D C" stall) |
+| `GPIO set level`, `LED-C set duty` | `gpio_set_level`, `ledc_set_duty` (spelled letters "L E D C" stall) |
+| `V task delay`, `P D M S to ticks` | `vTaskDelay`, `pdMS_TO_TICKS` — check the transcript |
 | `ESP-IDF` | the framework |
 | `P W M` (spaced) | letters that must land one by one |
 | `two thirty`, `a thousand hertz`, `two to the eighth`, `two hundred and fifty-six` | numbers — always words |

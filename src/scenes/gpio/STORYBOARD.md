@@ -1,141 +1,115 @@
-# GPIO — storyboard (draft for approval)
+# GPIO — storyboard v2 (pure ESP-IDF, draft for approval)
 
-Slug `gpio` · composition `GPIO` · `out/gpio.mp4` · ~5 min · every claim → `FACTS.md`.
-Sketch used throughout:
+Slug `gpio` · composition `GPIO` · `out/gpio.mp4` · ~5½ min · every claim → `FACTS.md`.
+**No Arduino**: `app_main`, ESP-IDF driver calls, `vTaskDelay(pdMS_TO_TICKS(ms))`.
 
-```cpp
-const int LED = 2;
+The program used throughout (same calls as ESP-IDF's own `get-started/blink` example):
 
-void setup() {
-  pinMode(LED, OUTPUT);
-}
+```c
+#include "driver/gpio.h"
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
 
-void loop() {
-  digitalWrite(LED, HIGH);
-  delay(500);
-  digitalWrite(LED, LOW);
-  delay(500);
+#define LED GPIO_NUM_2
+
+void app_main(void)
+{
+    gpio_reset_pin(LED);
+    gpio_set_direction(LED, GPIO_MODE_OUTPUT);
+
+    while (1) {
+        gpio_set_level(LED, 1);
+        vTaskDelay(pdMS_TO_TICKS(500));
+        gpio_set_level(LED, 0);
+        vTaskDelay(pdMS_TO_TICKS(500));
+    }
 }
 ```
 
-Colour mapping (STYLE.md): pin = pink · voltage on the wire / waveform = magenta ·
-registers, ticks, code = cyan · your value (HIGH/LOW, the LED, current) = amber ·
-works/fits/CPU free = green · wrong/rejected/over limit = red.
-
 ## Arc
 
-| # | Scene | Job | ~s |
+| # | Scene | Job | vs v1 |
 |---|---|---|---|
-| 1 | Problem | code says "on", LED stays dark: every pin starts as a listener | 16 |
-| 2 | Answer | two steps — make it an output, set its level → G·P·I·O | 10 |
-| 3 | The circuit | pin → resistor → LED → ground; why the resistor; which pins | 55 |
-| 4 | `pinMode` | Explainer: pin, mode | 55 |
-| 5 | `digitalWrite` | Explainer: pin, value | 45 |
-| 6 | Blink | CodeToHardware demo, real time | 22 |
-| 7 | `delay` | Explainer: ms; ticks; CPU is free; the pin holds itself | 35 |
-| 8 | Second knob: current | code sets on/off, the resistor sets how much; a pin is a signal, not a supply | 35 |
-| 9 | Under the hood | `digitalWrite` → Arduino core → `gpio_set_level` → `out_w1ts` → W1TS register | 45 |
-| 10 | Payoff | "Make it an output. Set its level. That's GPIO." + recap → PWM hook | 8 |
+| 1 | Problem | `gpio_set_level(LED, 1)` returns `ESP_OK`… and the LED stays dark | rewritten |
+| 2 | Answer | make it an output, set its level → G·P·I·O | same |
+| 3 | The circuit | pin → 220 Ω → LED → GND; Ohm's law; which pins; strapping | same |
+| 4 | `gpio_reset_pin` | the pin number; a known state (GPIO, in/out off, pull-up on) | new (replaces half of pinMode) |
+| 5 | `gpio_set_direction` | the output driver; OUTPUT is output-*only*; bad pin → `ESP_ERR_INVALID_ARG` / `ESP_ERROR_CHECK`; level first | new (replaces pinMode) |
+| 6 | `gpio_set_level` | 1/0 → 3.3 V/0 V; guaranteed bands; any non-zero = high; returns at once | rewritten (was digitalWrite) |
+| 7 | Blink | the whole `app_main`, real time | rewritten |
+| 8 | `vTaskDelay(pdMS_TO_TICKS(500))` | ticks (100 Hz → 50 ticks), rounding down to 0, blocked = CPU free, no delay → watchdog + dimmer | rewritten (was delay) |
+| 9 | Second knob: current | code = on/off, resistor = how much; signal, not supply | same |
+| 10 | Under the hood | `gpio_set_level` → `gpio_ll_set_level` → `out_w1ts` → register; `gpio_set_direction`'s writes | Arduino layer removed |
+| 11 | Payoff | "Make it an output. Set its level. That's GPIO." | recap updated |
 
 ## 1 · Problem
 
 | VO | Visual |
 |---|---|
-| p1 "You've written a line of code, and on the breadboard there's an LED." | left: code card `digitalWrite(2, HIGH);` · right: breadboard LED, dark |
-| p2 "But right after reset, every ESP32 pin is listening, not driving. So this line does nothing." | pin card `GPIO 2 · listening`; code line runs (bar sweeps), LED stays dark; a RED serial-monitor line types out: `IO 2 is not set as GPIO. Execute pinMode(2, OUTPUT) first.` |
+| p1 "You've written a line of code, and on the breadboard there's an LED." | `main.c`: `app_main` with `gpio_set_level(LED, 1);` · breadboard LED, dark |
+| p2 "But right after reset, every ESP32 pin is listening, not driving. So this call returns ESP_OK, and the LED stays dark." | pin card `GPIO 2 · listening`; line runs → green `ESP_OK` badge; LED stays dark; ✗ the LED stays dark |
 | p3 "So how do you make a pin switch something on?" | caption |
 
-## 2 · Answer
+## 4 · `gpio_reset_pin(LED);`
 
 | VO | Visual |
 |---|---|
-| a1 "Two steps. First, make the pin an output. Then set its level: high, or low. That's a GPIO: a general-purpose input/output pin." (`say`: "… That's a G P I O …") | **the pin diagram** (reused all video): a pad with an output driver = a switch. "make it an output" → the switch connects to the pad (listening → driving). "high" → switch to 3.3 V rail (amber), "low" → to ground. G·P·I·O lands letter by letter, then the words |
+| r1 "In app_main, start with gpio_reset_pin. It takes one thing: the pin." | call + card `pin · GPIO_NUM_2` |
+| r2 "The pin is a GPIO number, GPIO_NUM_2, not the pin's position on the board. The ESP32 has thirty-four GPIOs, and twenty-eight of them can be outputs." | ✗ "the 2nd pin on the header" / ✓ "the label: IO2 · GPIO_NUM_2"; 34-cell strip, 34–39 struck |
+| r3 "Reset puts it in a known state: a plain GPIO, input off, output off, and a weak pull-up, so it isn't left floating." | register-card rows lighting from the real source: function = GPIO · input off · output off · pull-up on (~45 kΩ) · pull-down off · interrupt off |
 
-## 3 · The circuit
-
-Explainer-style: a chain `GPIO 2 → 220 Ω → LED → GND` with one card per part.
-
-| VO | Visual |
-|---|---|
-| c1 "First, the circuit. From GPIO 2, through a resistor, into the long leg of the LED, and out of the short leg to ground." | schematic draws part by part on each spoken word; cards light: pin · resistor · LED (long leg = +) · ground |
-| c2 "When the pin is high, it sits at about three point three volts. Current flows out of the pin, through the LED, to ground, and it lights." | pin goes amber, current dots flow along the wire, LED lights |
-| c3 "The resistor sets how much current flows. The LED drops about two volts, leaving one point three across the resistor. One point three volts over two hundred and twenty ohms is about six milliamps." | worked chain builds on screen: `3.3 V − 2.0 V = 1.3 V` → `1.3 V ÷ 220 Ω ≈ 5.9 mA` |
-| c4 "Which pin? Not just any. Thirty-four to thirty-nine can only be inputs. Six to eleven are wired to the flash chip. And one and three carry your uploads." | ESP32 pin map, 34 GPIOs: 34–39 RED "input only", 6–11 RED "flash", 1/3 muted "TX/RX" — each group lights on its word |
-| c5 "GPIO 2 is a strapping pin: the chip reads it at reset to decide how to boot. Wired to ground through the LED, it stays low, and low is safe for both booting and flashing. Many boards already have an LED on it, but not all, so check yours." | strapping pins outlined amber (0, 2, 5, 12, 15); GPIO 2 zooms: `reset → reads 0 → ✓ boot ✓ flash` |
-
-## 4 · `pinMode(LED, OUTPUT);`
-
-Explainer: two cards — `pin · GPIO 2 · which pin`, `mode · OUTPUT · what it does`.
-
-| VO | Visual (stage view) |
-|---|---|
-| m1 "In setup, pinMode makes the pin an output. It takes two things: which pin, and what mode." | call line + cards light on "which pin", "what mode" |
-| m2 "The pin is the GPIO number, not the pin's position on the board. The ESP32 has thirty-four GPIOs, and twenty-eight of them can be outputs." | ✗/✓ cards: ✗ "the 2nd pin on the header" / ✓ "the pin labelled GPIO 2"; count bar 34 → 28 (34–39 struck RED) |
-| m3 "OUTPUT switches on the pin's output driver. Until now it was only listening. Now it can drive the wire high or low." | **the pin diagram** from scene 2 (callback): driver switch closes; pill `listening → driving` |
-| m4 "On an ESP32, OUTPUT keeps the input switched on too, so digitalRead can still tell you what the pin is doing." | register-card: `OUTPUT = 0x03` → bit 0 `input ✓` · bit 1 `output ✓` |
-| m5 "Ask for an output on a pin that can't drive, like thirty-four, and pinMode prints an error and leaves the pin alone. Your sketch keeps running." | `pinMode(34, OUTPUT);` → RED log `IO 34 config failed`; pin 34 stays `listening` |
-| m6 "And the datasheet doesn't promise which level the pin starts at. So right after pinMode, set the level you want." | output bit shown as `?` → `digitalWrite(LED, LOW);` → `0` |
-
-## 5 · `digitalWrite(LED, HIGH);`
-
-Explainer: `pin · GPIO 2 · the pin you set up`, `value · HIGH · the level`.
+## 5 · `gpio_set_direction(LED, GPIO_MODE_OUTPUT);`
 
 | VO | Visual |
 |---|---|
-| d1 "Then digitalWrite sets the level. It takes two things: the pin, and HIGH or LOW." | call line + cards |
-| d2 "HIGH drives the pin to three point three volts, and the LED lights. LOW pulls it to zero, and it goes dark." | voltage meter 0…3.3 V + LED; value card toggles HIGH ↔ LOW |
-| d3 "The datasheet guarantees high is at least two point six four volts, and low is at most zero point three three. Those are the only two levels a digital output gives you." | voltage axis with two GREEN bands (≥ 2.64 V, ≤ 0.33 V) and the gap between greyed |
-| d4 "HIGH is just the number one, and LOW is zero. In fact, any number that isn't zero counts as HIGH." | `HIGH = 1 · LOW = 0`; `digitalWrite(LED, 7)` → HIGH ✓ |
-| d5 "And it doesn't wait. digitalWrite sets the level and returns straight away. The pin holds that level on its own, until you write it again." | CPU lane: a short `digitalWrite` box, then GREEN `CPU free`; pin trace stays high underneath |
+| s1 "Then gpio_set_direction makes it an output. It takes two things: the pin, and the mode." | call + cards |
+| s2 "GPIO_MODE_OUTPUT switches on the pin's output driver. Until now it was only listening. Now it can drive the wire high or low." | the pin diagram: output-enable closes; listening → driving |
+| s3 "It's output only, though. The input is switched off, so gpio_get_level would always read zero. To read the pin back, use GPIO_MODE_INPUT_OUTPUT." | mode bits: OUTPUT = 0b010 (input ✗) vs INPUT_OUTPUT = 0b011; `gpio_get_level(LED) → 0` with the header's @warning quoted |
+| s4 "Try it on a pin that can't drive, like thirty-four. It logs an error and returns ESP_ERR_INVALID_ARG. Put the call inside ESP_ERROR_CHECK, and that error stops the program instead of slipping by." | `gpio_set_direction(GPIO_NUM_34, GPIO_MODE_OUTPUT)` → `E (…) gpio: io_num=34 can only be input` → `ESP_ERR_INVALID_ARG (0x102)`; `ESP_ERROR_CHECK(…)` → `ESP_ERROR_CHECK failed: esp_err_t 0x102 (ESP_ERR_INVALID_ARG)` → abort |
+| s5 "And the datasheet doesn't promise which level the pin starts at. If that matters, call gpio_set_level first. The level waits in its register, and the pin starts there the moment its output turns on." | GPIO_OUT bit 2 = `?` → `gpio_set_level(LED, 0)` before `gpio_set_direction` → bit = 0 → output on, starts LOW |
 
-## 6 · Blink (CodeToHardware)
-
-| VO | Visual |
-|---|---|
-| b1 "Put it together and you get blink. In setup, make the pin an output. In loop: high, wait half a second, low, wait half a second." | the sketch on the left, each line lit on its word; LED right; scope underneath; `real time` |
-| b2 "On, off, about once a second, for as long as it has power." | runs; square wave scrolls, 1 s period bracketed |
-
-## 7 · `delay(500);`
-
-Explainer: one card — `ms · 500 · how long`.
+## 6 · `gpio_set_level(LED, 1);`
 
 | VO | Visual |
 |---|---|
-| y1 "delay takes one number: milliseconds. Five hundred is half a second." | card; `500 ms = 0.5 s` |
-| y2 "Underneath, it asks FreeRTOS to put your loop to sleep for five hundred ticks. On Arduino, one tick is one millisecond." | tick ruler: 500 ticks × 1 ms |
-| y3 "While your loop sleeps, the CPU is free for other work, and the pin keeps its level. Nothing is holding it high. It's a bit in a register." | CPU lane: `loop` sleeping, GREEN `CPU free`; pin stays high; register bit glows |
-| y4 "Take the delays out, and the pin flips far too fast to see. The LED just looks dimmer. Hold that thought." | delays struck out; scope compresses to a blur; LED settles dimmer |
+| d1 "Then gpio_set_level sets the level. It takes two things: the pin, and the level: one for high, zero for low." | call + cards |
+| d2 "One drives the pin to three point three volts, and the LED lights. Zero pulls it to zero volts, and it goes dark." | voltmeter + LED |
+| d3 "The datasheet guarantees high is at least two point six four volts, and low is at most zero point three three. Those are the only two levels a digital output gives you." | the two green bands, nothing between |
+| d4 "The level is a whole number, and any number that isn't zero counts as high." | `uint32_t level` · `if (level)` from gpio_ll.h · `gpio_set_level(LED, 7)` → HIGH |
+| d5 "And it doesn't wait. gpio_set_level writes one register, returns ESP_OK, and the pin holds that level on its own until you write it again." | CPU lane + pin trace |
 
-## 8 · Second knob: current
-
-| VO | Visual |
-|---|---|
-| k1 "Your code decides on or off. The resistor decides how much current, and so how bright. Two twenty ohms: about six milliamps. One kilohm: about one point three, and the LED is dimmer." | resistor value slides 220 Ω → 1 kΩ; current bar + LED brightness follow |
-| k2 "But a pin is a signal, not a power supply. By default it's set to deliver about twenty milliamps, and about forty at most." | budget bars: LED 5.9 mA GREEN under a `default ~20 mA` line; `max ~40 mA` line above |
-| k3 "A motor, a relay or a strip of LEDs needs far more. For those, the pin switches a transistor, and the transistor switches the load." | RED bar running off the chart; then ✓ card: `pin → transistor → motor` |
-
-## 9 · Under the hood
-
-Layer descent, real source trimmed with "…".
+## 7 · Blink
 
 | VO | Visual |
 |---|---|
-| i1 "So what does digitalWrite really do? Let's follow it down." | `sketch.ino`: `digitalWrite(LED, HIGH);` |
-| i2 "In the Arduino core, it checks that pinMode claimed the pin. If not, that's the error from the start. Then it calls ESP-IDF's gpio_set_level." | `cores/esp32/esp32-hal-gpio.c` `__digitalWrite` (real): the `log_e(…Execute pinMode…)` line marked (callback to scene 1), `gpio_set_level` marked |
-| i3 "gpio_set_level checks that the pin can be an output, and passes it down to the hardware layer." | `esp_driver_gpio/src/gpio.c` `gpio_set_level` |
-| i4 "And at the bottom, it's one line. HIGH writes a one to bit two of the set register. LOW writes it to the clear register." | `hal/esp32/include/hal/gpio_ll.h` `gpio_ll_set_level`: `hw->out_w1ts = 1 << gpio_num;` / `out_w1tc` |
-| i5 "Write-one-to-set means only your pin's bit changes. Every other pin stays exactly as it was." | 32-bit register card `GPIO_OUT_W1TS_REG · 0x3FF44008`: bit 2 lights, `GPIO_OUT_REG` bit 2 flips, others untouched; TRM quote |
-| i6 "pinMode, underneath, is a few writes like this one: route the plain GPIO output to the pin, and set its bit in the output-enable register." | card: `enable_w1ts = 1 << 2` · `out_sel = 256 (simple GPIO output)` · `function = GPIO` |
+| b1 "Put it together and you get a blinking LED. In app_main, reset the pin and make it an output. Then, forever: high, wait half a second, low, wait half a second." | the whole `main.c`, lines lit; LED; scope; real time |
+| b2 "On, off, about once a second, for as long as it has power." | 1 s period bracketed |
 
-## 10 · Payoff
+## 8 · `vTaskDelay(pdMS_TO_TICKS(500));`
+
+Cards: `pdMS_TO_TICKS(500)` (ms → ticks) and `vTaskDelay` (blocks your task).
 
 | VO | Visual |
 |---|---|
-| x1 "Make it an output. Set its level. That's GPIO." | the line in `GRAD_TEXT`; recap rows: `pinMode → output driver on` · `digitalWrite → one bit, one register` · `resistor → how much current` · `HIGH or LOW → nothing in between` (→ *next: PWM*) |
+| y1 "To wait, you ask FreeRTOS: vTaskDelay, with the time converted by pdMS_TO_TICKS." | call + cards |
+| y2 "FreeRTOS counts time in ticks. By default there are a hundred a second, so one tick is ten milliseconds, and five hundred milliseconds is fifty ticks." | `CONFIG_FREERTOS_HZ = 100` → 1 tick = 10 ms; `500 × 100 ÷ 1000 = 50`; 50 ticks sweep in a real half second |
+| y3 "The conversion rounds down. Ask for five milliseconds and you get zero ticks, and a delay of zero doesn't wait at all." | `5 × 100 ÷ 1000 = 0.5 → 0`; `vTaskDelay(0)` — "a delay time of zero just forces a reschedule" (tasks.c) |
+| y4 "While your task waits, it's blocked. The CPU is free for other work, and the pin keeps its level. Nothing is holding it high. It's a bit in a register." | task lane (blocked) · CPU free · pin trace · GPIO_OUT bit 2 = 1 |
+| y5 "Take the delays out, and the task watchdog complains after five seconds, because your loop never lets the idle task run." | delays struck; 5 s timer; `E (…) task_wdt: Task watchdog got triggered…` `IDLE0 (CPU 0)` |
+| y6 "And the pin flips far too fast to see. The LED just looks dimmer. Hold that thought." | scope blurs; LED dims |
 
-## Open decisions
+## 10 · Under the hood
 
-1. **Pin:** GPIO 2 (matches the PWM video and the vertical slice, safe with LED-to-ground) vs a non-strapping pin like GPIO 4 (no strapping detour in scene 3).
-2. **Resistor / LED:** 220 Ω and a red LED at ~2.0 V — need the kit's real parts (Vf is UNVERIFIED).
-3. **y4 tease** ("take the delays out → dimmer") is physics, not hardware-verified yet — keep, or end the tease at the payoff only.
-4. Footage: placeholder `<Led>` like the PWM video, swapped for macro footage later.
+| VO | Visual |
+|---|---|
+| i1 "So what does gpio_set_level really do? Let's follow it down." | `main.c`: `gpio_set_level(LED, 1);` |
+| i2 "In the ESP-IDF driver, it checks that the pin can be an output, and passes it down to the hardware layer." | `gpio.c` `gpio_set_level` (real) |
+| i3 "And at the bottom, it's one line. High writes a one to bit two of the set register. Low writes it to the clear register." | `gpio_ll.h`: `hw->out_w1ts = 1 << gpio_num;` / `out_w1tc` |
+| i4 "Write-one-to-set means only your pin's bit changes. Every other pin stays exactly as it was." | W1TS @ 0x3FF44008 → GPIO_OUT bit 2 flips; TRM quote |
+| i5 "gpio_set_direction, underneath, is a few writes like this one: route the plain GPIO output to the pin, and set its bit in the output-enable register." | `GPIO_FUNC2_OUT_SEL_CFG_REG ← 256` · `GPIO_ENABLE_W1TS_REG ← 1 << 2` |
+
+## 11 · Payoff
+
+"Make it an output. Set its level. That's GPIO." — recap: `gpio_reset_pin` → a known state · `gpio_set_direction` → output driver on · `gpio_set_level` → one bit, one register · `vTaskDelay(pdMS_TO_TICKS(ms))` → ticks, CPU free · HIGH or LOW → nothing in between → next: PWM.
+
+Scenes 2, 3 and 9 (answer, circuit, current) are unchanged from v1.

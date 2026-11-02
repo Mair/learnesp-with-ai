@@ -1,52 +1,74 @@
 # GPIO — facts and where they come from
 
-Sources: arduino-esp32 `master` (3.3), ESP-IDF `release/v5.5`, ESP32 Series
-Datasheet v5.3, ESP32 TRM v5.9, ESP-IDF GPIO docs (`docs/en/api-reference/peripherals/gpio/esp32.inc`).
+**Pure ESP-IDF** (no Arduino). Sources: ESP-IDF `release/v5.5` (driver, HAL/LL,
+FreeRTOS, Kconfig, `examples/get-started/blink`), ESP32 Series Datasheet v5.3,
+ESP32 TRM v5.9, ESP-IDF GPIO docs (`docs/en/api-reference/peripherals/gpio/esp32.inc`).
 Raw files fetched and read. Line numbers are from the fetched files.
 
-## The calls
+## The program
 
 | Fact (as said or shown) | Source |
 |---|---|
-| `pinMode(pin, mode)`: pin ≥ 40 (`SOC_GPIO_PIN_COUNT`) → logs `Invalid IO %u selected` and returns | `cores/esp32/esp32-hal-gpio.c` `__pinMode` (l.117–120); `soc/esp32/include/soc/soc_caps.h` l.175 |
-| `pinMode` takes the pin back from whatever peripheral had it (`perimanClearPinBus` → that bus's deinit) before configuring it | `esp32-hal-gpio.c` l.122–128; `esp32-hal-periman.c` `perimanSetPinBus` (deinit of previous bus) |
-| `pinMode` builds a `gpio_config_t` for that one pin (`1ULL << pin`), pull-up/down **off** unless the mode asks, and calls `gpio_config()` | `esp32-hal-gpio.c` l.133–155 |
-| `OUTPUT` is `0x03` = input **and** output enabled ("so you can read the state of pin even when it is set as OUTPUT") → `GPIO_MODE_INPUT_OUTPUT` | `cores/esp32/esp32-hal-gpio.h` l.47–50; `hal/include/hal/gpio_types.h` l.92–103 |
-| Other modes: `INPUT 0x01`, `INPUT_PULLUP 0x05`, `INPUT_PULLDOWN 0x09`, `OUTPUT_OPEN_DRAIN 0x13` | `esp32-hal-gpio.h` l.46–57 |
-| `HIGH = 0x1`, `LOW = 0x0` | `esp32-hal-gpio.h` l.42–43 |
-| `pinMode(34…39, OUTPUT)` fails: `gpio_config` rejects output on input-only pins (`GPIO can only be used as input mode`, `ESP_ERR_INVALID_ARG`) → `pinMode` logs `IO %u config failed` and returns | `esp_driver_gpio/src/gpio.c` `gpio_config` l.363–366; `esp32-hal-gpio.c` l.156–159 |
-| `digitalWrite(pin, val)` **before** `pinMode`: logs `IO %u is not set as GPIO. Execute pinMode(%u, OUTPUT) first.` and does nothing | `esp32-hal-gpio.c` `__digitalWrite` l.182–186 |
-| `digitalWrite` → `gpio_set_level(pin, val)` → `gpio_hal_set_level` → `gpio_ll_set_level` | `esp32-hal-gpio.c` l.183; `gpio.c` l.245–250; `hal/esp32/include/hal/gpio_ll.h` l.504 |
-| **Any non-zero value is HIGH**: `if (level) out_w1ts … else out_w1tc` | `gpio_ll.h` `gpio_ll_set_level` l.506–518 |
-| Surprise: `val` is a `uint8_t`, so `digitalWrite(pin, 256)` wraps to 0 → LOW | `esp32-hal-gpio.h` l.75 (`uint8_t val`) |
-| `delay(ms)` = `vTaskDelay(ms / portTICK_PERIOD_MS)`; Arduino builds use `CONFIG_FREERTOS_HZ=1000` → 1 tick = 1 ms → `delay(500)` = 500 ticks. The task sleeps; the scheduler runs other tasks | `cores/esp32/esp32-hal-misc.c` l.212–214; `esp32-arduino-lib-builder/configs/defconfig.common` l.45 |
-| Generic `esp32` variant (ESP32 Dev Module) defines **no** `LED_BUILTIN`, so we write `const int LED = 2;` | `variants/esp32/pins_arduino.h` (no `LED_BUILTIN`) |
+| Your code starts in `void app_main(void)`, called by the "main" task the startup code creates; if `app_main` returns, that task deletes itself (`vTaskDelete(NULL)`) | `components/freertos/app_startup.c` l.83–85, l.213–217 |
+| Main task: priority `ESP_TASK_PRIO_MIN + 1` = **1**, pinned to **CPU 0** by default | `components/esp_system/include/esp_task.h` l.28, l.56–58; `esp_system/Kconfig` l.233–254 (`ESP_MAIN_TASK_AFFINITY_CPU0`) |
+| Official blink example: `gpio_reset_pin(BLINK_GPIO);` then `gpio_set_direction(BLINK_GPIO, GPIO_MODE_OUTPUT);`, then `gpio_set_level` + `vTaskDelay` in `while (1)` inside `app_main` | `examples/get-started/blink/main/blink_example_main.c` l.79–86, l.91–102 |
+| Headers: `driver/gpio.h`, `freertos/FreeRTOS.h`, `freertos/task.h` | blink example l.10–12 |
 
-## What `pinMode(…, OUTPUT)` does to the hardware (ESP-IDF → HAL)
+## The calls
 
 | Fact | Source |
 |---|---|
-| `gpio_config` per pin: input enable, open-drain off, **output enable**, pulls, interrupt type, then IO MUX function = GPIO | `gpio.c` `gpio_config` l.347–443 |
-| `gpio_output_enable`: ① route "simple GPIO output" through the GPIO matrix (`SIG_GPIO_OUT_IDX` = 256), ② set the pin's bit in the output-enable register, ③ IO MUX function → GPIO | `gpio.c` l.222–228; `gpio_ll.h` `gpio_ll_matrix_out_default` l.478–481, `gpio_ll_output_enable` l.391–398, `gpio_ll_func_sel` l.491–494; `soc/esp32/include/soc/gpio_sig_map.h` l.399 |
+| `gpio_reset_pin(n)`: invalid GPIO → `ESP_ERR_INVALID_ARG`; else interrupt off, **pull-up on** (output-capable pins, "so the GPIO should not be floating"), pull-down off, **input off, output off**, IO MUX function = GPIO; returns `ESP_OK` | `components/esp_driver_gpio/src/gpio.c` `gpio_reset_pin` l.462–481 |
+| `gpio_set_direction(n, mode)`: invalid GPIO → `ESP_ERR_INVALID_ARG`; output mode on an input-only pin → `ESP_LOGE("io_num=%d can only be input")` + `ESP_ERR_INVALID_ARG`; else input on/off, output on/off, open-drain on/off per mode bits | `gpio.c` l.315–345 |
+| Mode bits: INPUT = bit 0, OUTPUT = bit 1, OD = bit 2. `GPIO_MODE_OUTPUT` = output only (**input off**); `GPIO_MODE_INPUT_OUTPUT` = both | `hal/include/hal/gpio_types.h` l.91–103 |
+| `gpio_get_level` "@warning If the pad is not configured for input (or input and output) the returned value is always 0" → with `GPIO_MODE_OUTPUT` you can't read your own pin back | `driver/gpio.h` l.146 |
+| `gpio_set_level(n, level)`: not an output-capable GPIO → `ESP_ERR_INVALID_ARG` (logged by `GPIO_CHECK`); else writes the level and returns `ESP_OK`. **It does not enable the output**, so on a pin that was never made an output it returns `ESP_OK` and the pin doesn't drive | `gpio.c` l.245–250; `gpio_ll.h` l.504–518 (only `out_w1ts`/`out_w1tc`) |
+| …which also means: set the level *before* `gpio_set_direction`, and the pin starts at that level the moment its output turns on | follows from the above |
+| **Any non-zero `level` is HIGH**: `uint32_t level`; `if (level) out_w1ts … else out_w1tc` | `gpio_ll.h` `gpio_ll_set_level` l.504–518 |
+| Errors are `esp_err_t` (`ESP_OK` = 0, `ESP_ERR_INVALID_ARG` = 0x102). `ESP_ERROR_CHECK(x)` on failure prints `ESP_ERROR_CHECK failed: esp_err_t 0x102 (ESP_ERR_INVALID_ARG) at 0x…` + file/line/expression, then `abort()` | `esp_common/include/esp_err.h` l.22, 26, 115–121; `esp_system/esp_err.c` l.26–50 |
+| Logs print by default: `LOG_DEFAULT_LEVEL` defaults to INFO, so `E (…) gpio: io_num=34 can only be input` appears | `components/log/Kconfig.level` l.3–5 |
+
+## Waiting
+
+| Fact | Source |
+|---|---|
+| `pdMS_TO_TICKS(ms)` = `(ms × configTICK_RATE_HZ) / 1000` — **integer division, rounds down** | `FreeRTOS-Kernel/include/freertos/projdefs.h` l.45–47 |
+| `configTICK_RATE_HZ = CONFIG_FREERTOS_HZ`, **default 100** (range 1–1000) → 1 tick = 10 ms | `freertos/config/include/freertos/FreeRTOSConfig.h` l.92; `components/freertos/Kconfig` l.33–37 |
+| → `pdMS_TO_TICKS(500)` = 500 × 100 / 1000 = **50 ticks**; `pdMS_TO_TICKS(5)` = 500 / 1000 = **0** | arithmetic on the above |
+| `portTICK_PERIOD_MS` = 1000 / configTICK_RATE_HZ = 10 (the blink example's `CONFIG_BLINK_PERIOD / portTICK_PERIOD_MS` is the same idea) | `portable/xtensa/include/freertos/portmacro.h` l.116 |
+| `vTaskDelay(n)`: n > 0 → the task goes on the delayed list (blocked) for n ticks; **n = 0 "just forces a reschedule"** — it doesn't wait | `FreeRTOS-Kernel/tasks.c` `vTaskDelay` (comment "A delay time of zero just forces a reschedule") |
+| While blocked, the scheduler runs other ready tasks — or the idle task | FreeRTOS scheduling; `tasks.c` |
+| No delay at all: the main task (prio 1, CPU 0) never blocks → IDLE0 (prio 0) never runs → the Task Watchdog (on by default, 5 s, watches IDLE0 and IDLE1, panic off) prints `E (…) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:` … `IDLE0 (CPU 0)` — and the program keeps running | `esp_system/Kconfig` l.474–532 (`ESP_TASK_WDT_EN/INIT` y, `TIMEOUT_S` 5, `CHECK_IDLE_TASK_CPU0/1` y, `PANIC` n); `task_wdt.c` l.790–791 |
+| The pin toggling with no delay is far too fast to see → the LED looks dimmer (persistence of vision) | physics — **not yet verified on hardware** |
+
+## What `gpio_set_direction(…, GPIO_MODE_OUTPUT)` does to the hardware
+
+| Fact | Source |
+|---|---|
+| `gpio_output_enable`: ① route "simple GPIO output" through the GPIO matrix (`SIG_GPIO_OUT_IDX` = 256 → `GPIO_FUNC2_OUT_SEL_CFG_REG` for pin 2), ② set the pin's bit in the output-enable register, ③ IO MUX function → GPIO | `gpio.c` l.222–228; `gpio_ll.h` `gpio_ll_matrix_out_default` l.478–481, `gpio_ll_output_enable` l.391–398, `gpio_ll_func_sel` l.491–494; `soc/esp32/include/soc/gpio_sig_map.h` l.399 |
 | Output enable = `hw->enable_w1ts = 1 << pin` → `GPIO_ENABLE_W1TS_REG` @ `0x3FF44024` | `gpio_ll.h` l.394; TRM v5.9 GPIO register summary |
 
-## What `digitalWrite` does to the hardware
+## What `gpio_set_level` does to the hardware
 
 | Fact | Source |
 |---|---|
-| HIGH: `hw->out_w1ts = 1 << pin` → `GPIO_OUT_W1TS_REG` @ `0x3FF44008`; LOW: `out_w1tc` → `GPIO_OUT_W1TC_REG` @ `0x3FF4400C` (pins 32–39 use `out1_w1ts/tc`) | `gpio_ll.h` l.504–518; TRM v5.9 register summary |
+| `gpio_set_level` → `gpio_hal_set_level` → `gpio_ll_set_level`: HIGH: `hw->out_w1ts = 1 << pin` → `GPIO_OUT_W1TS_REG` @ `0x3FF44008`; LOW: `out_w1tc` → `GPIO_OUT_W1TC_REG` @ `0x3FF4400C` (pins 32–39 use `out1_w1ts/tc`) | `gpio.c` l.245–250; `gpio_ll.h` l.504–518; TRM v5.9 register summary |
 | W1TS: "For every bit that is 1 in the value written here, the corresponding bit in GPIO_OUT_REG will be set." → one write touches only that pin's bit | TRM v5.9 Register 6.2 |
-| The pin then holds that level with no further CPU work, until written again (it's a register bit driving the pad) | follows from the above; `gpio_ll_set_level` is a single store |
-| `GPIO_OUT_REG` reset value is **x (undefined)** in the TRM → don't rely on a starting level after `pinMode`; write the one you want | TRM v5.9 Register 6.1 |
+| The pin then holds that level with no further CPU work, until written again | `gpio_ll_set_level` is a single store into a latch register |
+| `GPIO_OUT_REG` reset value is **x (undefined)** in the TRM | TRM v5.9 Register 6.1 |
 
 ## Pins
 
 | Fact | Source |
 |---|---|
+| **ESP32-WROOM-32E module: 38 pins (+ GND pad 39).** Pin numbers are positions on the module; names are GPIOs. Left 1–14: GND, 3V3, EN, SENSOR_VP (GPIO36), SENSOR_VN (GPIO39), IO34, IO35, IO32, IO33, IO25, IO26, IO27, IO14, IO12. Bottom 15–24: GND, IO13, NC ×6 (17–22), IO15, **IO2 = pin 24**. Right 25–38 (bottom → top): IO0, IO4, IO16, IO17, IO5, IO18, IO19, NC, IO21, RXD0 (GPIO3), TXD0 (GPIO1), IO22, IO23, GND | ESP32-WROOM-32E/32UE datasheet v2.1, Figure 3 (Pin Layout, top view) + Table 3 (Pin Definitions) |
+| Pins 17–22 are NC: "GPIO6 to GPIO11 … are connected to the SPI flash integrated on the module and are not led out" | WROOM-32E datasheet v2.1, Table 3 note 2 |
+| Boot log before your code: `I (…) main_task: Calling app_main()` | `app_startup.c` l.147 (`MAIN_TAG = "main_task"`), l.213 |
+| 220 Ω through-hole resistor colour code: red (2) · red (2) · brown (×10) · gold (±5 %) | IEC 60062 resistor colour code |
 | ESP32 has 34 GPIOs: 0–19, 21–23, 25–27, 32–39 | IDF docs `gpio/esp32.inc` l.12 |
 | GPIO 34–39: input only, no software pull-up/pull-down | `esp32.inc` l.200; `soc_caps.h` l.184 (`SOC_GPIO_VALID_OUTPUT_GPIO_MASK` excludes 34–39) → 28 can be outputs |
 | GPIO 6–11 (and 16–17 on PSRAM modules) are wired to the module's flash/PSRAM: don't use | `esp32.inc` l.198 |
-| GPIO 1 / 3 = TX / RX, used for uploading and Serial | `esp32.inc` l.201; `variants/esp32/pins_arduino.h` l.6–7 |
+| GPIO 1 / 3 = U0TXD / U0RXD: flashing and the serial console | `esp32.inc` l.201 ("TXD & RXD are usually used for flashing and debugging") |
 | Strapping pins: 0, 2, 5, 12, 15 — sampled at reset, free as normal IO afterwards | `esp32.inc` l.197; datasheet §3 |
 | GPIO 2 default at reset: pull-down (0). Download mode needs GPIO0 = 0 and GPIO2 = 0. An LED + resistor **to ground** on GPIO 2 keeps it low → doesn't block flashing | datasheet v5.3 Table 3-1, Table 3-3 |
 | "During reset, all pins are output-disabled" → every pin starts listening, not driving | datasheet v5.3, IO_MUX notes ("At Reset") |

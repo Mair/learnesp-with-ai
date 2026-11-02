@@ -14,7 +14,7 @@
  */
 import { spawnSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
-import { existsSync, mkdirSync } from 'node:fs';
+import { existsSync, mkdirSync, rmSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -154,7 +154,15 @@ export function voClip(voice: string, id: string, say: string) {
 export function ensureClip(voice: string, id: string, say: string) {
   mkdirSync(VO_CACHE, { recursive: true });
   const mp3 = voClip(voice, id, say);
-  if (!existsSync(mp3)) run('edge-tts', ['-v', voice, `--pitch=${VO_PITCH}`, '-t', say, '--write-media', mp3]);
+  if (!existsSync(mp3)) {
+    try {
+      run('edge-tts', ['-v', voice, `--pitch=${VO_PITCH}`, '-t', say, '--write-media', mp3]);
+    } catch (e) {
+      // never leave a half-written clip in the cache
+      rmSync(mp3, { force: true });
+      throw e;
+    }
+  }
   return mp3;
 }
 
