@@ -3,6 +3,7 @@ import { AbsoluteFill, Composition } from 'remotion';
 import { Backdrop, Grade } from './components/Backdrop';
 import { GPIO, GPIO_FRAMES } from './scenes/GPIO';
 import { GPIOInput, INPUT_FRAMES } from './scenes/GPIOInput';
+import { GPIOInterrupts, IRQ_FRAMES } from './scenes/GPIOInterrupts';
 import { PWM, PWM_FRAMES } from './scenes/PWM';
 
 const W = 1920;
@@ -61,6 +62,20 @@ export const RemotionRoot: React.FC = () => (
         </Stage>
       )}
       durationInFrames={INPUT_FRAMES}
+      fps={FPS}
+      width={W}
+      height={H}
+    />
+
+    {/* GPIO interrupts (pure ESP-IDF): gpio_config → gpio_install_isr_service → gpio_isr_handler_add → ISR → queue → bounce → under the hood */}
+    <Composition
+      id="GPIOInterrupts"
+      component={() => (
+        <Stage floor={false}>
+          <GPIOInterrupts />
+        </Stage>
+      )}
+      durationInFrames={IRQ_FRAMES}
       fps={FPS}
       width={W}
       height={H}

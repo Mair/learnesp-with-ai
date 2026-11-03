@@ -15,7 +15,9 @@
     "gpio:audio": "node --disable-warning=ExperimentalWarning scripts/gpio-audio.ts",
     "gpio": "npm run gpio:audio && remotion render GPIO out/gpio.mp4",
     "gpio-input:audio": "node --disable-warning=ExperimentalWarning scripts/gpio-input-audio.ts",
-    "gpio-input": "npm run gpio-input:audio && remotion render GPIOInput out/gpio-input.mp4"
+    "gpio-input": "npm run gpio-input:audio && remotion render GPIOInput out/gpio-input.mp4",
+    "gpio-interrupts:audio": "node --disable-warning=ExperimentalWarning scripts/gpio-interrupts-audio.ts",
+    "gpio-interrupts": "npm run gpio-interrupts:audio && remotion render GPIOInterrupts out/gpio-interrupts.mp4"
   },
   "dependencies": {
     "@remotion/cli": "^4.0.535",
