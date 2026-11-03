@@ -155,12 +155,17 @@ export function ensureClip(voice: string, id: string, say: string) {
   mkdirSync(VO_CACHE, { recursive: true });
   const mp3 = voClip(voice, id, say);
   if (!existsSync(mp3)) {
-    try {
-      run('edge-tts', ['-v', voice, `--pitch=${VO_PITCH}`, '-t', say, '--write-media', mp3]);
-    } catch (e) {
-      // never leave a half-written clip in the cache
-      rmSync(mp3, { force: true });
-      throw e;
+    // the free service drops the odd request — retry before giving up
+    for (let attempt = 1; ; attempt++) {
+      try {
+        run('edge-tts', ['-v', voice, `--pitch=${VO_PITCH}`, '-t', say, '--write-media', mp3]);
+        break;
+      } catch (e) {
+        // never leave a half-written clip in the cache
+        rmSync(mp3, { force: true });
+        if (attempt >= 4) throw e;
+        spawnSync('sleep', [String(2 * attempt)]);
+      }
     }
   }
   return mp3;
