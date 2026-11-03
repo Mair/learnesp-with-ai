@@ -32,7 +32,8 @@ For a new topic, map onto these meanings (ADC: input voltage = magenta signal; r
 
 | Shot | Component | Use for |
 |---|---|---|
-| **Explainer** | `Explainer` (`components/Explainer.tsx`) | one call: the line, one card per argument (leader lines, active cards lit), a stage of crossfading views — one view per idea. Pass `views: [{ at, component, active, label, accent, right }]`; each view gets `t` and draws in `VIEW_W × VIEW_H` (1544 × 510). |
+| **Explainer** | `Explainer` (`components/Explainer.tsx`) | one call: the line, one card per argument (leader lines, active cards lit), a stage of crossfading views — one view per idea. Pass `views: [{ at, component, active, label, accent, right }]`; each view gets `t` and draws in `VIEW_W × VIEW_H` (1544 × 510). `codeIn` delays the call line so a **context panel** (the call inside `app_main`, `freertos-tasks/Create.tsx` `MainIntro`) can show first: lines dim to 15 %, the chosen line lights (`CodeLine live`), the panel lifts away as the big line fades in. |
+| **Code mutation** | `CodeAndViews` with `code` computed from `t` | "the other way to write it": the code panel's lines change on cue (`while (1) {` → `for (…) {`, a line inserted) with a `strong` mark + label on each changed line (`freertos-tasks/Fn.tsx`). The view beside it shows before → after chips (struck-through red → green). |
 | **CodeToHardware** | `CodeToHardware` | code on the left, the physical result (LED / speaker) on the right, scope underneath; `beats` with token `marks`; `timescale` for slow motion |
 | **Scope** | `Scope` | a rolling square wave; the right edge is "now" |
 | **Layer descent** | `UnderTheHood` pattern | real source quoted per layer (path in the panel header, "…" for trimmed lines), arrows labelled with the call, camera framing each new layer with its caller |
@@ -63,4 +64,6 @@ Diagram vocabulary that worked — reach for these first:
 - Keep labels clear of brackets, ticks and moving lines; check stills at the extreme values (0, max, the longest number).
 - Dense repeated rects: `shapeRendering="crispEdges"` (no seams). Thousands of ticks: low alpha, 1 px.
 - Leave the bottom ~140 px for the caption; leave ~60 px top for the kicker.
+- Anything rendered **outside `<Scene>`** (an overlay beside an `Explainer`) needs `zIndex: 11` — `Scene` is at 10 and the Backdrop's scrim sits above 0, so an un-z-indexed overlay comes out dimmed.
+- One label per spot: a status strip at the bottom of a column shows *one* message chosen from the state (`past the end` / `overwritten!` / `untouched`), not a second absolutely-positioned label on top of it.
 - Cards: up to 4 per Explainer (480 px apart); longer argument lists need fewer words per card.

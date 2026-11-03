@@ -5,7 +5,14 @@ description: Make a narrated, animated ESP32 explainer video (Remotion + synthes
 
 An **explainer** teaches one peripheral the way the PWM video does: every number the learner types is pulled apart until they can *see* what it does to the pin, every claim is checked against the real source, and picture, narration and sound are all driven by one timeline.
 
-**Project:** `/home/mairs/projects/learnesp32.com/Learn-ESP32-v-2` (a git repo — start from a clean tree and commit at each approved milestone).
+**Project:** `/Users/mair/projects/learnesp32/learnesp-with-ai` (a git repo — start from a clean tree and commit at each approved milestone). The old spike at `~/projects/learnesp32.com/spike-course/esp32-remotion` is frozen; never edit it.
+
+**Machine setup (check before step 4; a fresh clone has none of this):**
+- `npm install` (esbuild's postinstall warning from `allow-scripts` is harmless; `node -e "require('esbuild')"` to confirm).
+- `edge-tts` and `uv` (for faster-whisper) via `pip3 install --user edge-tts uv`; on macOS they land in `~/Library/Python/3.13/bin`, which is **not on PATH** — `export PATH="$HOME/Library/Python/3.13/bin:$PATH"` in every shell that runs `npm run vo` / `<slug>:audio`.
+- `.cache/vo` is gitignored and machine-local: the first run regenerates every clip (edge-tts is deterministic, so word offsets come back identical) and downloads the whisper model — run it in the background (`nohup npm run vo -- <slug> > /tmp/vo.log 2>&1 &`) and poll; a killed run leaves a **0-byte .mp3** that must be deleted before retrying. The first render also downloads Chrome Headless Shell.
+- Renders (~4 min for 5 min of video) likewise go in the background with a log.
+- Stills are written to `/tmp/stills/…`, which the read tool only resolves as `/private/tmp/stills/…` on macOS.
 **Reference implementation — read before building, copy its *visual* patterns (its code is legacy Arduino; don't copy its API):**
 
 | File | What it shows |
@@ -43,6 +50,7 @@ Load `SCRIPT.md`. Write the arc and, per scene, a table of beats: VO line (`text
 
 ### 4. Time it to the voice
 Put every VO line in `VO` with a provisional `at`, then `npm run vo -- <slug> [scene]`. It generates each clip and prints `word@offset`. Set each line's `at` to the previous line's end + ~0.6 s, every cue to `line.at + word offset` with the arithmetic in a comment (`// "the period" 8.3+14.4`), and each scene's `dur` to its last line's end + ~1.5 s. Re-run after any wording change.
+**Every time lives in `timeline.ts`** — never a literal second inside a view (`after(t, 13.3)`); when a scene is re-timed those are the cues that silently stay behind.
 **Done when** the sheet shows every line `FITS`, and every visual change in the storyboard has a cue tied to a spoken word.
 
 ### 5. Build the scenes
@@ -66,3 +74,14 @@ Tell the user: the scene list with times, what each view shows, every fact you v
 
 ## Changing an existing video
 Same loop on the affected scenes only: edit `VO`/cues → step 4 (re-time; shifting a scene's later cues means shifting every cue after the change by the same amount) → 5 → 6 → 7 → 8. Before refactoring the audio script, `md5sum` the stems; an unchanged timeline must rebuild byte-identical (the build is deterministic).
+
+## Review pass
+The user watches the render and reports critiques by timestamp. Map each timestamp to `sceneStart + t` → the scene and the VO line, then apply the pacing and context rules in `SCRIPT.md` ("Pacing", "Context before detail"). Lessons from the freertos-tasks review, now in the standards:
+- a list of steps said in one breath sounds rushed → one short VO line per step;
+- "here's the other way to write it" → mutate the code on screen, don't show a snippet beside it;
+- a call shown out of nowhere → show it inside `app_main` first, then pull it out;
+- a number that matters (×4) → its own short line and a big glyph;
+- a trap everyone hits (stack overflow) → three lines, not one;
+- every identifier the VO names ("its own b") must be defined on screen;
+- an under-the-hood descent is optional and is the first thing to cut when the audience is new to the topic.
+After the pass, update `STORYBOARD.md` (an "v2 (review pass)" note + the per-line tables) and `FACTS.md` (facts for cut scenes stay, marked as cut).

@@ -14,8 +14,10 @@ Every explainer follows the arc the PWM video used (310 s):
 | 4 | **Demo** | real code runs, the hardware responds on the same frame (`CodeToHardware`), slowed if needed | knob 1: duty → brightness, slowed 500× |
 | 5 | **Deeper calls** | any call that hides machinery gets its own Explainer after the demo that used it | `ledcFade` |
 | 6 | **Second knob** | the other dimension, contrasted with the first | frequency → pitch, on a speaker |
-| 7 | **Under the hood** | descend the real call path: `app_main` → ESP-IDF driver (+ its API doc) → HAL register writes → silicon | `ledc_update_duty` → `ledc_ll_set_duty_start` → `duty_start = 1` |
+| 7 | **Under the hood** *(optional)* | descend the real call path: `app_main` → ESP-IDF driver (+ its API doc) → HAL register writes → silicon | `ledc_update_duty` → `ledc_ll_set_duty_start` → `duty_start = 1` |
 | 8 | **Payoff** | one spoken line, then a 3–4 item recap | "That's PWM." |
+
+The under-the-hood scene earns its place when the register writes *are* the lesson (PWM, GPIO). When the audience is new to the whole subject (the first FreeRTOS video) it reads as "complicated" and gets cut in review — research it anyway, keep its facts in `FACTS.md`, and offer it as a candidate rather than a given.
 
 Mapping a new topic means finding its problem, its one-image answer, its calls, and its two knobs. For **A-to-D conversion** a plausible arc (verify every call in step 1) is: problem — a sensor gives a smooth voltage but the CPU only knows numbers → answer — sample it, chop it into steps → Explainers for the resolution / attenuation / read calls → demo: a potentiometer turning while the number tracks → second knob: attenuation (input range) vs resolution (step size) → under the hood: `esp32-hal-adc.c` → `adc_oneshot_read` → SAR conversion → payoff.
 
@@ -33,12 +35,24 @@ Apply every point to **every argument of every call** and every concept a scene 
 8. **Who does the work** — your code or the peripheral; does the call block; what the CPU is free to do.
 9. **A callback** to an earlier image when a new idea is the same mechanism ("it's the line across the counter from before").
 
+## Context before detail
+
+A call is never shown out of nowhere. Open on the code the learner has in front of them (`app_main`, both calls, each argument that differs labelled), say what the lines do together, pick one out (the others fade to ~15 %), and only then lift it into the Explainer shot with its cards (`Explainer` prop `codeIn`). Same for an alternative: "to end a task on purpose" is shown by **editing the code the learner is looking at** (`while (1)` → `for (…)`, a line inserted, each change marked on its spoken word), not by a snippet beside it.
+
 ## Narration
 
 - Second person, conversational, short sentences, one idea per sentence. Grammatical as written.
 - One VO line per view or beat, 4–16 s. ~2.6 words/s with the house voice.
 - Every number spoken appears on screen on that word; every on-screen change has a spoken reason.
+- **Every identifier the VO names is defined on screen** at that moment ("its own b" → `const blink_t *b = arg;` visible). If you can't point at it, don't say it.
 - Never claim more than `FACTS.md` supports; say "about" when rounding.
+
+### Pacing
+
+- **Steps, one per line.** "LED on, wait, LED off, wait" in one sentence sounds rushed. Make each step its own VO line (`f2a` … `f2d`: "LED on." / "Wait." / …) ~0.85 s apart, each with its own cue. Short clips are fine; the gap is the point.
+- **A number that matters gets its own line** and a big glyph: "… and a word is four bytes." / "Four times as much memory." with a 130 px `×4` popping in — not a clause at the end of a longer sentence.
+- **A trap everyone hits gets three lines, not one**: what goes wrong (the picture fills up and runs past the end) → what the system does (the check, the log line, the reboot) → "you will meet this one" + the fix, shown in green. ~25 s. Overflow, dangling pointers, pdPASS ≠ ESP_OK are this kind.
+- **Say the rule, not just the numbers.** A priority ladder with 0, 1, 5, 24 on it doesn't say "higher runs first"; a line does ("when two tasks are ready, the scheduler runs the one with the higher priority first"), with the two contenders on screen.
 
 ### `text` vs `say`
 `text` is the script as written (code names in code form: `gpio_set_level`, `ledc_update_duty`). `say` is what the TTS reads — set it whenever they differ:
@@ -51,7 +65,7 @@ Apply every point to **every argument of every call** and every concept a scene 
 | `P W M` (spaced) | letters that must land one by one |
 | `two thirty`, `a thousand hertz`, `two to the eighth`, `two hundred and fifty-six` | numbers — always words |
 
-Check the transcript (step 8) for words the TTS blurs ("the duty slides" was heard as "the duties slide") and rephrase.
+Check the transcript (step 8) for words the TTS blurs ("the duty slides" was heard as "the duties slide"; "Say you only want…" as "So you only want…" → "Suppose you only want…") and rephrase. Whisper writing `App May` / `X-TASTE create` for `app main` / `X task create` is its hearing, not the voice's — the house `say` forms are fine.
 
 ## Captions
 
