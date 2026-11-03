@@ -1,7 +1,8 @@
 /**
  * 6 · DEMO — app_main creates two tasks and returns ("Returned from
  * app_main()", the main task is deleted); both LEDs keep going at 200 / 500 ms
- * in real time; same function, two stacks → two b's.
+ * in real time; same function, two stacks → two b's (b = the pointer
+ * blink_task takes from arg: one → &fast, the other → &slow).
  */
 import React from 'react';
 import { AbsoluteFill, useCurrentFrame, useVideoConfig } from 'remotion';
@@ -10,7 +11,7 @@ import { mono, RED } from '../../components/Explainer';
 import { Panel } from '../../components/Panel';
 import { Kicker, Scene } from '../../components/Type';
 import { C, hexA } from '../../theme/palette';
-import { after, GREEN, LedCard, SerialLog, StackBox } from './parts';
+import { after, Code, GREEN, LedCard, SerialLog, StackBox } from './parts';
 import { DEMO as D, FAST, FPS, sceneDur, SLOW, wanted } from './timeline';
 
 export const Demo: React.FC = () => {
@@ -78,14 +79,18 @@ export const Demo: React.FC = () => {
                     h={220}
                     fill={0.6}
                     rows={[
-                      { text: 'b → &fast', sub: '{ GPIO_NUM_2, 200 }', color: C.amber, p: after(t, D.b) },
+                      { text: after(t, D.fastB) > 0.5 ? 'b → &fast' : 'b', sub: after(t, D.fastB) > 0.5 ? '{ GPIO_NUM_2, 200 }' : 'its own copy', color: C.amber, p: after(t, D.b) },
                       { text: 'saved registers', color: C.magenta, p: after(t, D.stack) },
                     ]}
                   />
                   <div style={{ display: 'grid', justifyItems: 'center', gap: 10, opacity: after(t, D.same) }}>
                     <div style={mono(20, C.muted)}>one copy of the code</div>
                     <div style={{ ...mono(24, '#fff', { fontWeight: 700 }), padding: '12px 18px', borderRadius: 12, border: `1px solid ${hexA(C.cyan, 0.7)}`, background: hexA(C.cyan, 0.1) }}>blink_task()</div>
-                    <div style={mono(20, C.muted)}>← both run it →</div>
+                    {/* what b is: the first line of the function */}
+                    <div style={{ opacity: after(t, D.pointer), borderLeft: `3px solid ${C.amber}`, paddingLeft: 10 }}>
+                      <Code size={19} lines={[<span key="b">const blink_t *<b style={{ color: C.amber }}>b</b> = <span style={{ color: after(t, D.arg) > 0.5 ? C.amber : undefined }}>arg</span>;</span>]} />
+                    </div>
+                    <div style={{ ...mono(18, C.muted), opacity: after(t, D.pointer) }}>a local → one per stack</div>
                   </div>
                   <StackBox
                     title="blink_slow's stack"
@@ -94,7 +99,7 @@ export const Demo: React.FC = () => {
                     h={220}
                     fill={0.6}
                     rows={[
-                      { text: 'b → &slow', sub: '{ GPIO_NUM_19, 500 }', color: C.amber, p: after(t, D.b + 0.3) },
+                      { text: after(t, D.slowB) > 0.5 ? 'b → &slow' : 'b', sub: after(t, D.slowB) > 0.5 ? '{ GPIO_NUM_19, 500 }' : 'its own copy', color: C.amber, p: after(t, D.b + 0.3) },
                       { text: 'saved registers', color: C.magenta, p: after(t, D.stack + 0.2) },
                     ]}
                   />

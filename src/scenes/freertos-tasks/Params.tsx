@@ -1,7 +1,8 @@
 /**
  * 5 · xTaskCreate ② — the parameter (arrives as arg; one function, two tasks;
- * must outlive the task → static), the priority (0…24; 5 preempts app_main at
- * once), the handle (or NULL), and the return value (pdPASS = 1 ≠ ESP_OK).
+ * must outlive the task → static), the priority (higher number runs first;
+ * 0…24; 5 preempts app_main at once), the handle (or NULL), and the return
+ * value (pdPASS = 1 ≠ ESP_OK).
  */
 import React from 'react';
 import { useCurrentFrame, useVideoConfig } from 'remotion';
@@ -130,20 +131,36 @@ const LifeView: React.FC<{ t: number }> = ({ t }) => {
 
 const PrioView: React.FC<{ t: number }> = ({ t }) => {
   const s = S.prio;
+  const ready = after(t, s.ready);
+  const first = after(t, s.first);
   return (
-    <div style={{ position: 'absolute', inset: 0, display: 'grid', alignContent: 'center' }}>
+    <div style={{ position: 'absolute', inset: 0, display: 'grid', alignContent: 'center', gap: 6 }}>
       <Ladder
         W={W}
-        axis={after(t, 21.7, 1)}
+        axis={after(t, s.ours - 0.6, 1)}
         marks={[
           { p: 0, label: 'IDLE0 · IDLE1', color: C.muted, show: after(t, s.zero), dy: 90, anchor: 'start' },
           { p: 1, label: 'main · app_main', color: C.ink, show: after(t, s.one), dy: -90, anchor: 'start' },
-          { p: 5, label: 'blink_fast · blink_slow', color: C.magenta, show: after(t, 22.3), dy: -36, anchor: 'start' },
+          { p: 5, label: 'blink_fast · blink_slow', color: C.magenta, show: after(t, s.ours), dy: -36, anchor: 'start' },
           { p: 22, label: 'esp_timer', color: C.muted, show: after(t, s.top), dy: 90, anchor: 'end' },
           { p: 24, label: 'ipc0 · ipc1', color: C.muted, show: after(t, s.top), dy: -36, anchor: 'end' },
         ]}
       />
-      <div style={{ opacity: after(t, s.top + 0.4), ...mono(20, C.muted), marginTop: 10 }}>25 or more → configASSERT fails → abort</div>
+      {/* higher number wins: two tasks ready at once → the higher priority runs first */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 18, opacity: after(t, s.higher), marginTop: -14 }}>
+        <div style={mono(22, C.magenta, { fontWeight: 700 })}>higher number → runs first</div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12, opacity: ready }}>
+          <span style={mono(20, C.muted)}>both ready:</span>
+          <Pill color={C.ink} size={20} style={{ opacity: first > 0.5 ? 0.45 : 1 }}>
+            main · priority 1
+          </Pill>
+          <Pill color={C.magenta} size={20} solid={first > 0.5}>
+            blink_fast · priority 5
+          </Pill>
+          <span style={{ ...mono(22, GREEN, { fontWeight: 700 }), opacity: first }}>← runs first</span>
+        </div>
+      </div>
+      <div style={{ opacity: after(t, s.top + 0.4), ...mono(18, C.muted) }}>25 or more → configASSERT fails → abort</div>
     </div>
   );
 };

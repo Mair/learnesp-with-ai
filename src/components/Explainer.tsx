@@ -91,7 +91,9 @@ export const Explainer: React.FC<{
   cardGap?: number;
   /** override the call line's font size (long calls) */
   codeSize?: number;
-}> = ({ t, frames, kicker, code, run, args, views, captions, cardW = CARD_W, cardGap = CARD_GAP, codeSize = CODE_SIZE }) => {
+  /** scene seconds: the call line fades in (default: there from the start) */
+  codeIn?: number;
+}> = ({ t, frames, kicker, code, run, args, views, captions, cardW = CARD_W, cardGap = CARD_GAP, codeSize = CODE_SIZE, codeIn }) => {
   const order = [...views].sort((a, b) => a.at - b.at);
   let cur = -1;
   order.forEach((v, i) => {
@@ -102,6 +104,7 @@ export const Explainer: React.FC<{
   const first = order[0].at;
   const lift = 300 * (1 - inOut((t - (first - 0.5)) / 0.8));
   const stageIn = ease((t - (first - 0.1)) / 0.6);
+  const codeOpacity = codeIn === undefined ? 1 : ease((t - codeIn) / 0.5);
 
   return (
     <Scene durationInFrames={frames}>
@@ -112,7 +115,7 @@ export const Explainer: React.FC<{
           </Kicker>
         </div>
 
-        <div style={{ position: 'absolute', inset: 0, transform: `translateY(${lift}px)` }}>
+        <div style={{ position: 'absolute', inset: 0, transform: `translateY(${lift}px)`, opacity: codeOpacity }}>
           <CallLine t={t} code={code} run={run} args={args} active={active} gap={cardGap} size={codeSize} />
           {args.map((a, i) => (
             <ArgCard key={i} arg={a} x={cardX(i, args.length, cardGap)} t={t} on={active ? active.includes(i) : true} lit={!!active} w={cardW} />

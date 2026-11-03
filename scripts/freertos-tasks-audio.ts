@@ -11,14 +11,14 @@
  *           high, GPIO 19 low), so the two rhythms can be heard: tangled in
  *           one loop, independent as two tasks; the 20 scheduler ticks of a
  *           200 ms delay counted out
- *   MUSIC   the house pad, ducked under VO, a gated pulse under the IDF
- *           descent, cut before the payoff, resolving to A major
+ *   MUSIC   the house pad, ducked under VO, cut before the payoff, resolving
+ *           to A major
  *
  * No sustained tones: nothing here is about pitch (SOUND.md).
  * Output: public/freertos-tasks/mix.wav (−16 LUFS, −1.5 dBTP) + stems in out/freertos-tasks-stems/.
  */
 import { join } from 'node:path';
-import { biquad, level, master, pad, ROOT, S, sfx, smooth, SR, talkingEnvelope, track, voiceover } from './lib/audio.ts';
+import { biquad, level, master, pad, ROOT, sfx, talkingEnvelope, track, voiceover } from './lib/audio.ts';
 import {
   ANSWER,
   CREATE,
@@ -26,7 +26,6 @@ import {
   DEMO,
   FAST,
   FN,
-  IDF,
   LOOP_PERIOD,
   PARAMS,
   PAYOFF,
@@ -135,15 +134,29 @@ const views = (scene: SceneId, v: Record<string, number>) => Object.values(v).fo
   tick(at(F.never.does), 2600, 0.06);
   buzz(at(F.never.logs), 0.06);
   buzz(at(F.never.aborts), 0.09);
-  tick(at(F.del.purpose), 2400, 0.06);
+  // ending on purpose: ten blinks counted out, the two edits, the delete
+  toggles(at(F.del.ten), at(F.del.ten), at(F.del.ten + (10 * 2 * FAST.ms) / 1000), FAST.ms, F_FAST);
+  tick(at(F.del.ten), 2400, 0.06);
+  clack(at(F.del.swap), 0.12);
+  tick(at(F.del.counted), 2800, 0.05);
   clack(at(F.del.deletes), 0.12);
-  tick(at(F.del.vtd), 2800, 0.06);
+  thump(at(F.del.vtd), 0.14);
+  tick(at(F.del.nul), 2600, 0.06);
+  blip(at(F.del.ends), 660, 990, 0.05);
+  tick(at(F.del.frees), 2400, 0.05);
 }
 
 // xTaskCreate ①: function, name, stack
 {
   const X = CREATE;
   const at = (x: number) => abs('create', x);
+  // the opening in app_main: the panel, the two calls, the first one picked out
+  tick(at(X.main.show), 2000, 0.09);
+  tick(at(X.main.two), 2600, 0.06);
+  tick(at(X.main.two + 0.25), 2600, 0.06);
+  tick(at(X.main.each), 2800, 0.05);
+  tick(at(X.main.each + 0.25), 2800, 0.05);
+  clack(at(X.main.pick), 0.12);
   tick(at(X.run));
   thump(at(X.run), 0.22);
   for (let k = 0; k < 6; k++) tick(at(X.six + 0.08 * k), 2600 + 120 * k, 0.04);
@@ -161,18 +174,29 @@ const views = (scene: SceneId, v: Record<string, number>) => Object.values(v).fo
   blip(at(X.bytes.bytes), 660, 990, 0.05);
   tick(at(X.bytes.vanilla), 2400, 0.06);
   tick(at(X.bytes.words), 2800, 0.06);
-  thump(at(X.bytes.four), 0.14);
+  tick(at(X.bytes.word4), 2600, 0.06);
+  thump(at(X.bytes.four), 0.3); // ×4 — the emphatic one
+  tick(at(X.bytes.same), 2400, 0.05);
+  tick(at(X.bytes.fourStack), 2800, 0.05);
   for (const x of [X.holds.locals, X.holds.calls, X.holds.regs]) tick(at(x), 2800, 0.06);
   clack(at(X.holds.heap), 0.12);
   tick(at(X.scale.main), 2600, 0.06);
   thump(at(X.scale.k4), 0.14);
   tick(at(X.scale.idle), 2400, 0.06);
-  // too small: the stack grows call by call, then the canary goes
-  for (let k = 0; k < 5; k++) tick(at(X.overflow.small + 0.48 * (k + 1)), 2400 + 180 * k, 0.05);
+  // the trap: the stack grows call by call, runs past the end, is caught, the chip reboots (and reboots)
+  thump(at(X.overflow.trap), 0.16);
+  for (let k = 0; k < 4; k++) tick(at(X.overflow.small + ((X.overflow.past - X.overflow.small) * (k + 1)) / 4), 2400 + 180 * k, 0.05);
+  buzz(at(X.overflow.past), 0.08);
+  thump(at(X.overflow.overflow), 0.2);
   tick(at(X.overflow.check), 2600, 0.06);
   buzz(at(X.overflow.catches), 0.1);
   tick(at(X.overflow.prints), 3100, 0.06);
   thump(at(X.overflow.restarts), 0.2);
+  thump(at(X.overflow.reboots), 0.12);
+  thump(at(X.overflow.reboots + 0.4), 0.12);
+  tick(at(X.overflow.outgrown), 2400, 0.06);
+  blip(at(X.overflow.fix), 660, 990, 0.06);
+  clack(at(X.overflow.bigger), 0.12);
 }
 
 // xTaskCreate ②: parameter, priority, handle, return value
@@ -193,8 +217,11 @@ const views = (scene: SceneId, v: Record<string, number>) => Object.values(v).fo
   blip(at(X.life.statik), 660, 990, 0.05);
   tick(at(X.life.local), 2600, 0.06);
   buzz(at(X.life.gone), 0.07);
+  clack(at(X.prio.ours), 0.12); // our 5 lands
+  tick(at(X.prio.higher), 2800, 0.06);
+  tick(at(X.prio.ready), 2600, 0.06);
+  blip(at(X.prio.first), 660, 990, 0.06);
   for (const x of [X.prio.zero, X.prio.one]) tick(at(x), 2600, 0.06);
-  clack(at(22.3), 0.12); // our 5 lands
   tick(at(X.prio.top), 3100, 0.06);
   thump(at(X.preempt.outranks), 0.16);
   clack(at(X.preempt.straight), 0.12);
@@ -224,6 +251,10 @@ const views = (scene: SceneId, v: Record<string, number>) => Object.values(v).fo
   tick(at(D.same), 2400, 0.06);
   tick(at(D.stack), 2600, 0.06);
   clack(at(D.b), 0.1);
+  tick(at(D.pointer), 2800, 0.06);
+  tick(at(D.arg), 3100, 0.05);
+  clack(at(D.fastB), 0.1);
+  clack(at(D.slowB), 0.1);
   blip(at(D.settings), 660, 990, 0.05);
 }
 
@@ -251,18 +282,6 @@ const views = (scene: SceneId, v: Record<string, number>) => Object.values(v).fo
   tick(at(S_.cores.own), 2400, 0.05);
 }
 
-// under the hood: one layer after another
-{
-  const at = (x: number) => abs('idf', x);
-  IDF.layers.forEach((l, i) => {
-    tick(at(l.at), 1800 - 150 * i, 0.12);
-    for (const m of l.marks) {
-      tick(at(m.at), 3100, 0.05);
-      if (m.strong) thump(at(m.at), 0.18);
-    }
-  });
-}
-
 // payoff
 tick(abs('payoff', PAYOFF.job), 1800, 0.08);
 thump(abs('payoff', PAYOFF.line), 0.45);
@@ -275,13 +294,6 @@ const music = new Float32Array(N);
 const MUSIC_CUT = abs('payoff', 0) - 0.15;
 {
   pad(music, [130.81, 164.81, 220.0], 0, MUSIC_CUT, 1, 3, 0.08);
-  const iS = sceneStart('idf');
-  for (let i = S(iS); i < S(MUSIC_CUT); i++) {
-    const t = i / SR;
-    const gate = ((t - iS) * (100 / 60) * 2) % 1;
-    const env = Math.exp(-gate * 7) * smooth((t - iS) / 2) * Math.min(1, (MUSIC_CUT - t) / 0.08);
-    music[i] += 1.4 * env * Math.sin(2 * Math.PI * 55 * t);
-  }
   pad(music, [110.0, 164.81, 220.0, 277.18], abs('payoff', PAYOFF.line), SECONDS, 1.15, 0.35, 2.5);
   biquad(music, 'lp', 1400, 0.6);
   level(music, -30, 3, 6);

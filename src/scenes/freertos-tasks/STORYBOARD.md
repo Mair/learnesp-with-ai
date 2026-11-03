@@ -1,6 +1,7 @@
 # FreeRTOS tasks: storyboard v1 (pure ESP-IDF)
 
-- Slug `freertos-tasks`, composition `FreeRTOSTasks`, output `out/freertos-tasks.mp4`, about 6 min.
+- Slug `freertos-tasks`, composition `FreeRTOSTasks`, output `out/freertos-tasks.mp4`, about 5½ min.
+- **v2 (review pass):** steps paced one at a time; the task-function code *mutates* to show ending a task; `xTaskCreate` is first shown inside `app_main`; ×4 is emphatic; the overflow trap gets three lines; "higher priority runs first" is said; `b` is defined in the demo; the under-the-hood scene is dropped.
 - Every claim is sourced in `FACTS.md`.
 - First video in the FreeRTOS series. It follows `gpio` and `gpio-input` and comes **before** `gpio-interrupts` (see `AGENTS.md`, "Course order").
 - GPIO is limited to the output calls from the `gpio` video, with each task driving its own pin.
@@ -46,13 +47,12 @@ void app_main(void)
 |---|---|---|
 | 1 | Problem | two LEDs at two rates; one loop makes both wait: 200+200+500+500 = 1400 ms |
 | 2 | Answer | one loop per LED. The scheduler interleaves them, and app_main is already a task. Ends on the word **TASK** |
-| 3 | The task function | `void fn(void *)`; set up the pin, loop forever; never return (wrapper → abort); `vTaskDelete(NULL)` |
-| 4 | `xTaskCreate` ①: function, name, stack | no brackets; 15 characters (`gpio_task_examp`); **bytes** not words; what's on a stack; heap; 4096 / 1536; overflow canary → reboot |
-| 5 | `xTaskCreate` ②: parameter, priority, handle, return | arg arrives; one function and two tasks; `static` lifetime; 0…24 (idle 0, main 1, esp_timer 22, ipc 24); 5 preempts app_main right away; NULL handle; pdPASS = 1 ≠ ESP_OK (don't use ESP_ERROR_CHECK); −1 when out of memory |
-| 6 | Demo | the log shows `Returned from app_main()` and the LEDs keep going at 200 / 500 ms, in real time; two stacks with two `b` pointers |
+| 3 | The task function | `void fn(void *)`; set up the pin, loop forever (on · wait · off · wait, one at a time); never return (wrapper → abort); the code mutates: `while (1)` → `for (… 10 …)`, then `vTaskDelete(NULL)` |
+| 4 | `xTaskCreate` ①: function, name, stack | opens in `app_main` (both calls; the first is pulled out); no brackets; 15 characters (`gpio_task_examp`); **bytes** not words — **×4**; what's on a stack; heap; 4096 / 1536; the trap: overflow → checked at each switch → name printed, reboot → the fix is a bigger stack |
+| 5 | `xTaskCreate` ②: parameter, priority, handle, return | arg arrives; one function and two tasks; `static` lifetime; higher number runs first when both are ready; 0…24 (idle 0, main 1, esp_timer 22, ipc 24); 5 preempts app_main right away; NULL handle; pdPASS = 1 ≠ ESP_OK (don't use ESP_ERROR_CHECK); −1 when out of memory |
+| 6 | Demo | the log shows `Returned from app_main()` and the LEDs keep going at 200 / 500 ms, in real time; two stacks, two copies of `b` (= `const blink_t *b = arg;`): one → `&fast`, one → `&slow` |
 | 7 | What vTaskDelay does | Running → Blocked for N ticks; 10 ms tick, 200 ms = 20 ticks; tick check → Ready → Running; idle runs the rest; two cores (teaser) |
-| 8 | Under the hood | xTaskCreate → PinnedToCore(tskNO_AFFINITY) → stack + TCB from the heap → 0xA5 fill, name, priority → first frame pc = wrapper → ready list + yield |
-| 9 | Payoff | "Give every job its own loop. That's a task." + recap, next: the scheduler |
+| 8 | Payoff | "Give every job its own loop. That's a task." + recap, next: the scheduler |
 
 The VO lines are in `timeline.ts` (`VO`). The visual for each line:
 
@@ -76,19 +76,27 @@ The VO lines are in `timeline.ts` (`VO`). The visual for each line:
 |---|---|
 | f1 one void pointer, returns nothing | signature lit; `typedef void (*TaskFunction_t)(void *);` |
 | f2 sets up its pin, loops forever | setup lines, then the loop lit; a mini LED blinking |
+| f2a–f2d LED on. · Wait. · LED off. · Wait. | one step box per line, ~0.85 s apart |
+| f2e the same calls as the blink video | pill |
 | f3 must never return | wrapper diagram: `vPortTaskWrapper → blink_task(arg) → returns?` → red log `E (…) FreeRTOS: FreeRTOS Task "blink_fast" should not return, Aborting now!` → abort |
-| f4 vTaskDelete(NULL) | the green alternative: `vTaskDelete(NULL); // ends this task` |
+| f4 ten blinks; swap the loop; deletes itself | **the code panel mutates**: line 6 `while (1) {` → `for (int i = 0; i < 10; i++) {` (marked), then `vTaskDelete(NULL);` is inserted before the closing brace (marked). Right: an LED that blinks ten times and stops; the two edits as before → after chips |
+| f5 NULL = the calling task; idle frees the stack | pill, verdict, note |
 
 ## 4 · xTaskCreate ① (Explainer, six cards)
 | VO | Visual |
 |---|---|
-| c1 six arguments | call line + six cards in turn |
+| c0 back in app_main, two calls | the `app_main` panel: both `xTaskCreate` lines, `&fast`/`&slow` labelled with their LED |
+| c0b take the first one | the other lines fade to 15 %; the first call lights |
+| c1 six arguments | the panel lifts away as the big call line arrives; cards in turn |
 | c2 the function, no brackets | `blink_task` ✓ vs `blink_task()` ✗ "calls it now" |
 | c3 name, 15 characters | the 16-cell name buffer: `blink_fast\0` fits; `gpio_task_example` → `gpio_task_examp\0` with "le" cut off |
-| c4 bytes, not words | 2048 bytes vs vanilla 2048 words × 4 = 8192 bytes; a ×4 bar |
+| c4 bytes, not words; a word is four bytes | 2048 bytes vs vanilla 2048 words × 4 = 8192 bytes; `1 word = 32 bits = 4 bytes` |
+| c4b four times as much | a big amber **×4** pops in |
 | c5 what's on the stack; heap | stack column: locals (`b`), call frames (`gpio_set_level`), saved registers; "allocated from the heap at xTaskCreate" |
 | c6 for scale | bars: main 4096 · ours 2048 · idle 1536 |
-| c7 overflow → reboot | canary: the bottom 16 bytes `a5 a5 …`; the stack grows into them; red log `***ERROR*** A stack overflow in task blink_fast has been detected.` → reboot |
+| c7 the trap: too small → past the end | "the trap: stack overflow"; the stack column fills call by call (`printf` among them) and runs past the end, red |
+| c7b checked at every task switch → name printed, restarts | red log `***ERROR*** A stack overflow in task blink_fast has been detected.` → panic → restarts (… and again) |
+| c7c you will meet this one; the fix | "this message = the task has outgrown its stack"; green verdict `xTaskCreate(…, 4096, …)`; the column turns into a bigger, green one |
 
 ## 5 · xTaskCreate ② (Explainer, same call)
 | VO | Visual |
@@ -96,7 +104,8 @@ The VO lines are in `timeline.ts` (`VO`). The visual for each line:
 | q1 parameter arrives as arg | `&fast` → `void *arg` → `const blink_t *b = arg;` |
 | q2 one function, two LEDs | `fast {GPIO 2, 200}` and `slow {GPIO 19, 500}` → two tasks, the same function |
 | q3 must stay valid; static | app_main's stack is freed when it returns, so a pointer into it ✗ dangles; `static` lives for the whole program ✓ |
-| q4 priority 0…24 | ladder 0…24: IDLE 0, main 1, **blink 5**, esp_timer 22, ipc 24 |
+| q4 higher numbers win; ready at the same time → higher runs first | ladder with **5** on it; `higher number → runs first`; `both ready: main · 1` vs `blink_fast · 5 ← runs first` |
+| q4b 0 idle, 1 app_main, top 24 | the other ladder marks: IDLE 0, main 1, esp_timer 22, ipc 24 |
 | q5 preempts at once | CPU0 lane: `main` → xTaskCreate → `blink_fast` runs → blocks → `main` resumes |
 | q6 handle | `TaskHandle_t h; … &h` → `vTaskDelete(h)`; or NULL |
 | q7 pdPASS = 1, not esp_err_t | `pdPASS = 1` vs `ESP_OK = 0` → ESP_ERROR_CHECK(1) → abort ✗ |
@@ -107,7 +116,8 @@ The VO lines are in `timeline.ts` (`VO`). The visual for each line:
 |---|---|
 | d1 creates both tasks, returns | log: `main_task: Calling app_main()` … `main_task: Returned from app_main()` |
 | d2 each at its own pace | board with two LEDs blinking in real time at 200 / 500 ms; lanes |
-| d3 own stack, own b | two stack columns: `blink_fast`'s b → fast, `blink_slow`'s b → slow |
+| d3 own stack, own b: the pointer read from arg | two stack columns, each with a `b` row; between them `const blink_t *b = arg;` — "a local → one per stack" |
+| d3b one b → fast, the other → slow | the rows become `b → &fast { GPIO_NUM_2, 200 }` and `b → &slow { GPIO_NUM_19, 500 }` |
 
 ## 7 · What vTaskDelay does
 | VO | Visual |
@@ -118,10 +128,7 @@ The VO lines are in `timeline.ts` (`VO`). The visual for each line:
 | v4 idle the rest | lanes: tiny task slivers, a long idle span |
 | v5 two cores (teaser) | CPU 0 / CPU 1 lanes; "unpinned: either core, see the two-cores video" |
 
-## 8 · Under the hood
-Descending layers: `task.h` → `freertos_tasks_c_additions.h` → `tasks.c prvInitialiseNewTask` → `port.c pxPortInitialiseStack` → `tasks.c prvAddNewTaskToReadyList`, with the real trimmed lines and marks.
-
-## 9 · Payoff
+## 8 · Payoff
 "Give every job its own loop. That's a task." Recap:
 - `void fn(void *arg) { while (1) … }` → never returns
 - `xTaskCreate(fn, name, bytes, arg, prio, &h)` → a task
@@ -130,6 +137,7 @@ Descending layers: `task.h` → `freertos_tasks_c_additions.h` → `tasks.c prvI
 - next: the scheduler
 
 ## Decisions
+- The under-the-hood descent (xTaskCreatePinnedToCore → heap → 0xA5 → wrapper frame → ready list) was cut in the review pass: too much for a first FreeRTOS video. Its facts stay in `FACTS.md`.
 - No `ESP_LOGI` inside the tasks; logging is left to the stacks video. Only the startup log from `main_task` is shown.
 - Two cores are mentioned once, as a teaser. Priorities beyond "5 outranks 1" are left for the scheduler video.
 - Built without stopping for storyboard approval, as with the interrupts video.

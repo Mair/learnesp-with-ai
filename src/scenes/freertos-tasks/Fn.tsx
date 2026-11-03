@@ -1,13 +1,14 @@
 /**
  * 3 · THE TASK FUNCTION — void fn(void *arg); set up, loop forever; never
- * return (vPortTaskWrapper logs + aborts); vTaskDelete(NULL) to end on purpose.
+ * return (vPortTaskWrapper logs + aborts); to end on purpose the code itself
+ * mutates: while (1) → for (… 10 …), then vTaskDelete(NULL) is added.
  */
 import React from 'react';
 import { useCurrentFrame, useVideoConfig } from 'remotion';
 import { GREEN, mono, RED } from '../../components/Explainer';
 import { C, hexA } from '../../theme/palette';
-import { after, Code, CodeAndViews, LedCard, Pill, SerialLog, Verdict } from './parts';
-import { FAST, FN as S, FPS, sceneDur, TASK_CODE, wanted } from './timeline';
+import { after, CodeAndViews, LedCard, Pill, SerialLog, Verdict } from './parts';
+import { FAST, FN as S, FPS, sceneDur, TASK_CODE, TASK_CODE_DEL, wanted } from './timeline';
 
 const Box: React.FC<{ children: React.ReactNode; color: string; p?: number; style?: React.CSSProperties }> = ({ children, color, p = 1, style }) => (
   <div
@@ -123,30 +124,47 @@ const NeverView: React.FC<{ t: number }> = ({ t }) => {
   );
 };
 
+/** the LED blinks ten times from `ten`, then stays off: 10 × (200 on + 200 off) = 4 s */
+const tenBlinks = (t: number) => {
+  const ms = (t - S.del.ten) * 1000;
+  return ms >= 0 && ms < 10 * 2 * FAST.ms ? wanted(FAST.ms, ms) : 0;
+};
+
+const Edit: React.FC<{ p: number; from: string; to: string }> = ({ p, from, to }) => (
+  <div style={{ opacity: p, transform: `translateY(${(1 - p) * 10}px)`, display: 'grid', gridTemplateColumns: '1fr 44px 1fr', alignItems: 'center', gap: 10 }}>
+    <div style={{ ...mono(21, C.muted, { textDecoration: 'line-through' }), padding: '10px 14px', borderRadius: 10, border: `1px solid ${hexA(RED, 0.5)}`, background: hexA(RED, 0.07) }}>{from}</div>
+    <span style={{ ...mono(26, GREEN), textAlign: 'center' }}>→</span>
+    <div style={{ ...mono(21, '#fff', { fontWeight: 700 }), padding: '10px 14px', borderRadius: 10, border: `1px solid ${hexA(GREEN, 0.8)}`, background: hexA(GREEN, 0.1) }}>{to}</div>
+  </div>
+);
+
 const DelView: React.FC<{ t: number }> = ({ t }) => {
   const s = S.del;
+  const blinks = Math.min(10, Math.max(0, Math.floor(((t - s.ten) * 1000) / (2 * FAST.ms))));
   return (
-    <div style={{ position: 'absolute', inset: 0, display: 'grid', alignContent: 'center', gap: 28 }}>
-      <div style={{ opacity: after(t, s.purpose), ...mono(22, C.muted) }}>a task that has finished its job:</div>
-      <div style={{ opacity: after(t, s.deletes), borderLeft: `4px solid ${GREEN}`, background: hexA(GREEN, 0.08), padding: '14px 18px' }}>
-        <Code
-          size={24}
-          lines={[
-            '    // … the work is done',
-            <span key="d">
-              {'    '}
-              <b style={{ color: after(t, s.vtd) > 0.5 ? GREEN : '#cfd6ff' }}>vTaskDelete(NULL);</b>
-              <span style={{ color: C.muted }}> // NULL = me</span>
-            </span>,
-            '}',
-          ]}
-        />
+    <div style={{ position: 'absolute', inset: 0, display: 'grid', alignContent: 'center', gap: 22 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 24, opacity: after(t, s.ten) }}>
+        <LedCard pin={FAST.pin} on={tenBlinks(t)} size={90} />
+        <div style={{ display: 'grid', gap: 8 }}>
+          <div style={mono(24, '#fff', { fontWeight: 700 })}>ten blinks, then stop</div>
+          <div style={mono(20, C.amber)}>
+            blink {blinks} / 10{blinks >= 10 ? ' · done' : ''}
+          </div>
+        </div>
       </div>
-      <div style={{ opacity: after(t, s.vtd + 0.6) }}>
-        <Verdict ok p={after(t, s.vtd + 0.6)} size={24}>
-          the task ends · the idle task frees its stack later
+      <Edit p={after(t, s.swap)} from="while (1) {" to="for (int i = 0; i < 10; i++) {" />
+      <Edit p={after(t, s.deletes)} from="}  // return → abort" to="vTaskDelete(NULL);" />
+      <div style={{ opacity: after(t, s.nul) }}>
+        <Pill color={GREEN} size={22}>
+          NULL → the task making the call: delete <b>me</b>
+        </Pill>
+      </div>
+      <div style={{ opacity: after(t, s.ends) }}>
+        <Verdict ok p={after(t, s.ends)} size={24}>
+          the task ends — without returning
         </Verdict>
       </div>
+      <div style={{ opacity: after(t, s.frees), ...mono(20, C.muted) }}>its stack and control block are freed later, by the idle task</div>
     </div>
   );
 };
@@ -156,14 +174,20 @@ export const Fn: React.FC = () => {
   const { fps } = useVideoConfig();
   const t = frame / fps;
   const V = S.views;
+  // the code itself is edited on cue: while (1) → for (… 10 …), then vTaskDelete(NULL)
+  const code = t < S.del.swap ? TASK_CODE : t < S.del.deletes ? [...TASK_CODE_DEL.slice(0, 12), '}'] : TASK_CODE_DEL;
   return (
     <CodeAndViews
       t={t}
       frames={Math.round(sceneDur('fn') * FPS)}
       kicker="The task function"
       file="main/main.c · blink_task"
-      code={TASK_CODE}
+      code={code}
       codeSize={21}
+      marks={[
+        { line: 6, at: S.del.swap, token: 'for (int i = 0; i < 10; i++)', label: 'ten times, then out', strong: true },
+        { line: 12, at: S.del.deletes, token: 'vTaskDelete(NULL)', label: 'delete this task', strong: true },
+      ]}
       views={[
         { at: V.sig, component: SigView, label: 'one pointer in, nothing out', accent: C.amber, lines: S.lines.sig },
         { at: V.body, component: BodyView, label: 'set up, then loop forever', accent: C.cyan, lines: S.lines.body },

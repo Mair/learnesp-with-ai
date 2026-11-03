@@ -239,6 +239,12 @@ pxCreatedTask)` (`task.h` L370–376).
   (`COMPILER_OPTIMIZATION_ASSERTIONS_ENABLE`, root `Kconfig` L374–376). So 25
   or more aborts by default.
 - 5: one higher than main (1), well below the system tasks above.
+- Higher number = higher priority, and the scheduler always runs the
+  highest-priority Ready task: "the scheduler ensures the highest priority
+  task that is able to run is the task selected to enter the Running state"
+  (FreeRTOS kernel docs, Task Priorities; `taskSELECT_HIGHEST_PRIORITY_TASK`
+  in `tasks.c` — line number not re-checked). The VO says "when two tasks are
+  ready, the one with the higher priority runs first".
 - Created higher than the running task means it runs straight away:
   `prvAddNewTaskToReadyList` → `if (taskIS_YIELD_REQUIRED(pxNewTCB, pdTRUE))
   taskYIELD_IF_USING_PREEMPTION()` (`tasks.c` L1315–1323). In the two-core
@@ -293,6 +299,8 @@ pxCreatedTask)` (`task.h` L370–376).
   `freertos_idf.rst` L269–274).
 
 ## Under the hood: xTaskCreate's path
+
+*(The scene built on this was cut in the review pass; kept for reference.)*
 
 1. `xTaskCreate` (static inline) → `xTaskCreatePinnedToCore(…,
    tskNO_AFFINITY)` (`task.h` L370–395).

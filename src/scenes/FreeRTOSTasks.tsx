@@ -5,13 +5,12 @@
  *
  *   1 problem    two LEDs, two rates; one loop → 1400 ms for both
  *   2 answer     one loop per LED; the scheduler; app_main runs in task "main" → TASK
- *   3 fn         void fn(void *arg); loop forever; never return; vTaskDelete(NULL)
- *   4 create     xTaskCreate ①: function, name (15 chars), stack (bytes; heap; overflow)
+ *   3 fn         void fn(void *arg); loop forever; never return; the code mutates to end: vTaskDelete(NULL)
+ *   4 create     xTaskCreate ①: in app_main; function, name (15 chars), stack (bytes ×4; heap; overflow)
  *   5 params     xTaskCreate ②: parameter (static), priority (5 preempts), handle, pdPASS
  *   6 demo       app_main returns; both LEDs keep going; two stacks, two b's
  *   7 delay      Running → Blocked for 20 ticks → Ready; idle; two cores
- *   8 the IDF    xTaskCreatePinnedToCore → heap → 0xa5 / name / priority → wrapper frame → ready list
- *   9 payoff     "Give every job its own loop. That's a task."
+ *   8 payoff     "Give every job its own loop. That's a task."
  *
  * Everything — picture AND soundtrack — is driven by ./freertos-tasks/timeline.ts.
  */
@@ -26,7 +25,6 @@ import { Params } from './freertos-tasks/Params';
 import { Payoff } from './freertos-tasks/Payoff';
 import { Problem } from './freertos-tasks/Problem';
 import { FPS, sceneDur, SCENES, SceneId, sceneStart, TASKS_FRAMES } from './freertos-tasks/timeline';
-import { UnderTheHood } from './freertos-tasks/UnderTheHood';
 
 export { TASKS_FRAMES };
 
@@ -40,7 +38,6 @@ const SCENE_COMPONENTS: Record<SceneId, React.FC> = {
   params: Params,
   demo: Demo,
   delay: Delay,
-  idf: UnderTheHood,
   payoff: Payoff,
 };
 
