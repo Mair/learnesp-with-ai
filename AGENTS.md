@@ -25,6 +25,25 @@ plain ESP-IDF C:
   its API; it needs an ESP-IDF rewrite (`ledc_timer_config`,
   `ledc_channel_config`, `ledc_set_duty` + `ledc_update_duty`, …).
 
+## Course order — use only what's been taught
+
+A video may only use APIs and concepts that earlier videos taught.
+The order so far:
+
+1. `gpio` (output) → 2. `gpio-input` (polled input) →
+3. **FreeRTOS series**: `freertos-tasks` → scheduler & priorities →
+   delay-until → two cores → stacks & watchdog → queues → mutexes →
+   priority inversion → semaphores → task notifications → event groups →
+   timers → critical sections → task stats →
+4. `gpio-interrupts`, which **needs** FreeRTOS: tasks, queues, `…FromISR`,
+   `portYIELD_FROM_ISR`.
+
+So in the FreeRTOS videos, GPIO is limited to what videos 1–2 taught:
+`gpio_reset_pin`, `gpio_set_direction`, `gpio_set_level`,
+`gpio_set_pull_mode`, `gpio_get_level`, polled in a loop. No `gpio_config`
+with `intr_type`, no ISR service, no interrupts. Each task drives its own
+pin(s), and no two tasks touch the same pin.
+
 - **Read, write, render here.** Paths: `src/scenes/<slug>/`,
   `public/<slug>/`, `out/<slug>.mp4`, `out/<slug>-stems/`.
 - **Never edit the old spike** at

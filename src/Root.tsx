@@ -3,6 +3,7 @@ import { AbsoluteFill, Composition } from 'remotion';
 import { Backdrop, Grade } from './components/Backdrop';
 import { GPIO, GPIO_FRAMES } from './scenes/GPIO';
 import { GPIOInput, INPUT_FRAMES } from './scenes/GPIOInput';
+import { FreeRTOSTasks, TASKS_FRAMES } from './scenes/FreeRTOSTasks';
 import { GPIOInterrupts, IRQ_FRAMES } from './scenes/GPIOInterrupts';
 import { PWM, PWM_FRAMES } from './scenes/PWM';
 
@@ -76,6 +77,19 @@ export const RemotionRoot: React.FC = () => (
         </Stage>
       )}
       durationInFrames={IRQ_FRAMES}
+      fps={FPS}
+      width={W}
+      height={H}
+    />
+    {/* FreeRTOS tasks (pure ESP-IDF): xTaskCreate's six arguments, vTaskDelay underneath, under the hood */}
+    <Composition
+      id="FreeRTOSTasks"
+      component={() => (
+        <Stage floor={false}>
+          <FreeRTOSTasks />
+        </Stage>
+      )}
+      durationInFrames={TASKS_FRAMES}
       fps={FPS}
       width={W}
       height={H}

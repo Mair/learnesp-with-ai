@@ -35,7 +35,6 @@ export const RED = '#ff5470';
 // ── layout ────────────────────────────────────────────────────────────────
 
 const CODE_SIZE = 50;
-const CH = CODE_SIZE * 0.6; // monospace advance
 const CODE_TOP = 92;
 const CARD_TOP = 214;
 const CARD_W = 420;
@@ -87,7 +86,12 @@ export const Explainer: React.FC<{
   args: ExplainerArg[];
   views: ExplainerView[];
   captions: Caption[];
-}> = ({ t, frames, kicker, code, run, args, views, captions }) => {
+  /** card width / spacing — narrower for calls with more than four arguments */
+  cardW?: number;
+  cardGap?: number;
+  /** override the call line's font size (long calls) */
+  codeSize?: number;
+}> = ({ t, frames, kicker, code, run, args, views, captions, cardW = CARD_W, cardGap = CARD_GAP, codeSize = CODE_SIZE }) => {
   const order = [...views].sort((a, b) => a.at - b.at);
   let cur = -1;
   order.forEach((v, i) => {
@@ -109,9 +113,9 @@ export const Explainer: React.FC<{
         </div>
 
         <div style={{ position: 'absolute', inset: 0, transform: `translateY(${lift}px)` }}>
-          <CallLine t={t} code={code} run={run} args={args} active={active} />
+          <CallLine t={t} code={code} run={run} args={args} active={active} gap={cardGap} size={codeSize} />
           {args.map((a, i) => (
-            <ArgCard key={i} arg={a} x={cardX(i, args.length)} t={t} on={active ? active.includes(i) : true} lit={!!active} />
+            <ArgCard key={i} arg={a} x={cardX(i, args.length, cardGap)} t={t} on={active ? active.includes(i) : true} lit={!!active} w={cardW} />
           ))}
         </div>
 
@@ -144,7 +148,7 @@ export const Explainer: React.FC<{
   );
 };
 
-const cardX = (i: number, n: number) => 960 + (i - (n - 1) / 2) * CARD_GAP;
+const cardX = (i: number, n: number, gap = CARD_GAP) => 960 + (i - (n - 1) / 2) * gap;
 
 function tokenCol(code: string, token: string) {
   const esc = token.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -152,14 +156,17 @@ function tokenCol(code: string, token: string) {
   return m ? m.index : 0;
 }
 
-const CallLine: React.FC<{ t: number; code: string; run: number; args: ExplainerArg[]; active: number[] | null }> = ({
+const CallLine: React.FC<{ t: number; code: string; run: number; args: ExplainerArg[]; active: number[] | null; gap?: number; size?: number }> = ({
   t,
   code,
   run: runAt,
   args,
   active,
+  gap = CARD_GAP,
+  size = CODE_SIZE,
 }) => {
   const run = ease((t - runAt) / 0.3);
+  const CH = size * 0.6;
   const codeX = (1920 - code.length * CH) / 2;
   const located = args
     .map((a, i) => ({ a, i, c: tokenCol(code, a.token) }))
@@ -213,7 +220,7 @@ const CallLine: React.FC<{ t: number; code: string; run: number; args: Explainer
           left: codeX - 24,
           padding: '0 24px',
           fontFamily: FONT.mono,
-          fontSize: CODE_SIZE,
+          fontSize: size,
           lineHeight: 1.3,
           whiteSpace: 'pre',
           color: '#cfd6ff',
@@ -230,8 +237,8 @@ const CallLine: React.FC<{ t: number; code: string; run: number; args: Explainer
           const p = ease((t - a.at) / 0.5);
           if (p <= 0) return null;
           const x1 = codeX + (tokenCol(code, a.token) + a.token.length / 2) * CH;
-          const y1 = CODE_TOP + CODE_SIZE * 1.3 + 2;
-          const x2 = cardX(i, args.length);
+          const y1 = CODE_TOP + size * 1.3 + 2;
+          const x2 = cardX(i, args.length, gap);
           const y2 = CARD_TOP;
           const on = active ? active.includes(i) : true;
           return (
@@ -253,7 +260,7 @@ const CallLine: React.FC<{ t: number; code: string; run: number; args: Explainer
   );
 };
 
-const ArgCard: React.FC<{ arg: ExplainerArg; x: number; t: number; on: boolean; lit: boolean }> = ({ arg: a, x, t, on, lit }) => {
+const ArgCard: React.FC<{ arg: ExplainerArg; x: number; t: number; on: boolean; lit: boolean; w?: number }> = ({ arg: a, x, t, on, lit, w = CARD_W }) => {
   const p = ease((t - a.at) / 0.45);
   if (p <= 0) return null;
   const col = a.color;
@@ -261,9 +268,9 @@ const ArgCard: React.FC<{ arg: ExplainerArg; x: number; t: number; on: boolean; 
     <div
       style={{
         position: 'absolute',
-        left: x - CARD_W / 2,
+        left: x - w / 2,
         top: CARD_TOP,
-        width: CARD_W,
+        width: w,
         height: CARD_H,
         boxSizing: 'border-box',
         borderRadius: 16,
@@ -281,7 +288,7 @@ const ArgCard: React.FC<{ arg: ExplainerArg; x: number; t: number; on: boolean; 
       <div style={{ fontFamily: FONT.mono, fontSize: 15, letterSpacing: '.28em', textTransform: 'uppercase', color: col }}>
         {a.title}
       </div>
-      <div style={{ fontSize: 36, fontWeight: 700, color: C.ink, letterSpacing: '.02em' }}>{a.value}</div>
+      <div style={{ fontSize: w < 360 ? 30 : 36, fontWeight: 700, color: C.ink, letterSpacing: '.02em' }}>{a.value}</div>
       <div style={{ fontSize: 20, color: C.muted }}>{a.sub}</div>
     </div>
   );
