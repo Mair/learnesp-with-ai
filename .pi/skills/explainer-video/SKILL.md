@@ -32,8 +32,8 @@ Standards live in three files — load each at the step that points to it:
 ## Steps
 
 ### 1. Research
-**Pure ESP-IDF only — no Arduino** (see the project's `AGENTS.md`): code lives in `void app_main(void)`, waits are `vTaskDelay(pdMS_TO_TICKS(ms))`, errors are `esp_err_t` / `ESP_ERROR_CHECK`. List every ESP-IDF call the learner will type for this topic, then read each one's real implementation down to the register writes: ESP-IDF (`components/esp_driver_*/src/*.c`, `components/hal/esp32/include/hal/*_ll.h`, FreeRTOS in `components/freertos/`, Kconfig defaults, `release/v5.5`), the official examples (`examples/`), and the ESP32 datasheet / TRM for limits. Never cite arduino-esp32. Fetch raw files; work every number through the real code path (integer division, clamps, max values, defaults).
-Write `src/scenes/<slug>/FACTS.md`: each fact, the file/line or doc it came from, and any surprise ("rounds 12.17 down → 2.76 s", "255 is bumped to 256 = fully on").
+**Pure ESP-IDF only — no Arduino** (see the project's `AGENTS.md`): code lives in `void app_main(void)`, waits are `vTaskDelay(pdMS_TO_TICKS(ms))`, errors are `esp_err_t` / `ESP_ERROR_CHECK`. List every ESP-IDF call the learner will type for this topic, then read each one's real implementation down to the register writes: **ESP-IDF v6.0 or later only** (currently tag `v6.0.2`, local checkout `~/.espressif/v6.0.2/esp-idf`; see `AGENTS.md` — never v5.x): `components/esp_driver_*/src/*.c`, `components/esp_hal_<periph>/esp32/include/hal/*_ll.h` (v6 moved the HAL here), FreeRTOS in `components/freertos/`, Kconfig defaults, the official examples (`examples/`), and the ESP32 datasheet / TRM for limits. Never cite arduino-esp32. Fetch raw files; work every number through the real code path (integer division, clamps, max values, defaults).
+Write `src/scenes/<slug>/FACTS.md`, headed by the exact ESP-IDF tag you read: each fact, the file/line or doc it came from, and any surprise ("rounds 12.17 down → 2.76 s", "255 is bumped to 256 = fully on").
 **Done when** every number and claim you intend to put on screen or in the VO has a source line in `FACTS.md`.
 
 ### 2. Script + storyboard → approval

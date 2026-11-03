@@ -18,12 +18,33 @@ plain ESP-IDF C:
   default `CONFIG_FREERTOS_HZ = 100` → 1 tick = 10 ms). No `delay()`.
 - **Use the ESP-IDF driver APIs** (`driver/gpio.h`, `driver/ledc.h`, …), their
   `esp_err_t` return values, `ESP_ERROR_CHECK`, `ESP_LOGx`, and `menuconfig`
-  options. Research sources are ESP-IDF (`release/v5.5`), the HAL/LL headers,
-  the datasheet and the TRM — never arduino-esp32.
+  options. Research sources are ESP-IDF, the HAL/LL headers, the datasheet and
+  the TRM — never arduino-esp32.
 - **The existing PWM video (`src/scenes/pwm/`) predates this rule** and uses
   Arduino calls (`ledcAttach`, `ledcWrite`, …). Copy its *visual patterns*, not
   its API; it needs an ESP-IDF rewrite (`ledc_timer_config`,
   `ledc_channel_config`, `ledc_set_duty` + `ledc_update_duty`, …).
+
+## ESP-IDF v6.0 or later. Always.
+
+Every API, default, file path, line number and log message a video shows or
+a `FACTS.md` cites comes from **ESP-IDF v6.0 or later**, never v5.x or older.
+
+- **Current reference: tag `v6.0.2`.** A local checkout is at
+  `~/.espressif/v6.0.2/esp-idf`; read it there, or fetch raw files from
+  `github.com/espressif/esp-idf` at tag `v6.0.2` (or `release/v6.0`). If a
+  newer v6.x/v7.x is installed, use the newest one and say which in `FACTS.md`.
+- **Name the exact version at the top of every `FACTS.md`** (tag, not just
+  "v6"), so a later re-check knows what was read.
+- **v6 moved the HAL.** The LL headers are in
+  `components/esp_hal_<periph>/<target>/include/hal/*_ll.h` (e.g.
+  `esp_hal_ledc/esp32/include/hal/ledc_ll.h`), not `components/hal/<target>/…`.
+  Drivers are still in `components/esp_driver_<periph>/`.
+- An API that is deprecated or removed in v6 is not used on screen, even if
+  it still compiles.
+- Videos researched against v5.5 (`gpio`, `gpio-input`, `freertos-tasks`,
+  `gpio-interrupts`, and the first PWM v2 draft) must have their facts
+  re-checked against v6 before their next render.
 
 ## Course order — use only what's been taught
 
