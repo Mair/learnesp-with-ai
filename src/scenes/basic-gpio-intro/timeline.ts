@@ -17,13 +17,13 @@ export const FPS = 30;
 export const SECTION = '1-basic-gpio';
 
 // ── generated: VO plan (node scripts/vo-plan.ts basic-gpio-intro) — do not edit by hand ──
-export const VO_AT: Record<string, number> = {"w1":0.8,"w2":5.76,"w3":13.26,"g1":0.5,"g2":7.4,"g3":11.6,"g4":17.94,"g5":22.82,"m1":0.5,"m2":2.86,"m3":9.56,"n1":0.5,"n2":7.66,"n3":13.62,"n4":21.34,"z1":0.6};
-export const SCENE_DUR: Record<string, number> = {"want":16.68,"what":28.14,"map":20.16,"needs":26.18,"go":6.94};
+export const VO_AT: Record<string, number> = {"w1":0.8,"w2":5.76,"w3":13.26,"g1":0.5,"g2":7.1,"g3":11.3,"g4":17.64,"g5":22.52,"m1":0.5,"m2":2.86,"m3":9.56,"n1":0.5,"n2":7.66,"n3":13.62,"n4":21.34,"z1":0.6};
+export const SCENE_DUR: Record<string, number> = {"want":16.68,"what":27.84,"map":20.16,"needs":26.18,"go":6.94};
 export const VO_WORDS: Record<string, [string, number][]> = {
   w1: [["Here's",0],["an",0.36],["ESP32",0.46],["on",1.56],["a",1.92],["breadboard",2.06],["with",2.5],["an",2.94],["LED",3.08],["and",3.5],["a",4.1],["button.",4.2]],
   w2: [["By",0],["the",0.24],["end",0.36],["of",0.48],["this",0.58],["section,",0.74],["your",1.56],["code",1.64],["will",1.9],["switch",2.1],["that",2.42],["LED",2.7],["on",3.08],["and",3.58],["off",3.72],["and",4.02],["read",4.7],["that",4.9],["button.",5.12]],
   w3: [["So",0],["how",0.26],["does",0.4],["code",0.58],["reach",0.86],["the",1.34],["outside",1.56],["world?",1.92]],
-  g1: [["through",0],["its",0.32],["pins.",0.44],["Most",1.52],["of",1.6],["them",1.76],["are",1.88],["GPIOs,",2.06],["general",4.3],["purpose",4.44],["input",4.78],["and",5.26],["output.",5.52]],
+  g1: [["Through",0],["its",0.32],["pins,",0.46],["most",1.48],["of",1.6],["them",1.76],["are",1.94],["GPIO,",2.22],["general",4.02],["purpose",4.14],["input",4.5],["and",4.94],["output.",5.2]],
   g2: [["General",0],["purpose,",0.42],["because",1.22],["your",1.48],["code",1.64],["decides",1.96],["what",2.44],["each",2.74],["pin",2.98],["does.",3.26]],
   g3: [["Make",0],["one",0.24],["an",0.38],["output,",0.48],["and",1.24],["your",1.4],["code",1.5],["sets",1.76],["it",2],["high,",2.16],["3",3.1],[".3",3.26],["volts",3.82],["or",4.04],["low",4.62],["zero.",4.82]],
   g4: [["Make",0],["it",0.26],["an",0.34],["input",0.46],["and",0.84],["your",1.42],["code",1.52],["reads",1.94],["which",2.48],["of",2.7],["the",2.8],["two",2.88],["it",3.06],["sees.",3.18]],
@@ -218,7 +218,7 @@ export const VO: VoLine[] = [
   L('w1', 'want', "Here's an ESP32 on a breadboard, with an LED and a button.", undefined, 0.8),
   L('w2', 'want', 'By the end of this section, your code will switch that LED on and off, and read that button.'),
   L('w3', 'want', 'So how does code reach the outside world?', undefined, 2.2),
-  L('g1', 'what', 'Through its pins. Most of them are GPIOs: general-purpose input and output.', 'Through its pins. Most of them are G P I Os: general-purpose input and output.'),
+  L('g1', 'what', 'Through its pins. Most of them are GPIO: general-purpose input and output.', 'Through its pins. Most of them are G P I O: general-purpose input and output.'),
   L('g2', 'what', 'General-purpose, because your code decides what each pin does.', undefined, 1.0),
   L('g3', 'what', 'Make one an output, and your code sets it high, 3.3 volts, or low, zero.', 'Make one an output, and your code sets it high, three point three volts, or low, zero.'),
   L('g4', 'what', 'Make it an input, and your code reads which of the two it sees.', undefined, 1.2),

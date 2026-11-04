@@ -23,7 +23,7 @@
 ## 2 · What it is
 | VO | Visual |
 |---|---|
-| g1 "Through its pins. Most of them are GPIOs: general-purpose input and output." | the pins light up one after another; the hero word **GPIO** spells out as **G**eneral-**P**urpose **I**nput / **O**utput |
+| g1 "Through its pins. Most of them are GPIO: general-purpose input and output." | the pins light up one after another; the hero word **GPIO** spells out as **G**eneral-**P**urpose **I**nput / **O**utput |
 | g2 "General-purpose, because your code decides what each pin does." | one pin is picked out, with two switches beside it: `output` / `input` |
 | g3 "Make one an output, and your code sets it high, 3.3 volts, or low, zero." | output side: pin → LED; a level chip toggles `1 · 3.3 V` / `0 · 0 V`, and the LED follows |
 | g4 "Make it an input, and your code reads which of the two it sees." | input side: button → pin → code; pressing turns the chip from `1` to `0` |
