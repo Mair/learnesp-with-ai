@@ -32,6 +32,8 @@ Every course section (Basic GPIO, FreeRTOS, Advanced GPIO, …) opens with an in
 | 4 | **What you need** | the parts on the bench (board, LED, resistor, button…) and which earlier sections it builds on |
 | 5 | **Go** | "First up: …" → the first video of the section |
 
+A section with many videos (FreeRTOS has 14) gets **compact cards** (name + one-line promise) in rows lit by the VO; only the first card carries a hardware result. Videos that don't exist yet get no slug on their card.
+
 Same house style, voice, palette and sound as the explainers; captions on every beat. Function names may appear on the map cards, but nothing is explained there. Every claim still goes in `FACTS.md`.
 
 ## The depth standard
@@ -78,7 +80,7 @@ A call is never shown out of nowhere. Open on the code the learner has in front 
 | `P W M` (spaced) | letters that must land one by one |
 | `two thirty`, `a thousand hertz`, `two to the eighth`, `two hundred and fifty-six` | numbers — always words |
 
-Check the transcript (step 8) for words the TTS blurs ("the duty slides" was heard as "the duties slide"; "Say you only want…" as "So you only want…" → "Suppose you only want…") and rephrase. Whisper writing `App May` / `X-TASTE create` for `app main` / `X task create` is its hearing, not the voice's — the house `say` forms are fine.
+Check the transcript (step 8) for words the TTS blurs ("the duty slides" was heard as "the duties slide"; "Say you only want…" as "So you only want…" → "Suppose you only want…") and rephrase. Whisper writing `App May` / `X-TASTE create` for `app main` / `X task create` is its hearing, not the voice's — the house `say` forms are fine. More blurs found in the intros: "Make a pin an output" → "Take a pin and output" (say "Make one an output"); "you read a button" → "you write a button" (present-tense *read* is ambiguous — say "your code reads"); "every wait" / "its own waits" → "every way" / "its own weights" (say "delay", which is also the word in the code); "does a pin" → "does a pen". Cue words must match what Whisper heard in the clip (`task` for "tasks" → `w(id, 'task')`), or `w()` throws when the timeline loads.
 
 ## Captions
 

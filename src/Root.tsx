@@ -6,6 +6,9 @@ import { GPIOInput, INPUT_FRAMES } from './scenes/GPIOInput';
 import { FreeRTOSTasks, TASKS_FRAMES } from './scenes/FreeRTOSTasks';
 import { GPIOInterrupts, IRQ_FRAMES } from './scenes/GPIOInterrupts';
 import { PWM, PWM_FRAMES } from './scenes/PWM';
+import { BasicGPIOIntro, BASIC_INTRO_FRAMES } from './scenes/BasicGPIOIntro';
+import { FreeRTOSIntro, FREERTOS_INTRO_FRAMES } from './scenes/FreeRTOSIntro';
+import { AdvancedGPIOIntro, ADVANCED_INTRO_FRAMES } from './scenes/AdvancedGPIOIntro';
 
 const W = 1920;
 const H = 1080;
@@ -26,7 +29,49 @@ const Stage: React.FC<{ children: React.ReactNode; floor?: boolean }> = ({ child
  */
 export const RemotionRoot: React.FC = () => (
   <>
-    {/* Module 01 · PWM: ledcAttach → ledcWrite → ledcFade → ledcWriteTone */}
+    {/* Section 1 intro: Basic GPIO */}
+    <Composition
+      id="BasicGPIOIntro"
+      component={() => (
+        <Stage floor={false}>
+          <BasicGPIOIntro />
+        </Stage>
+      )}
+      durationInFrames={BASIC_INTRO_FRAMES}
+      fps={FPS}
+      width={W}
+      height={H}
+    />
+
+    {/* Section 2 intro: FreeRTOS */}
+    <Composition
+      id="FreeRTOSIntro"
+      component={() => (
+        <Stage floor={false}>
+          <FreeRTOSIntro />
+        </Stage>
+      )}
+      durationInFrames={FREERTOS_INTRO_FRAMES}
+      fps={FPS}
+      width={W}
+      height={H}
+    />
+
+    {/* Section 3 intro: Advanced GPIO */}
+    <Composition
+      id="AdvancedGPIOIntro"
+      component={() => (
+        <Stage floor={false}>
+          <AdvancedGPIOIntro />
+        </Stage>
+      )}
+      durationInFrames={ADVANCED_INTRO_FRAMES}
+      fps={FPS}
+      width={W}
+      height={H}
+    />
+
+    {/* PWM (pure ESP-IDF LEDC): ledc_timer_config → ledc_channel_config → ledc_set_duty + ledc_update_duty → fade → ledc_set_freq */}
     <Composition
       id="PWM"
       component={() => (

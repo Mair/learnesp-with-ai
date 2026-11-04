@@ -29,6 +29,9 @@ const RIGHT: [number, string][] = [
   [31, 'IO19'], [30, 'IO18'], [29, 'IO5'], [28, 'IO17'], [27, 'IO16'], [26, 'IO4'], [25, 'IO0'],
 ];
 
+/** every module pin wired to a GPIO (IOxx / SENSOR_Vx / TXD0 / RXD0), as [module pin, name] */
+export const WROOM_IO_PINS: [number, string][] = [...LEFT, ...BOTTOM, ...RIGHT].filter(([, n]) => /^(IO|SENSOR|TXD|RXD)/.test(n));
+
 const nameColor = (name: string) => (name === 'GND' || name === '3V3' || name === 'EN' ? C.muted : name === 'NC' ? hexA(C.muted, 0.45) : C.ink);
 
 /**

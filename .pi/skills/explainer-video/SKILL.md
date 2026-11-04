@@ -5,7 +5,7 @@ description: Make a narrated, animated ESP32 explainer video (Remotion + synthes
 
 An **explainer** teaches someone **how to use** one peripheral: every number the learner types is pulled apart until they can *see* what it does to the pin, every claim is checked against the real source, and picture, narration and sound are all driven by one timeline.
 
-**Section intros** (`<section>-intro`) follow the same steps but use the intro arc in `SCRIPT.md` ("Section intro") instead of the explainer arc.
+**Section intros** (`<section>-intro`) follow the same steps but use the intro arc in `SCRIPT.md` ("Section intro") instead of the explainer arc. Build them from `src/scenes/intro/kit.tsx` (Bench, MapCards, PartsList, Checklist, Terminal, GoCard) and `intro/vignettes.tsx`; copy `basic-gpio-intro/` (timeline with a `SOUND` list + `Scenes.tsx`). The soundtrack is shared: `scripts/intro-audio.ts <slug>`.
 
 **Teach driving, not the engine** (see `AGENTS.md`). You don't need to know how an engine works to drive a car. No under-the-hood scenes: no driver source, HAL/LL calls, register names or bit fields on screen or in the VO. Show what to type, what each argument means in plain words, what the hardware does, and the mistakes people make with their fix. Research goes all the way down to keep every claim true, but it stays in `FACTS.md`. Keep it simple.
 
