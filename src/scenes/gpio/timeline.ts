@@ -363,7 +363,7 @@ export const DELAY = {
   dimmer: {
     fast: 45.68, // "flips far too fast" 45.14+0.54
     dim: 49.28, // "looks dimmer" 45.14+4.14
-    hold: 50.26, // "Hold that thought" 45.14+5.12
+    hold: 50.52, // "We'll come back to that" 45.14+5.38
   },
   captions: [
     { at: 0.5, text: 'vTaskDelay(ticks) · pdMS_TO_TICKS(ms) converts' },
@@ -420,7 +420,7 @@ export const PAYOFF = {
     { at: 4.35, k: 'gpio_set_direction(…, OUTPUT)', v: 'output driver on' },
     { at: 4.7, k: 'gpio_set_level(pin, 1)', v: 'the pin holds it · returns ESP_OK' },
     { at: 5.05, k: 'vTaskDelay(pdMS_TO_TICKS(ms))', v: 'ticks · the CPU is free' },
-    { at: 5.4, k: 'HIGH or LOW', v: 'nothing in between → next: PWM' },
+    { at: 5.4, k: 'HIGH or LOW', v: 'nothing in between · next: input' },
   ],
 };
 
@@ -554,7 +554,7 @@ export const VO: VoLine[] = [
   { id: 'y3', scene: 'delay', at: 19.42, text: "The conversion rounds down. Ask for five milliseconds and you get zero ticks, and a delay of zero doesn't wait at all." },
   { id: 'y4', scene: 'delay', at: 27.02, text: "While your task waits, it's blocked. The CPU is free for other work, and the pin keeps its level. Nothing is holding it high. It's a bit in a register." },
   { id: 'y5', scene: 'delay', at: 37.62, text: "Take the delays out, and the task watchdog complains after five seconds, because your loop never lets the idle task run." },
-  { id: 'y6', scene: 'delay', at: 45.14, text: "And the pin flips far too fast to see. The LED just looks dimmer. Hold that thought." },
+  { id: 'y6', scene: 'delay', at: 45.14, text: "And the pin flips far too fast to see. The LED just looks dimmer. We'll come back to that." },
 
   { id: 'k1', scene: 'current', at: 0.6, text: "Your code decides on or off. The resistor decides how much current, and so how bright." },
   { id: 'k2', scene: 'current', at: 7.0, text: "Two twenty ohms: about six milliamps. One kilohm: about one point three, and the LED is dimmer." },

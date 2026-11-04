@@ -1,5 +1,7 @@
 # GPIO interrupts — storyboard v1 (pure ESP-IDF)
 
+> **Course sections:** this is now in section 3 (Advanced GPIO), after PWM. p1 and f3 say "back in the GPIO input video" instead of "last time" (re-voiced, re-timed); the payoff's "next:" points to ADC.
+
 > **Under-the-hood scene cut** (rule "teach driving, not the engine", `AGENTS.md`). The scene, its VO and its sound were removed; the video goes straight from the second knob to the payoff. Its storyboard rows and facts are kept below, marked *(cut)*, for reference only.
 
 Slug `gpio-interrupts` · composition `GPIOInterrupts` · `out/gpio-interrupts.mp4` · ~6 min · every claim → `FACTS.md`.

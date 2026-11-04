@@ -1,5 +1,7 @@
 # GPIO — storyboard v2 (pure ESP-IDF, draft for approval)
 
+> **Course sections:** PWM moved to section 3 (Advanced GPIO), so y6 no longer promises it next ("We'll come back to that.") and the payoff's "next:" points to GPIO input.
+
 > **Under-the-hood scene cut** (rule "teach driving, not the engine", `AGENTS.md`). The scene, its VO and its sound were removed; the video goes straight from the second knob to the payoff. Its storyboard rows and facts are kept below, marked *(cut)*, for reference only.
 
 Slug `gpio` · composition `GPIO` · `out/gpio.mp4` · ~5½ min · every claim → `FACTS.md`.
@@ -98,7 +100,7 @@ Cards: `pdMS_TO_TICKS(500)` (ms → ticks) and `vTaskDelay` (blocks your task).
 | y3 "The conversion rounds down. Ask for five milliseconds and you get zero ticks, and a delay of zero doesn't wait at all." | `5 × 100 ÷ 1000 = 0.5 → 0`; `vTaskDelay(0)` — "a delay time of zero just forces a reschedule" (tasks.c) |
 | y4 "While your task waits, it's blocked. The CPU is free for other work, and the pin keeps its level. Nothing is holding it high. It's a bit in a register." | task lane (blocked) · CPU free · pin trace · GPIO_OUT bit 2 = 1 |
 | y5 "Take the delays out, and the task watchdog complains after five seconds, because your loop never lets the idle task run." | delays struck; 5 s timer; `E (…) task_wdt: Task watchdog got triggered…` `IDLE0 (CPU 0)` |
-| y6 "And the pin flips far too fast to see. The LED just looks dimmer. Hold that thought." | scope blurs; LED dims |
+| y6 "And the pin flips far too fast to see. The LED just looks dimmer. We'll come back to that." | scope blurs; LED dims |
 
 ## 10 · Under the hood *(cut)*
 

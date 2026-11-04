@@ -1,9 +1,11 @@
 ---
 name: explainer-video
-description: Make a narrated, animated ESP32 explainer video (Remotion + synthesized VO and sound) in the learnesp32 house style. Use when the user wants a new explainer video or lesson animation on a topic (e.g. "a video on A-to-D conversion"), or wants to add, re-time or deepen a scene in an existing one.
+description: Make a narrated, animated ESP32 explainer video (Remotion + synthesized VO and sound) in the learnesp32 house style. Use when the user wants a new explainer video or lesson animation on a topic (e.g. "a video on A-to-D conversion"), or wants to add, re-time or deepen a scene in an existing one. Also for a course section's intro video (`<section>-intro`).
 ---
 
 An **explainer** teaches someone **how to use** one peripheral: every number the learner types is pulled apart until they can *see* what it does to the pin, every claim is checked against the real source, and picture, narration and sound are all driven by one timeline.
+
+**Section intros** (`<section>-intro`) follow the same steps but use the intro arc in `SCRIPT.md` ("Section intro") instead of the explainer arc.
 
 **Teach driving, not the engine** (see `AGENTS.md`). You don't need to know how an engine works to drive a car. No under-the-hood scenes: no driver source, HAL/LL calls, register names or bit fields on screen or in the VO. Show what to type, what each argument means in plain words, what the hardware does, and the mistakes people make with their fix. Research goes all the way down to keep every claim true, but it stays in `FACTS.md`. Keep it simple.
 

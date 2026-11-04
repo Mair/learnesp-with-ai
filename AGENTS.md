@@ -73,23 +73,33 @@ a `FACTS.md` cites comes from **ESP-IDF v6.0 or later**, never v5.x or older.
 ## Course order — use only what's been taught
 
 A video may only use APIs and concepts that earlier videos taught.
-The order so far:
+The course is in three sections, in this order. **Every section opens with a
+short intro video** (`<section>-intro`, see the explainer-video skill,
+`SCRIPT.md` "Section intro").
 
-1. `gpio` (output) → 2. `pwm` (dimming: LEDC) → 3. `gpio-input` (polled input) →
-4. **FreeRTOS series**: `freertos-tasks` → scheduler & priorities →
-   delay-until → two cores → stacks & watchdog → queues → mutexes →
-   priority inversion → semaphores → task notifications → event groups →
-   timers → critical sections → task stats →
-5. `gpio-interrupts`, which **needs** FreeRTOS: tasks, queues, `…FromISR`,
-   `portYIELD_FROM_ISR`.
+**1. Basic GPIO**
+0. `basic-gpio-intro`: what GPIO is, what this section builds
+1. `gpio`: output (switch an LED)
+2. `gpio-input`: polled input (read a button)
 
-`pwm` comes straight after `gpio`, which ends on "a pin is only high or low,
-nothing in between". It may only use what `gpio` taught: `app_main`,
-`vTaskDelay(pdMS_TO_TICKS(ms))`, "your task waits, the CPU is free",
-`esp_err_t` / `ESP_ERROR_CHECK`, `ESP_LOGx`. Anything new (a struct of
-settings, `&` to hand it over) is explained in the video where it first appears.
+**2. FreeRTOS**
+`freertos-intro` → `freertos-tasks` → scheduler & priorities → delay-until → two cores →
+stacks & watchdog → queues → mutexes → priority inversion → semaphores →
+task notifications → event groups → timers → critical sections → task stats
 
-So in the FreeRTOS videos, GPIO is limited to what `gpio` and `gpio-input` taught:
+**3. Advanced GPIO** (may use everything from sections 1 and 2)
+0. `advanced-gpio-intro`
+1. `pwm`: dimming and tones (LEDC)
+2. `gpio-interrupts`: needs FreeRTOS (tasks, queues, `…FromISR`,
+   `portYIELD_FROM_ISR`)
+3. `adc`: reading a voltage
+4. `dac`: putting out a voltage (original ESP32: GPIO 25/26; ESP32-S2: 17/18)
+
+Each video's "next:" points to the next video in this list; the last video of a
+section points to the next section's intro. Don't say "last
+time" for something taught more than one video back; name the video instead.
+
+So in the FreeRTOS videos, GPIO is limited to what Basic GPIO taught:
 `gpio_reset_pin`, `gpio_set_direction`, `gpio_set_level`,
 `gpio_set_pull_mode`, `gpio_get_level`, polled in a loop. No `gpio_config`
 with `intr_type`, no ISR service, no interrupts. Each task drives its own

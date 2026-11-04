@@ -499,7 +499,7 @@ export const PAYOFF = {
     { at: 5.35, k: 'gpio_set_pull_mode(…, PULLUP_ONLY)', v: 'a default level · 45 kΩ' },
     { at: 5.7, k: 'gpio_get_level(pin)', v: '0 or 1 · right now' },
     { at: 6.05, k: 'read every tick', v: 'one press, one count — bounce ignored' },
-    { at: 6.4, k: 'polling', v: 'next: two jobs at once → tasks' },
+    { at: 6.4, k: 'polling', v: 'next: two jobs at once → FreeRTOS' },
   ],
 };
 

@@ -20,9 +20,9 @@ export type SceneId = IrqSceneId;
 export const FPS = 30;
 
 export const SCENES: { id: IrqSceneId; dur: number }[] = [
-  { id: 'problem', dur: 22.8 },
+  { id: 'problem', dur: 24.62 },
   { id: 'answer', dur: 16.0 },
-  { id: 'config', dur: 49.4 },
+  { id: 'config', dur: 50.68 },
   { id: 'service', dur: 30.1 },
   { id: 'handler', dur: 27.1 },
   { id: 'isr', dur: 55.1 },
@@ -108,16 +108,16 @@ export const RELEASE_HIGHS: [number, number][] = [
 // ── 1. problem ─────────────────────────────────────────────────────────────
 
 export const PROBLEM = {
-  codeIn: 0.94, // "Last time" 0.60+0.34
-  hundred: 3.18, // "a hundred times a second" 0.6+2.58
-  same: 6.16, // "the same thing" 0.6+5.56
-  notPressed: 7.22, // "not pressed" 0.6+6.62
-  hour: 8.9, // "three hundred and sixty thousand" 8.4+0.50
-  justInCase: 11.16, // "just in case" 8.4+2.76
-  pulse: 12.74, // "a pulse" 8.4+4.34
-  slip: 14.9, // "slip between two reads" 8.4+6.50
-  never: 16.88, // "never be seen" 8.4+8.48
-  question: 18.14,
+  codeIn: 1.22, // "GPIO input video" 0.60+0.62
+  hundred: 4.72, // "a hundred times a second" 0.6+4.12
+  same: 7.98, // "the same thing" 0.6+7.38
+  notPressed: 9.0, // "not pressed" 0.6+8.40
+  hour: 10.72, // "three hundred and sixty thousand" 10.22+0.50
+  justInCase: 12.98, // "just in case" 10.22+2.76
+  pulse: 14.56, // "a pulse" 10.22+4.34
+  slip: 16.72, // "slip between two reads" 10.22+6.50
+  never: 18.7, // "never be seen" 10.22+8.48
+  question: 19.96,
 };
 
 // ── 2. answer ──────────────────────────────────────────────────────────────
@@ -134,7 +134,7 @@ export const ANSWER = {
 // ── 3. gpio_config ─────────────────────────────────────────────────────────
 
 export const CONFIG = {
-  views: { struct: 0.5, mask: 8.72, fields: 21.06, intr: 27.3, errors: 39.14 },
+  views: { struct: 0.5, mask: 8.72, fields: 21.06, intr: 28.58, errors: 40.42 },
   struct: {
     one: 4.38, // "one struct" 0.5+3.88
     every: 6.12, // "every pin in its mask" 0.5+5.62
@@ -148,29 +148,29 @@ export const CONFIG = {
     ull: 20.08, // "1ULL" 8.72+11.36
   },
   fields: {
-    input: 23.84, // "an input" 21.06+2.78
-    up: 24.7, // "the pull-up on" 21.06+3.64
-    down: 25.94, // "the pull-down off" 21.06+4.88
+    input: 25.1, // "an input" 21.06+4.04
+    up: 26.22, // "the pull-up on" 21.06+5.16
+    down: 27.38, // "the pull-down off" 21.06+6.32
   },
   intr: {
-    type: 28.82, // "interrupt type" 27.3+1.52
-    neg: 30.14, // "GPIO_INTR_NEGEDGE" 27.3+2.84
-    falling: 33.54, // "a falling edge" 27.3+6.24
-    oneToZero: 34.8, // "from one to zero" 27.3+7.50
-    down: 37.92, // "goes down" 27.3+10.62
+    type: 30.1, // "interrupt type" 28.58+1.52
+    neg: 31.42, // "GPIO_INTR_NEGEDGE" 28.58+2.84
+    falling: 34.82, // "a falling edge" 28.58+6.24
+    oneToZero: 36.08, // "from one to zero" 28.58+7.50
+    down: 39.2, // "goes down" 28.58+10.62
   },
   errors: {
-    wrap: 39.98, // "ESP_ERROR_CHECK" 39.14+0.84
-    empty: 42.14, // "An empty mask" 39.14+3.00
-    exist: 43.98, // "doesn't exist" 39.14+4.84
-    ret: 44.7, // "returns ESP_ERR_INVALID_ARG" 39.14+5.56
+    wrap: 41.26, // "ESP_ERROR_CHECK" 40.42+0.84
+    empty: 43.42, // "An empty mask" 40.42+3.00
+    exist: 45.26, // "doesn't exist" 40.42+4.84
+    ret: 45.98, // "returns ESP_ERR_INVALID_ARG" 40.42+5.56
   },
   captions: [
     { at: 0.5, text: 'gpio_config(&io): one struct configures every pin in pin_bit_mask' },
     { at: 8.72, text: '1ULL << 18 → bit 18 of a 64-bit mask (GPIOs go up to 39)' },
     { at: 21.06, text: 'mode INPUT · pull-up ENABLE · pull-down DISABLE — as in the input video' },
-    { at: 27.3, text: 'intr_type = GPIO_INTR_NEGEDGE → fires on 1 → 0: the press' },
-    { at: 39.14, text: 'mask 0 or a GPIO that doesn\'t exist → ESP_ERR_INVALID_ARG' },
+    { at: 28.58, text: 'intr_type = GPIO_INTR_NEGEDGE → fires on 1 → 0: the press' },
+    { at: 40.42, text: 'mask 0 or a GPIO that doesn\'t exist → ESP_ERR_INVALID_ARG' },
   ] as Caption[],
 };
 
@@ -405,7 +405,7 @@ export const PAYOFF = {
     { at: 4.75, k: 'gpio_install_isr_service(0)', v: 'once, at start-up' },
     { at: 5.1, k: 'gpio_isr_handler_add(pin, fn, arg)', v: 'your function, for that pin' },
     { at: 5.45, k: 'xQueueSendFromISR → xQueueReceive', v: 'the task sleeps until it happens' },
-    { at: 5.8, k: 'wait · xQueueReset · read once', v: 'bounce handled' },
+    { at: 5.8, k: 'wait · xQueueReset · read once', v: 'bounce handled · next: ADC' },
   ],
 };
 
@@ -416,14 +416,14 @@ export type VoLine = { id: string; scene: IrqSceneId; at: number; text: string; 
 export const VOICE = 'en-US-AndrewMultilingualNeural';
 
 export const VO: VoLine[] = [
-  { id: 'p1', scene: 'problem', at: 0.6, text: 'Last time, the loop read the button a hundred times a second. Almost every read said the same thing: not pressed.' },
+  { id: 'p1', scene: 'problem', at: 0.6, text: 'Back in the GPIO input video, the loop read the button a hundred times a second. Almost every read said the same thing: not pressed.' },
   {
     id: 'p2',
     scene: 'problem',
-    at: 8.4,
+    at: 10.22,
     text: "That's three hundred and sixty thousand reads an hour, just in case. And a pulse shorter than one tick can slip between two reads, and never be seen.",
   },
-  { id: 'p3', scene: 'problem', at: 18.14, text: 'What if the pin could tell you when something happens?' },
+  { id: 'p3', scene: 'problem', at: 19.96, text: 'What if the pin could tell you when something happens?' },
 
   {
     id: 'a1',
@@ -447,18 +447,18 @@ export const VO: VoLine[] = [
     text: "The mask has one bit per GPIO. One, shifted left by eighteen, sets bit eighteen. It's a sixty-four-bit value, because the pins go up to thirty-nine, so write the one as 1ULL.",
     say: "The mask has one bit per GPIO. One, shifted left by eighteen, sets bit eighteen. It's a sixty-four-bit value, because the pins go up to thirty-nine, so write the one as one, U, L, L.",
   },
-  { id: 'f3', scene: 'config', at: 21.06, text: 'Mode and pulls are the same as last time: an input, with the pull-up on, and the pull-down off.', say: 'Mode and pulls are the same as last time: an input, with the pull up on, and the pull down off.' },
+  { id: 'f3', scene: 'config', at: 21.06, text: 'Mode and pulls are the same as back in the GPIO input video: an input, with the pull-up on, and the pull-down off.', say: 'Mode and pulls are the same as back in the GPIO input video: an input, with the pull up on, and the pull down off.' },
   {
     id: 'f4',
     scene: 'config',
-    at: 27.3,
+    at: 28.58,
     text: "The new field is the interrupt type. GPIO_INTR_NEGEDGE fires on a falling edge, from one to zero. With a pull-up, that's the moment the button goes down.",
     say: "The new field is the interrupt type. GPIO interrupt, neg edge, fires on a falling edge, from one to zero. With a pull up, that's the moment the button goes down.",
   },
   {
     id: 'f5',
     scene: 'config',
-    at: 39.14,
+    at: 40.42,
     text: "Wrap it in ESP_ERROR_CHECK. An empty mask, or a pin that doesn't exist, returns ESP_ERR_INVALID_ARG.",
     say: "Wrap it in E S P error check. An empty mask, or a pin that doesn't exist, returns E S P error invalid arg.",
   },

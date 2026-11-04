@@ -20,6 +20,20 @@ Every explainer follows this arc (the PWM video, 310 s, minus its cut under-the-
 
 Mapping a new topic means finding its problem, its one-image answer, its calls, and its two knobs. For **A-to-D conversion** a plausible arc (verify every call in step 1) is: problem — a sensor gives a smooth voltage but the CPU only knows numbers → answer — sample it, chop it into steps → Explainers for the resolution / attenuation / read calls → demo: a potentiometer turning while the number tracks → second knob: attenuation (input range) vs resolution (step size) → payoff.
 
+## Section intro
+
+Every course section (Basic GPIO, FreeRTOS, Advanced GPIO, …) opens with an intro video, slug `<section>-intro`. It is **not** an explainer: no call is pulled apart, no argument cards. Its job is to make the learner want the section and know where it goes. About 1½–2½ minutes.
+
+| # | Beat | Job |
+|---|---|---|
+| 1 | **The want** | a concrete thing the learner can't do yet, shown on hardware ("blink an LED, read a button"; "do two things at once"; "dim a light, catch a press the instant it happens, read a voltage") |
+| 2 | **What it is** | the section's idea in one plain sentence and one picture (a pin that can be an output or an input; the scheduler sharing the CPU) |
+| 3 | **The map** | the section's videos in order, one card each: name, the one-line promise, the result on hardware. Highlight the first one |
+| 4 | **What you need** | the parts on the bench (board, LED, resistor, button…) and which earlier sections it builds on |
+| 5 | **Go** | "First up: …" → the first video of the section |
+
+Same house style, voice, palette and sound as the explainers; captions on every beat. Function names may appear on the map cards, but nothing is explained there. Every claim still goes in `FACTS.md`.
+
 ## The depth standard
 
 Apply every point to **every argument of every call** and every concept a scene introduces. If a point doesn't apply, decide that consciously.

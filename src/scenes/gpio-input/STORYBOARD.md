@@ -1,6 +1,6 @@
 # GPIO input — storyboard v1 (as built)
 
-> **Course order change:** `pwm` now sits between `gpio` and this video, so "last time" no longer means the GPIO output video. r1 and s4 were reworded to not depend on it, and the payoff's "next:" now points to tasks.
+> **Course order change:** `pwm` now sits between `gpio` and this video, so "last time" no longer means the GPIO output video. r1 and s4 were reworded to not depend on it, and the payoff's "next:" now points to the FreeRTOS section.
 
 > **Under-the-hood scene cut** (rule "teach driving, not the engine", `AGENTS.md`). The scene, its VO and its sound were removed; the video goes straight from the second knob to the payoff. Its storyboard rows and facts are kept below, marked *(cut)*, for reference only.
 
@@ -53,7 +53,7 @@ Scene 9 extends the loop to count presses (edge + `ESP_LOGI`).
 | 9 | Counting presses | level vs edge; bounce (Ganssle's numbers); polling every 10 ms is the debouncer |
 | 10 | Second knob: pull-up vs pull-down | wiring + one word in code flips the logic; never both |
 | 11 | ~~Under the hood~~ *(cut)* | `gpio_get_level` → `(hw->in >> 18) & 1` → GPIO_IN_REG; FUN_IE / FUN_WPU bits in IO_MUX_GPIO18_REG |
-| 12 | Payoff | "Make it an input. Give it a pull. Read its level." → next: tasks |
+| 12 | Payoff | "Make it an input. Give it a pull. Read its level." → next: FreeRTOS |
 
 ## 1 · Problem
 
