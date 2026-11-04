@@ -1,6 +1,6 @@
 /**
  * 1 · THE PROBLEM — polling's cost.
- * "Last time, the loop read the button a hundred times a second. Almost every read said the same thing: not pressed."
+ * "Back in the GPIO input video, the loop read the button a hundred times a second. Almost every read said the same thing: not pressed."
  * "That's three hundred and sixty thousand reads an hour, just in case. And a pulse shorter than one tick can slip between two reads, and never be seen."
  * "What if the pin could tell you when something happens?"
  *
@@ -36,7 +36,7 @@ export const Problem: React.FC = () => {
         </div>
         <div style={{ position: 'absolute', left: 160, top: 120, width: 1600, display: 'grid', gridTemplateColumns: '860px 1fr', gridTemplateRows: '330px 360px', gap: 24 }}>
           <div style={{ opacity: codeIn }}>
-            <Panel label="last time · polling" accent={C.cyan} right="main/main.c">
+            <Panel label="GPIO input video · polling" accent={C.cyan} right="main/main.c">
               <pre style={{ margin: 0, fontFamily: FONT.mono, fontSize: 25, lineHeight: 1.6, color: '#cfd6ff' }}>
                 {LOOP.map((l, i) => (
                   <div key={i} style={{ padding: '0 10px', borderLeft: `3px solid ${i === 1 && t >= P.hundred ? C.cyan : 'transparent'}`, background: i === 1 && t >= P.hundred ? hexA(C.cyan, 0.1) : 'transparent' }}>
