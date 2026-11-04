@@ -172,7 +172,7 @@ const Gpio34View: React.FC<{ t: number }> = ({ t }) => {
         <div style={{ opacity: none, fontSize: 22, color: C.muted }}>GPIO 34–39: input only — no pull resistors in the pad</div>
         <div style={{ ...box('rgba(255,255,255,.14)'), opacity: log }}>
           <div style={mono(15, C.muted, { letterSpacing: '.14em', marginBottom: 8 })}>IDF.PY MONITOR</div>
-          <div style={mono(18, RED)}>E (…) gpio: gpio_pullup_en(85): GPIO number error (input-only pad has no internal PU)</div>
+          <div style={mono(18, RED)}>E (…) gpio: gpio_pullup_en(88): GPIO number error (input-only pad has no internal PU)</div>
         </div>
         <div style={{ opacity: ok, ...mono(28, C.ink) }}>
           …then returns <b style={{ color: C.amber }}>ESP_OK</b> <span style={{ color: C.muted, fontSize: 22 }}>(gpio_set_pull_mode ignores it)</span>

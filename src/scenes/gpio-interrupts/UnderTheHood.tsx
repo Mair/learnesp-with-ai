@@ -6,7 +6,7 @@
  *   gpio.c          gpio_intr_service → status (pcpu_int) → gpio_isr_loop: __builtin_ffs,
  *                   clear first (edge), fn(args)
  *
- * FACTS: gpio_ll.h l.39–41, l.260–263, l.273–276, l.298–301, l.323–330; gpio_reg.h; TRM; gpio.c l.483–530.
+ * FACTS: gpio_ll.h l.31–33, l.259–262, l.272–275, l.297–300, l.322–329; gpio_reg.h; TRM; gpio.c l.486–533.
  */
 import React from 'react';
 import { AbsoluteFill, useCurrentFrame, useVideoConfig } from 'remotion';

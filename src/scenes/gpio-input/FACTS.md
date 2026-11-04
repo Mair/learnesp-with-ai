@@ -1,10 +1,19 @@
 # GPIO input — facts and where they come from
 
-**Pure ESP-IDF** (no Arduino). Sources: ESP-IDF `release/v5.5` (driver, HAL/LL,
+**Pure ESP-IDF** (no Arduino). Sources: **ESP-IDF tag `v6.0.2`** (local checkout
+`~/.espressif/v6.0.2/esp-idf`: driver, HAL/LL,
 soc register headers, docs, `examples/peripherals/gpio/generic_gpio`), ESP32
 Series Datasheet v5.3, ESP32 TRM v5.9, Jack Ganssle *A Guide to Debouncing*
 (rev 3, June 2008, hosted at my.eng.utah.edu/~cs5780/debouncing.pdf).
-Raw files fetched and read. Line numbers are from the fetched files.
+Line numbers are v6.0.2.
+
+**Re-checked v5.5 → v6.0.2:** every fact still holds. What moved: the HAL is now in
+`components/esp_hal_gpio/`; `gpio_pullup_en`'s check is on **line 88** (v5.5: 85), so
+its log line reads `gpio_pullup_en(88): …`, and the on-screen line was updated; the ESP32
+RTC-pull condition is now `GPIO_RTCIO_ARE_INDEPENDENT` (0 on ESP32, `gpio.c` l.36–42)
+instead of `SOC_GPIO_SUPPORT_RTC_INDEPENDENT`. Fixed while re-checking: the
+`gpio_dump_io_configuration` sample in the docs shows `FuncSel: 1`, but on ESP32
+`PIN_FUNC_GPIO` = 2, so pin 18 prints `FuncSel: 2 (GPIO)`.
 Facts already proven in `src/scenes/gpio/FACTS.md` (output video) are referenced, not repeated.
 
 ## The program
@@ -16,10 +25,10 @@ Facts already proven in `src/scenes/gpio/FACTS.md` (output video) are referenced
 
 | Fact | Source |
 |---|---|
-| Espressif's own input example configures inputs "pulled up" (`pull_up_en = 1`, `GPIO_MODE_INPUT`) and reads them with `gpio_get_level` | `examples/peripherals/gpio/generic_gpio/main/gpio_example_main.c` l.23–24, l.92–98, l.70 |
+| Espressif's own input example configures inputs "pulled up" (`pull_up_en = 1`, `GPIO_MODE_INPUT`) and reads them with `gpio_get_level` | `examples/peripherals/gpio/generic_gpio/main/gpio_example_main.c` l.23–24, l.97–100, l.70 |
 | **Why GPIO 18 for the button:** output-capable (so it has internal pulls), not a strapping pin, not flash/PSRAM, not UART, not JTAG, **not an RTC pad** (so its pull-up lives in its plain IO_MUX register — no RTC detour under the hood). The docs list no special function for it | `gpio/esp32.inc` l.115–118 (GPIO18 row: no ADC, no RTC, no comment), l.197–201 |
 | GPIO 18 = **pin 30** on the ESP32-WROOM-32E module | WROOM-32E datasheet v2.1 Table 3 (see output FACTS "Pins") |
-| On ESP32, pads with an RTC function (0, 2, 4, 12–15, 25–27, 32–39) get their pulls through the RTC IO registers instead (`rtc_gpio_pullup_en`) | `gpio.c` l.87–96 (`!rtc_gpio_is_valid_gpio(n) \|\| SOC_GPIO_SUPPORT_RTC_INDEPENDENT`, the latter 0 on ESP32 per `soc_caps.h` l.177); `esp32.inc` RTC_GPIO column |
+| On ESP32, pads with an RTC function (0, 2, 4, 12–15, 25–27, 32–39) get their pulls through the RTC IO registers instead (`rtc_gpio_pullup_en`) | `gpio.c` l.90–100 (`!rtc_gpio_is_valid_gpio(n) \|\| GPIO_RTCIO_ARE_INDEPENDENT`, the latter 0 on ESP32 per `gpio.c` l.38–39); `esp32.inc` RTC_GPIO column |
 
 ## Floating and the pull-up (the problem and the answer)
 
@@ -38,40 +47,40 @@ Facts already proven in `src/scenes/gpio/FACTS.md` (output video) are referenced
 
 | Fact | Source |
 |---|---|
-| Reset: interrupt off, **pull-up on** (output-capable pins; comment "for powersave reasons, the GPIO should not be floating"), pull-down off, **input off**, output off, function = GPIO | `gpio.c` l.462–481 |
-| → after `gpio_reset_pin` alone, the pin **can't be read**: input is off, so `gpio_get_level` returns 0 | `gpio.c` l.471 (`gpio_input_disable`); `driver/gpio.h` l.146 (@warning) |
+| Reset: interrupt off, **pull-up on** (output-capable pins; comment "for powersave reasons, the GPIO should not be floating"), pull-down off, **input off**, output off, function = GPIO | `gpio.c` l.465–484 |
+| → after `gpio_reset_pin` alone, the pin **can't be read**: input is off, so `gpio_get_level` returns 0 | `gpio.c` l.474 (`gpio_input_disable`); `driver/gpio.h` l.135 (@warning) |
 
 ## `gpio_set_direction(BUTTON, GPIO_MODE_INPUT)`
 
 | Fact | Source |
 |---|---|
-| `GPIO_MODE_INPUT` = `GPIO_MODE_DEF_INPUT` = BIT0 = **0b001** ("input only") | `hal/include/hal/gpio_types.h` l.92, l.99 |
-| INPUT → `gpio_input_enable` (sets **FUN_IE**), and because bit 1 is clear → `gpio_output_disable` (driver off), OD off | `gpio.c` l.315–345 (`gpio_set_direction`), l.206–220 |
-| `gpio_input_enable` → `gpio_ll_input_enable` → `PIN_INPUT_ENABLE(reg)` = `SET_PERI_REG_MASK(reg, FUN_IE)`; **FUN_IE = bit 9** | `gpio_ll.h` l.363–366; `soc/esp32/register/soc/io_mux_reg.h` l.53, l.79 |
+| `GPIO_MODE_INPUT` = `GPIO_MODE_DEF_INPUT` = BIT0 = **0b001** ("input only") | `components/esp_hal_gpio/include/hal/gpio_types.h` l.103, l.110 |
+| INPUT → `gpio_input_enable` (sets **FUN_IE**), and because bit 1 is clear → `gpio_output_disable` (driver off), OD off | `gpio.c` l.318–348 (`gpio_set_direction`), l.202–223 |
+| `gpio_input_enable` → `gpio_ll_input_enable` → `PIN_INPUT_ENABLE(reg)` = `SET_PERI_REG_MASK(reg, FUN_IE)`; **FUN_IE = bit 9** | `esp_hal_gpio/esp32/include/hal/gpio_ll.h` l.362–365; `soc/esp32/register/soc/io_mux_reg.h` l.53, l.79 |
 | TRM: the input value "can be read at any time … However, it is necessary to enable the input in the IO MUX by setting the FUN_IE bit" | TRM v5.9 §6.2.3 Simple GPIO Input |
-| `gpio_get_level` "@warning If the pad is not configured for input (or input and output) the returned value is always 0" → **forget `gpio_set_direction` and an active-low button reads "pressed" forever** | `driver/gpio.h` l.146 + active-low logic below |
-| GPIO 34–39 **can** be inputs (input-only); `gpio_set_direction(34, GPIO_MODE_INPUT)` is fine (the error is only for output modes) | `gpio.c` l.319–322 (`mode & GPIO_MODE_DEF_OUTPUT`) |
+| `gpio_get_level` "@warning If the pad is not configured for input (or input and output) the returned value is always 0" → **forget `gpio_set_direction` and an active-low button reads "pressed" forever** | `driver/gpio.h` l.135 + active-low logic below |
+| GPIO 34–39 **can** be inputs (input-only); `gpio_set_direction(34, GPIO_MODE_INPUT)` is fine (the error is only for output modes) | `gpio.c` l.322–325 (`mode & GPIO_MODE_DEF_OUTPUT`) |
 
 ## `gpio_set_pull_mode(BUTTON, GPIO_PULLUP_ONLY)`
 
 | Fact | Source |
 |---|---|
-| Four modes: `GPIO_PULLUP_ONLY` (0), `GPIO_PULLDOWN_ONLY` (1), `GPIO_PULLUP_PULLDOWN` (2), `GPIO_FLOATING` (3) | `gpio_types.h` l.116–121 |
-| "This function always overwrite the current pull-up/pull-down configurations" — PULLUP_ONLY = `gpio_pulldown_dis` + `gpio_pullup_en` | `driver/gpio.h` l.188; `gpio.c` l.279–313 |
-| ESP32 note: "Only pins that support both input & output have integrated pull-up and pull-down resistors. Input-only GPIOs 34-39 do not." | `driver/gpio.h` l.189; `esp32.inc` l.200; TRM FUN_WPU description ("their FUN_WPU is always 0") |
-| **Surprise:** `gpio_set_pull_mode(GPIO_NUM_34, GPIO_PULLUP_ONLY)`: passes its own check (`GPIO_IS_VALID_GPIO`), calls `gpio_pullup_en(34)`, which logs `E (…) gpio: gpio_pullup_en(85): GPIO number error (input-only pad has no internal PU)` and returns `ESP_ERR_INVALID_ARG` — **but `gpio_set_pull_mode` ignores that return and returns `ESP_OK`**. `ESP_ERROR_CHECK` would not catch it → GPIO 34–39 need an external resistor | `gpio.c` l.85 (check + message), l.279–313 (return values of `gpio_pullup_en` etc. discarded, `ret` stays `ESP_OK`); log format `"%s(%d): " format` with `__FUNCTION__`, `__LINE__` from `esp_common/include/esp_check.h` l.236–241 / l.373–378 |
-| `gpio_reset_pin` already turned the pull-up on — but as a power-saving side effect; `gpio_set_pull_mode` states it in your code | `gpio.c` l.466–468 (comment) |
-| Pull-up hardware for GPIO 18: `gpio_ll_pullup_en` → `REG_SET_BIT(GPIO_PIN_MUX_REG[18], FUN_PU)`; `GPIO_PIN_MUX_REG[18]` = `IO_MUX_GPIO18_REG` = `DR_REG_IO_MUX_BASE + 0x70` = **0x3FF49070**; **FUN_PU = bit 8**, FUN_PD = bit 7 | `gpio_ll.h` l.78–81, l.113–116; `soc/esp32/gpio_periph.c` l.29; `io_mux_reg.h` l.43–51, l.255–256; `reg_base.h` l.25 |
+| Four modes: `GPIO_PULLUP_ONLY` (0), `GPIO_PULLDOWN_ONLY` (1), `GPIO_PULLUP_PULLDOWN` (2), `GPIO_FLOATING` (3) | `gpio_types.h` l.127–132 |
+| "This function always overwrite the current pull-up/pull-down configurations" — PULLUP_ONLY = `gpio_pulldown_dis` + `gpio_pullup_en` | `driver/gpio.h` l.177; `gpio.c` l.282–316 |
+| ESP32 note: "Only pins that support both input & output have integrated pull-up and pull-down resistors. Input-only GPIOs 34-39 do not." | `driver/gpio.h` l.178; `esp32.inc` l.200; TRM FUN_WPU description ("their FUN_WPU is always 0") |
+| **Surprise:** `gpio_set_pull_mode(GPIO_NUM_34, GPIO_PULLUP_ONLY)`: passes its own check (`GPIO_IS_VALID_GPIO`), calls `gpio_pullup_en(34)`, which logs `E (…) gpio: gpio_pullup_en(88): GPIO number error (input-only pad has no internal PU)` and returns `ESP_ERR_INVALID_ARG` — **but `gpio_set_pull_mode` ignores that return and returns `ESP_OK`**. `ESP_ERROR_CHECK` would not catch it → GPIO 34–39 need an external resistor | `gpio.c` l.88 (check + message), l.282–316 (return values of `gpio_pullup_en` etc. discarded, `ret` stays `ESP_OK`); log format `"%s(%d): " format` with `__FUNCTION__`, `__LINE__` from `esp_common/include/esp_check.h` `ESP_RETURN_ON_FALSE` (l.168 / l.191) |
+| `gpio_reset_pin` already turned the pull-up on — but as a power-saving side effect; `gpio_set_pull_mode` states it in your code | `gpio.c` l.469–471 (comment) |
+| Pull-up hardware for GPIO 18: `gpio_ll_pullup_en` → `REG_SET_BIT(GPIO_PIN_MUX_REG[18], FUN_PU)`; `GPIO_PIN_MUX_REG[18]` = `IO_MUX_GPIO18_REG` = `DR_REG_IO_MUX_BASE + 0x70` = **0x3FF49070**; **FUN_PU = bit 8**, FUN_PD = bit 7 | `gpio_ll.h` l.77–80, l.112–115; `soc/esp32/gpio_periph.c` l.30; `io_mux_reg.h` l.43–51, l.249–250; `reg_base.h` l.25 |
 
 ## `gpio_get_level(BUTTON)`
 
 | Fact | Source |
 |---|---|
-| Signature `int gpio_get_level(gpio_num_t gpio_num)` — returns **0 or 1**, an `int`, **not an `esp_err_t`** → no error to check; don't wrap it in `ESP_ERROR_CHECK` (a 1 would abort as "error 0x1") | `driver/gpio.h` l.144–155; `gpio.c` l.252–255 (no `GPIO_CHECK`); `esp_err.h` (`ESP_ERROR_CHECK` aborts on any value ≠ `ESP_OK`) |
-| `gpio_get_level` → `gpio_hal_get_level` → `gpio_ll_get_level`: `return (hw->in >> gpio_num) & 0x1;` (GPIO 32–39 use `in1`) | `gpio.c` l.252–255; `gpio_hal.h` l.239; `gpio_ll.h` l.534–540 |
+| Signature `int gpio_get_level(gpio_num_t gpio_num)` — returns **0 or 1**, an `int`, **not an `esp_err_t`** → no error to check; don't wrap it in `ESP_ERROR_CHECK` (a 1 would abort as "error 0x1") | `driver/gpio.h` l.133–144; `gpio.c` l.255–258 (no `GPIO_CHECK`); `esp_err.h` (`ESP_ERROR_CHECK` aborts on any value ≠ `ESP_OK`) |
+| `gpio_get_level` → `gpio_hal_get_level` → `gpio_ll_get_level`: `return (hw->in >> gpio_num) & 0x1;` (GPIO 32–39 use `in1`) | `gpio.c` l.255–258; `gpio_hal.h` l.239; `gpio_ll.h` l.521–527 |
 | `hw->in` = **GPIO_IN_REG @ 0x3FF4403C**, read-only, "GPIO0-31 input value. Each bit represents a pin input value, 1 for high level and 0 for low level"; GPIO_IN1_REG @ 0x3FF44040 = GPIO 32–39 | `soc/esp32/register/soc/gpio_reg.h` l.130, l.138; TRM v5.9 Register 6.14 / 6.15, register summary |
-| One read of GPIO_IN_REG captures **all 32 pins at once**; `>> 18 & 1` keeps pin 18 | `gpio_ll.h` l.537 |
-| It is a **snapshot**: the level at the instant of the read. It doesn't wait for a press and doesn't remember one | single register load, `gpio_ll.h` l.537 |
+| One read of GPIO_IN_REG captures **all 32 pins at once**; `>> 18 & 1` keeps pin 18 | `gpio_ll.h` l.524 |
+| It is a **snapshot**: the level at the instant of the read. It doesn't wait for a press and doesn't remember one | single register load, `gpio_ll.h` l.524 |
 | With a pull-up and a button to GND: **pressed = 0, released = 1** ("active low") → `bool pressed = (gpio_get_level(BUTTON) == 0);` | circuit above |
 
 ## Polling, edges and bounce
@@ -93,7 +102,7 @@ Facts already proven in `src/scenes/gpio/FACTS.md` (output video) are referenced
 
 | Fact | Source |
 |---|---|
-| Button to **3.3 V** + `GPIO_PULLDOWN_ONLY`: released → pulled to 0 V → 0; pressed → 3.3 V → 1 ("active high"). Same 45 kΩ, same ~73 µA when pressed | `gpio_types.h` l.118; datasheet RPD 45 kΩ |
+| Button to **3.3 V** + `GPIO_PULLDOWN_ONLY`: released → pulled to 0 V → 0; pressed → 3.3 V → 1 ("active high"). Same 45 kΩ, same ~73 µA when pressed | `gpio_types.h` l.129; datasheet RPD 45 kΩ |
 | Pull-up + button to GND is the arrangement in Espressif's example (`pull_up_en = 1`) | `gpio_example_main.c` l.22–24, l.97 |
 | Never enable both on a button pin: `GPIO_PULLUP_PULLDOWN` = 45 k + 45 k divider ≈ 1.65 V when released → between VIL 0.825 V and VIH 2.475 V → undefined | datasheet thresholds + divider arithmetic |
 | An external pull-up (e.g. 10 kΩ → 0.33 mA) is stronger: use it for long wires or GPIO 34–39 | Ohm's law; 34–39 fact above. "long wires" is general practice — **keep off-screen or soften** |
@@ -102,20 +111,20 @@ Facts already proven in `src/scenes/gpio/FACTS.md` (output video) are referenced
 
 | Fact | Source |
 |---|---|
-| `gpio_dump_io_configuration(stdout, 1ULL << 18)` prints `IO[18] -` / `Pullup: 1, Pulldown: 0, DriveCap: 2` / `InputEn: 1, OutputEn: 0, OpenDrain: 0` / `FuncSel: 1 (GPIO)` / `GPIO Matrix SigOut ID: …` / `GPIO Matrix SigIn ID: (simple GPIO input)` / `SleepSelEn: …` | `gpio.c` l.1099–1146; `gpio.rst` l.47–80 (sample dump) |
+| `gpio_dump_io_configuration(stdout, 1ULL << 18)` prints `IO[18] -` / `Pullup: 1, Pulldown: 0, DriveCap: 2` / `InputEn: 1, OutputEn: 0, OpenDrain: 0` / `FuncSel: 2 (GPIO)` / `GPIO Matrix SigOut ID: …` / `GPIO Matrix SigIn ID: (simple GPIO input)` / `SleepSelEn: …` | `gpio.c` l.1091–1138; `gpio.rst` l.47–80 (sample dump, from a chip where `PIN_FUNC_GPIO` = 1) |
 
 ## Other chips (context only — not claimed on screen)
 
 | Fact | Source |
 |---|---|
-| ESP32-S3 / C3 define `SOC_GPIO_SUPPORT_PIN_GLITCH_FILTER` (filters pulses < 2 IO_MUX clock cycles — far too short for switch bounce); C6 / H2 / P4 also have 8 configurable "flex" glitch filters | `soc/<chip>/include/soc/soc_caps.h` (release/v5.5); `gpio.rst` l.113–125 |
+| ESP32-S3 / C3 define `SOC_GPIO_SUPPORT_PIN_GLITCH_FILTER` (filters pulses < 2 IO_MUX clock cycles — far too short for switch bounce); C6 / H2 / P4 also have 8 configurable "flex" glitch filters | `soc/<chip>/include/soc/soc_caps.h` (v6.0.2); `gpio.rst` l.113–125 |
 
 ## Under the hood (as shown)
 
 | Fact | Source |
 |---|---|
 | IO_MUX_GPIO18_REG fields: MCU_SEL bits 14–12 (`MCU_SEL_S` 12), FUN_DRV bits 11–10 (`FUN_DRV_S` 10, reset 2), FUN_IE bit 9, FUN_WPU (`FUN_PU`) bit 8, FUN_WPD (`FUN_PD`) bit 7 | `soc/esp32/register/soc/io_mux_reg.h` l.43–66; TRM v5.9 IO_MUX_x_REG figure |
-| `PIN_FUNC_GPIO` = 2 on ESP32 → MCU_SEL = 2 after `gpio_reset_pin` | `io_mux_reg.h` l.85; `gpio.c` l.479 (`gpio_hal_func_sel(…, PIN_FUNC_GPIO)`) |
+| `PIN_FUNC_GPIO` = 2 on ESP32 → MCU_SEL = 2 after `gpio_reset_pin` | `io_mux_reg.h` l.85; `gpio.c` l.481 (`gpio_hal_func_sel(…, PIN_FUNC_GPIO)`) |
 | The other 31 bits of GPIO_IN shown on screen are an arbitrary, dimmed pattern — illustration, not a claim | — |
 | Bounce shape on screen is illustrative; its length (≈ 1.6 ms) matches Ganssle's average | Ganssle pdf l.128–129 |
 | Demo press timing: the zoomed press lands 4 ms after a tick → the LED follows 6 ms later (computed by `demoRead` from the same schedule) | `timeline.ts` `DEMO.presses`, `demoRead` |

@@ -42,9 +42,11 @@ a `FACTS.md` cites comes from **ESP-IDF v6.0 or later**, never v5.x or older.
   Drivers are still in `components/esp_driver_<periph>/`.
 - An API that is deprecated or removed in v6 is not used on screen, even if
   it still compiles.
-- Videos researched against v5.5 (`gpio`, `gpio-input`, `freertos-tasks`,
-  `gpio-interrupts`, and the first PWM v2 draft) must have their facts
-  re-checked against v6 before their next render.
+- `gpio`, `gpio-input`, `freertos-tasks`, `gpio-interrupts` and the PWM v2
+  draft were first researched on v5.5 and have been re-checked against v6.0.2
+  (each `FACTS.md` has a "Re-checked v5.5 → v6.0.2" note). Anything quoted on
+  screen that carries a source line number (e.g. `gpio_isr_handler_add(564):`
+  in a log line) must be re-checked whenever the reference tag changes.
 
 ## Course order — use only what's been taught
 

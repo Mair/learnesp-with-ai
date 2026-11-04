@@ -426,7 +426,7 @@ export type Layer = {
   marks: LineMark[];
 };
 
-export const IDF_VERSION = 'ESP-IDF v5.5 · real source, trimmed with …';
+export const IDF_VERSION = 'ESP-IDF v6.0.2 · real source, trimmed with …';
 
 export const IDF = {
   layers: [
@@ -460,7 +460,7 @@ export const IDF = {
     {
       at: 11.52, // "And at the bottom" 11.52+0
       name: 'HAL · one store',
-      path: 'components/hal/esp32/include/hal/gpio_ll.h',
+      path: 'components/esp_hal_gpio/esp32/include/hal/gpio_ll.h',
       via: 'gpio_hal_set_level() → gpio_ll_set_level()',
       code: [
         'if (level) {',

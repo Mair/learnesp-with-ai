@@ -4,7 +4,7 @@
  *   snap      a snapshot at the moment of the call: a press between two reads is missed
  *   compare   active low → pressed = (gpio_get_level(BUTTON) == 0)
  *
- * FACTS: driver/gpio.h l.144–155; gpio.c l.252–255; esp_err.h; gpio_ll.h l.537.
+ * FACTS: driver/gpio.h l.133–144; gpio.c l.255–258; esp_err.h; gpio_ll.h l.524.
  */
 import React from 'react';
 import { useCurrentFrame, useVideoConfig } from 'remotion';

@@ -146,7 +146,7 @@ const OnceView: React.FC<{ t: number }> = ({ t }) => {
         </div>
       </div>
       <div style={{ opacity: after(t, o.ret), borderRadius: 14, border: `1px solid ${hexA(RED, 0.5)}`, padding: '14px 18px', background: 'rgba(10,4,32,.6)', ...mono(21, RED) }}>
-        E (…) gpio: gpio_install_isr_service(534): GPIO isr service already installed
+        E (…) gpio: gpio_install_isr_service(537): GPIO isr service already installed
       </div>
       <Verdict ok p={after(t, o.ret + 0.5)} size={22}>
         once, at start-up — then add handlers for as many pins as you like

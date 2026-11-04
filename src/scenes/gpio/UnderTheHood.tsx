@@ -9,7 +9,7 @@
  *   silicon         GPIO_OUT_W1TS_REG @ 0x3FF44008 → only bit 2 of GPIO_OUT_REG changes
  *   direction       the same kind of writes: out_sel = 256, enable_w1ts = 1 << 2
  *
- * Source quoted from ESP-IDF release/v5.5; "…" marks trimmed lines.
+ * Source quoted from ESP-IDF v6.0.2; "…" marks trimmed lines.
  * Same layer-descent pattern as the PWM video.
  */
 import React from 'react';

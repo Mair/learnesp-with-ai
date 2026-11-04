@@ -99,7 +99,7 @@ const OrderView: React.FC<{ t: number }> = ({ t }) => {
           <div style={{ color: C.muted }}>gpio_install_isr_service(0);</div>
         </div>
         <div style={{ opacity: after(t, o.ret), borderRadius: 12, border: `1px solid ${hexA(RED, 0.5)}`, padding: '12px 16px', background: 'rgba(10,4,32,.6)', ...mono(18, RED), lineHeight: 1.4 }}>
-          E (…) gpio: gpio_isr_handler_add(561): GPIO isr service is not installed, call gpio_install_isr_service() first
+          E (…) gpio: gpio_isr_handler_add(564): GPIO isr service is not installed, call gpio_install_isr_service() first
         </div>
         <div style={{ opacity: after(t, o.ret), ...mono(24, C.ink) }}>
           → <b style={{ color: RED }}>ESP_ERR_INVALID_STATE</b>

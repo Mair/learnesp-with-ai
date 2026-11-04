@@ -7,7 +7,7 @@
  *   silicon         GPIO_IN_REG @ 0x3FF4403C: all 32 low pins at once; bit 18 = the button
  *   setup           IO_MUX_GPIO18_REG @ 0x3FF49070: FUN_IE (bit 9), FUN_WPU (bit 8), FUN_WPD (bit 7)
  *
- * Same layer-descent pattern as the output video. Source: ESP-IDF release/v5.5.
+ * Same layer-descent pattern as the output video. Source: ESP-IDF v6.0.2.
  */
 import React from 'react';
 import { AbsoluteFill, useCurrentFrame, useVideoConfig } from 'remotion';

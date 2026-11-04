@@ -402,7 +402,7 @@ export const TYPES = {
 
 export type LineMark = Mark & { line: number };
 
-export const IDF_VERSION = 'ESP-IDF v5.5 · ESP32 TRM · real source, trimmed with …';
+export const IDF_VERSION = 'ESP-IDF v6.0.2 · ESP32 TRM · real source, trimmed with …';
 
 export const IDF = {
   pin18: 4.58, // "Pin eighteen's register" 4.58+0

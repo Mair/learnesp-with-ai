@@ -170,7 +170,7 @@ const ValueView: React.FC<{ t: number }> = ({ t }) => {
             <span style={{ color: C.cyan, background: hexA(C.cyan, 0.15), padding: '0 4px', borderRadius: 4 }}>if (level)</span> → out_w1ts <span style={{ color: C.muted }}>// set</span>
           </div>
           <div>else → out_w1tc <span style={{ color: C.muted }}>// clear</span></div>
-          <div style={mono(16, C.muted)}>hal/esp32/include/hal/gpio_ll.h</div>
+          <div style={mono(16, C.muted)}>esp_hal_gpio/esp32/include/hal/gpio_ll.h</div>
         </div>
         <Verdict ok p={any} size={26}>
           7 isn't 0 → high

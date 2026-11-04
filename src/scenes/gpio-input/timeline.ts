@@ -497,7 +497,7 @@ export const PULLS = {
 export type LineMark = Mark & { line: number };
 export type Layer = { at: number; name: string; path: string; via?: string; code: string[]; marks: LineMark[] };
 
-export const IDF_VERSION = 'ESP-IDF v5.5 · real source, trimmed with …';
+export const IDF_VERSION = 'ESP-IDF v6.0.2 · real source, trimmed with …';
 
 export const IDF = {
   layers: [
@@ -522,7 +522,7 @@ export const IDF = {
     {
       at: 10.3, // "And at the bottom" 10.3+0
       name: 'HAL · one load',
-      path: 'components/hal/esp32/include/hal/gpio_ll.h',
+      path: 'components/esp_hal_gpio/esp32/include/hal/gpio_ll.h',
       via: 'gpio_hal_get_level() → gpio_ll_get_level()',
       code: ['if (gpio_num < 32) {', '    return (hw->in >> gpio_num) & 0x1;', '} else {', '    return (… hw->in1 …) >> (gpio_num - 32)) & 0x1;', '}'],
       marks: [

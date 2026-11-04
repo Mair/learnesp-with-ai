@@ -1,8 +1,15 @@
 # FreeRTOS tasks: facts
 
-Every claim on screen or in the VO, with its source. ESP-IDF **release/v5.5**
-(raw files from `github.com/espressif/esp-idf/release/v5.5`), FreeRTOS kernel
-**V10.5.1** as shipped in ESP-IDF. Paths are relative to the ESP-IDF root.
+Every claim on screen or in the VO, with its source. **ESP-IDF tag `v6.0.2`**
+(local checkout `~/.espressif/v6.0.2/esp-idf`), FreeRTOS kernel
+**V10.5.1** as shipped in ESP-IDF. Paths are relative to the ESP-IDF root. Line numbers are v6.0.2.
+
+**Re-checked v5.5 → v6.0.2:** every fact still holds. `tasks.c`, `task.h`, `projdefs.h`,
+`stack_macros.h`, `esp_err.h`, `esp_ipc.c`, `freertos.rst` and `freertos_idf.rst` are
+byte-identical (same V10.5.1 kernel). What moved: lines in `port.c`, `portmacro.h`,
+`app_startup.c`, `additions` and the Kconfigs. One real change: v6's default C library is
+**Picolibc** (`components/esp_libc/Kconfig` l.3–6), and `LIBC_NEWLIB_NANO_FORMAT` depends on
+Newlib, so `TASK_EXTRA_STACK_SIZE` is 512 and the main task is still **4096 bytes**.
 Short names used below:
 
 | Short | File |
@@ -83,23 +90,23 @@ register. So the two tasks don't interfere.
 - `esp_startup_start_app()` creates `main_task` with
   `xTaskCreatePinnedToCore(main_task, "main", ESP_TASK_MAIN_STACK, NULL,
   ESP_TASK_MAIN_PRIO, NULL, ESP_TASK_MAIN_CORE)` and then calls
-  `vTaskStartScheduler()` (`app_startup.c` L83–99).
+  `vTaskStartScheduler()` (`app_startup.c` L80–97).
 - `main_task` logs `Started on CPU%d`, then `Calling app_main()`, calls
   `app_main()`, logs `Returned from app_main()`, and calls `vTaskDelete(NULL)`
-  (`app_startup.c` L185–217; tag `"main_task"`, L147). The log line reads
+  (`app_startup.c` L176–208; tag `"main_task"`, L138). The log line reads
   `I (…) main_task: Returned from app_main()`.
 - Main task priority `ESP_TASK_MAIN_PRIO = ESP_TASK_PRIO_MIN + 1` = **1**
   (`esp_task.h` L28, L56; `freertos.rst` L107–111 "1").
 - Main task stack = `CONFIG_ESP_MAIN_TASK_STACK_SIZE` (default **3584**,
-  `components/esp_system/Kconfig` L225–227) + `TASK_EXTRA_STACK_SIZE`
+  `components/esp_system/Kconfig` L232–234) + `TASK_EXTRA_STACK_SIZE`
   (`esp_task.h` L57). `TASK_EXTRA_STACK_SIZE` is 512 unless nano printf
-  formatting is enabled (`esp_task.h` L33–37). `LIBC_NEWLIB_NANO_FORMAT`
-  defaults to y only on ESP32-C2 (`components/newlib/Kconfig` L105–107;
-  `CONFIG_NEWLIB_NANO_FORMAT` is its old name, `components/newlib/sdkconfig.rename`
-  L12). So on the ESP32 it's 3584 + 512 = **4096 bytes**.
-- Main task affinity defaults to **CPU0** (`esp_system/Kconfig` L233–235).
+  formatting is enabled (`esp_task.h` L33–37, `#ifdef CONFIG_LIBC_NEWLIB_NANO_FORMAT`).
+  `LIBC_NEWLIB_NANO_FORMAT` defaults to y only on ESP32-C2 and depends on Newlib
+  (`components/esp_libc/Kconfig` L106–109); v6 defaults to Picolibc (L3–6). So on the
+  ESP32 it's 3584 + 512 = **4096 bytes**.
+- Main task affinity defaults to **CPU0** (`esp_system/Kconfig` L240–242).
 - "If app_main() returns then this task is deleted and its stack memory is
-  freed" (`esp_system/Kconfig` L229–231).
+  freed" (`esp_system/Kconfig` L236–238).
 - The other tasks keep running after `app_main` returns: `vTaskDelete(NULL)`
   removes only the calling task (`tasks.c` L1342–1360; `task.h` L785).
 
@@ -126,17 +133,17 @@ register. So the two tasks don't interfere.
 - If one does return: ESP-IDF wraps every task function in
   `vPortTaskWrapper`. It calls `pxCode(pvParameters)`. If that returns, it
   logs `ESP_LOGE("FreeRTOS", "FreeRTOS Task \"%s\" should not return, Aborting
-  now!", …)` and calls `abort()` (`port.c` L141–148). The log line reads
+  now!", …)` and calls `abort()` (`port.c` L145–152). The log line reads
   `E (…) FreeRTOS: FreeRTOS Task "blink_fast" should not return, Aborting now!`.
 - The wrapper is `CONFIG_FREERTOS_TASK_FUNCTION_WRAPPER`, default y. It
   depends on `COMPILER_OPTIMIZATION_DEBUG` (or core dump / GDB stub)
   (`components/freertos/Kconfig` L362–367). The default optimisation level is
-  Debug (`Kconfig` root L338–340, L363–364). So it's on by default.
+  Debug (`Kconfig` root L337–339, L362–363). So it's on by default.
   *Unverified:* what happens with `-O2` and no core dump. The VO says "by
   default".
 - The initial stack frame's `pc` is `vPortTaskWrapper`; the task function and
-  its parameter are its arguments (`port.c` L349–360, inside
-  `pxPortInitialiseStack`, L392).
+  its parameter are its arguments (`port.c` L353–364, inside
+  `pxPortInitialiseStack`, L396).
 - To end a task on purpose: `vTaskDelete(NULL)` deletes the calling task
   (`task.h` L785 and doc above it; `freertos_idf.rst` L106, L120 "Tasks
   self-deleting via vTaskDelete(NULL)").
@@ -173,7 +180,7 @@ pxCreatedTask)` (`task.h` L370–376).
   differs from vanilla FreeRTOS" (`task.h` L315–316). "Task stack sizes in
   Vanilla FreeRTOS are specified in a number of words, whereas in IDF FreeRTOS,
   the task stack sizes are specified in bytes" (`freertos_idf.rst` L92).
-- `StackType_t` is `uint8_t` on the ESP32 port (`portmacro.h` L88, L91), so
+- `StackType_t` is `uint8_t` on the ESP32 port (`portmacro.h` L78, L81), so
   depth × sizeof(StackType_t) = bytes.
 - *Arithmetic:* in vanilla FreeRTOS on a 32-bit CPU, 2048 words = 2048 × 4 =
   8192 bytes, four times as much.
@@ -186,7 +193,7 @@ pxCreatedTask)` (`task.h` L370–376).
 - Allocated from the heap at creation: stack first, then TCB
   (`pvPortMallocStack(usStackDepth * sizeof(StackType_t))`, then
   `pvPortMalloc(sizeof(TCB_t))`; the stack grows down, so it's allocated
-  first, `additions` L197–262; `portmacro.h` L115 `portSTACK_GROWTH (-1)`).
+  first, `additions` L195–260; `portmacro.h` L105 `portSTACK_GROWTH (-1)`).
 - ESP-IDF maps FreeRTOS allocations to `heap_caps_malloc`, placed in internal
   memory (`freertos.rst` L136).
 - The new stack is filled with `0xa5` (`tasks.c` L90 `tskSTACK_FILL_BYTE`,
@@ -194,7 +201,7 @@ pxCreatedTask)` (`task.h` L370–376).
 - What's on a task's stack: its local variables and function calls; and, while
   it's switched out, its saved registers. *Partly derived:* the initial
   exception frame `XtExcFrame` is built on the task's stack (`port.c`
-  L335–360). The scheduler saves the context there on a switch; the TCB's
+  L339–364). The scheduler saves the context there on a switch; the TCB's
   first member is `pxTopOfStack`, "the last item placed on the task's stack"
   (`tasks.c` L419).
 - Overflow check: `CONFIG_FREERTOS_CHECK_STACKOVERFLOW` defaults to **CANARY**
@@ -203,22 +210,22 @@ pxCreatedTask)` (`task.h` L370–376).
   that the lowest 16 bytes at `pxStack` are still `0xa5a5a5a5` ×4
   (`stack_macros.h` L91–105).
 - If not: `vApplicationStackOverflowHook` → `esp_system_abort("***ERROR*** A
-  stack overflow in task blink_fast has been detected.")` (`port.c` L561–574).
+  stack overflow in task blink_fast has been detected.")` (`port.c` L565–578).
 - Panic default: `ESP_SYSTEM_PANIC_PRINT_REBOOT`, print registers and reboot
-  (`esp_system/Kconfig` L31–33).
+  (`esp_system/Kconfig` L30–32).
 - The check only runs on a context switch, so the overflow "may already be long
   gone" (`freertos/Kconfig` L378–381).
 
 ### 4 · parameter
 - "Pointer that will be used as the parameter for the task being created"
   (`task.h` L318–319). It's passed to the task function as its argument
-  (`port.c` L354–358: `a3`/`a7 = pvParameters`).
+  (`port.c` L358–362: `a3`/`a7 = pvParameters`).
 - Lifetime: "the passed parameter … must exist for the lifetime of the task,
   so in this case is declared static. If it was just an automatic stack
   variable it might no longer exist, or at least have been corrupted, by the
   time the new task attempts to access it" (`task.h` L354–356).
 - A local in `app_main` lives on the main task's stack, which is freed when
-  `app_main` returns (`esp_system/Kconfig` L229–231). So a pointer to it
+  `app_main` returns (`esp_system/Kconfig` L236–238). So a pointer to it
   dangles. *Derived.*
 - `static blink_t fast` has static storage duration and lives for the whole
   program (C standard).
@@ -236,7 +243,7 @@ pxCreatedTask)` (`task.h` L370–376).
 - Out of range: `configASSERT( uxPriority < configMAX_PRIORITIES )`, then a
   clamp to 24 (`tasks.c` L1111–1116). `configASSERT(a)` is `assert(a)`
   (`FreeRTOSConfig.h` L132). Asserts are enabled by default
-  (`COMPILER_OPTIMIZATION_ASSERTIONS_ENABLE`, root `Kconfig` L374–376). So 25
+  (`COMPILER_OPTIMIZATION_ASSERTIONS_ENABLE`, root `Kconfig` L392–394). So 25
   or more aborts by default.
 - 5: one higher than main (1), well below the system tasks above.
 - Higher number = higher priority, and the scheduler always runs the
@@ -268,7 +275,7 @@ pxCreatedTask)` (`task.h` L370–376).
   L330–331).
 - `pdPASS` = `pdTRUE` = **1**; `errCOULD_NOT_ALLOCATE_REQUIRED_MEMORY` =
   **-1** (`projdefs.h` L59–67). Returned when the stack or TCB allocation
-  fails (`additions` L273–276).
+  fails (`additions` L271–274).
 - Not an `esp_err_t`: `ESP_OK` = **0** (`esp_err.h` L22). `ESP_ERROR_CHECK(x)`
   calls `_esp_error_check_failed` → `abort()` when `x != ESP_OK` (`esp_err.h`
   L115–121; `esp_system/esp_err.c` L46–50). So `ESP_ERROR_CHECK(xTaskCreate(…))`
@@ -281,7 +288,7 @@ pxCreatedTask)` (`task.h` L370–376).
   (`freertos_idf.rst` L45, L86–88).
 - The ESP32 runs FreeRTOS on both cores by default (`CONFIG_FREERTOS_UNICORE`
   default n on ESP32, `freertos/Kconfig` L23–26;
-  `CONFIG_FREERTOS_NUMBER_OF_CORES` = 2, L652–658).
+  `CONFIG_FREERTOS_NUMBER_OF_CORES` = 2, L625–631).
 
 ## vTaskDelay underneath
 
@@ -289,7 +296,7 @@ pxCreatedTask)` (`task.h` L370–376).
   (`prvAddCurrentTaskToDelayedList`, `tasks.c` L1579–1611, L6335) and yields.
   `vTaskDelay(0)` just forces a reschedule (L1583 comment).
 - Ticks: `CONFIG_FREERTOS_HZ` default **100** (`freertos/Kconfig` L33–37) →
-  `portTICK_PERIOD_MS` = 1000 / 100 = **10 ms** (`portmacro.h` L116).
+  `portTICK_PERIOD_MS` = 1000 / 100 = **10 ms** (`portmacro.h` L106).
 - `pdMS_TO_TICKS(ms)` = ms × 100 / 1000 (integer) (`projdefs.h` L46). So 200
   → **20 ticks**, 500 → **50 ticks**.
 - On each tick, `xTaskIncrementTick` checks `if( xConstTickCount >=
@@ -306,13 +313,13 @@ pxCreatedTask)` (`task.h` L370–376).
    tskNO_AFFINITY)` (`task.h` L370–395).
 2. `xTaskCreatePinnedToCore`: allocate the stack (`pvPortMallocStack`), then
    the TCB (`pvPortMalloc(sizeof(TCB_t))`). If either fails, return
-   `errCOULD_NOT_ALLOCATE_REQUIRED_MEMORY` (`additions` L153–281).
+   `errCOULD_NOT_ALLOCATE_REQUIRED_MEMORY` (`additions` L151–279).
 3. `prvInitialiseNewTask`: `memset(pxStack, 0xa5, …)` (L1044); top of stack =
    the highest address, aligned (L1052–1056); copy the name and terminate it at
    15 (L1078–1103); `configASSERT(uxPriority < configMAX_PRIORITIES)`, store
    priority (L1111–1122); `xCoreID` (L1125).
 4. `pxPortInitialiseStack`: build the first exception frame with `pc =
-   vPortTaskWrapper`, args = your function + parameter (`port.c` L349–360).
+   vPortTaskWrapper`, args = your function + parameter (`port.c` L353–364).
 5. `prvAddNewTaskToReadyList`: `prvAddTaskToReadyList(pxNewTCB)`; if the
    scheduler is running and the new task outranks the running task, yield
    (`tasks.c` L1233–1330, yield at L1319).

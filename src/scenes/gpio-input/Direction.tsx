@@ -4,7 +4,7 @@
  *   forget   skip it → gpio_get_level is always 0 → "pressed" forever
  *   any      INPUT works on every GPIO, even 34–39 (only output modes are refused)
  *
- * FACTS: gpio_types.h l.92/99; gpio.c l.315–345; gpio_ll.h l.363–366; driver/gpio.h l.146.
+ * FACTS: gpio_types.h l.103/110; gpio.c l.318–348; gpio_ll.h l.362–365; driver/gpio.h l.135.
  */
 import React from 'react';
 import { useCurrentFrame, useVideoConfig } from 'remotion';
