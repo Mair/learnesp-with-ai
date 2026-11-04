@@ -1,5 +1,7 @@
 # GPIO input — storyboard v1 (as built)
 
+> **Course order change:** `pwm` now sits between `gpio` and this video, so "last time" no longer means the GPIO output video. r1 and s4 were reworded to not depend on it, and the payoff's "next:" now points to tasks.
+
 > **Under-the-hood scene cut** (rule "teach driving, not the engine", `AGENTS.md`). The scene, its VO and its sound were removed; the video goes straight from the second knob to the payoff. Its storyboard rows and facts are kept below, marked *(cut)*, for reference only.
 
 Slug `gpio-input` · composition `GPIOInput` · `out/gpio-input.mp4` · ~6 min · every claim → `FACTS.md`.
@@ -51,7 +53,7 @@ Scene 9 extends the loop to count presses (edge + `ESP_LOGI`).
 | 9 | Counting presses | level vs edge; bounce (Ganssle's numbers); polling every 10 ms is the debouncer |
 | 10 | Second knob: pull-up vs pull-down | wiring + one word in code flips the logic; never both |
 | 11 | ~~Under the hood~~ *(cut)* | `gpio_get_level` → `(hw->in >> 18) & 1` → GPIO_IN_REG; FUN_IE / FUN_WPU bits in IO_MUX_GPIO18_REG |
-| 12 | Payoff | "Make it an input. Give it a pull. Read its level." → next: interrupts |
+| 12 | Payoff | "Make it an input. Give it a pull. Read its level." → next: tasks |
 
 ## 1 · Problem
 
@@ -82,7 +84,7 @@ Scene 9 extends the loop to count presses (edge + `ESP_LOGI`).
 
 | VO | Visual |
 |---|---|
-| r1 "In app_main, start the same way as last time: gpio_reset_pin, with the button's pin." | call + card `pin · GPIO_NUM_18` |
+| r1 "In app_main, start the same way as for an output: gpio_reset_pin, with the button's pin." | call + card `pin · GPIO_NUM_18` |
 | r2 "It puts the pin in a known state: a plain GPIO, output off, and, for saving power, a weak pull-up. But the input is off too." | register-card rows from the source: function = GPIO ✓ · output off ✓ · pull-up on ✓ · **input off** (red) |
 | r3 "So right now, the pin can't be read at all." | `gpio_get_level(BUTTON) → 0`, whatever the button does |
 
@@ -93,7 +95,7 @@ Scene 9 extends the loop to count presses (edge + `ESP_LOGI`).
 | s1 "gpio_set_direction makes it an input. Two things: the pin, and the mode." | call + cards |
 | s2 "GPIO_MODE_INPUT switches on the pin's input buffer, and leaves its output driver off. The pin only listens." | pin diagram (output video's, mirrored): input buffer gate closes, output driver greyed; mode bits `0b001` |
 | s3 "Forget this line, and gpio_get_level always returns zero. With a button to ground, zero means pressed, so your program sees the button held down forever." | header @warning quoted; button released but reads `0 0 0 …` → "pressed" ✗ |
-| s4 "Input mode works on every GPIO, even thirty-four to thirty-nine. The error from last time only applies to outputs." | `gpio_set_direction(GPIO_NUM_34, GPIO_MODE_INPUT) → ESP_OK` ✓ (vs struck OUTPUT) |
+| s4 "Input mode works on every GPIO, even thirty-four to thirty-nine. The pin thirty-four error you've seen was only for outputs." | `gpio_set_direction(GPIO_NUM_34, GPIO_MODE_INPUT) → ESP_OK` ✓ (vs struck OUTPUT) |
 
 ## 6 · `gpio_set_pull_mode(BUTTON, GPIO_PULLUP_ONLY);`
 

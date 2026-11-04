@@ -36,7 +36,7 @@ export const SCENES: { id: InSceneId; dur: number }[] = [
   { id: 'answer', dur: 21.4 },
   { id: 'circuit', dur: 34.8 },
   { id: 'reset', dur: 23.6 },
-  { id: 'direction', dur: 33.9 },
+  { id: 'direction', dur: 34.6 },
   { id: 'pull', dur: 51.3 },
   { id: 'read', dur: 31.1 },
   { id: 'demo', dur: 32.6 },
@@ -160,8 +160,8 @@ export const CIRCUIT = {
 
 export const RESET = {
   code: 'gpio_reset_pin(BUTTON);',
-  run: 3.7, // "gpio_reset_pin" 0.5+3.20
-  args: [{ token: 'BUTTON', at: 5.38, title: 'pin', value: 'GPIO_NUM_18', sub: '#define BUTTON GPIO_NUM_18' }], // "the button's pin" 0.5+4.88
+  run: 3.9, // "gpio_reset_pin" 0.5+3.40
+  args: [{ token: 'BUTTON', at: 5.5, title: 'pin', value: 'GPIO_NUM_18', sub: '#define BUTTON GPIO_NUM_18' }], // "the button's pin" 0.5+5.00
   views: { state: 6.5, read: 15.34 },
   state: {
     known: 7.46, // "a known state" 6.5+0.96
@@ -211,7 +211,7 @@ export const DIRECTION = {
   any: {
     every: 26.66, // "every GPIO" 25.3+1.36
     gpio34: 28.44, // "thirty-four to thirty-nine" 25.3+3.14
-    outputs: 31.74, // "only for outputs" 25.3+6.44
+    outputs: 32.4, // "only for outputs" 25.3+7.10
   },
   captions: [
     { at: 0.5, text: 'gpio_set_direction(pin, mode)' },
@@ -499,7 +499,7 @@ export const PAYOFF = {
     { at: 5.35, k: 'gpio_set_pull_mode(…, PULLUP_ONLY)', v: 'a default level · 45 kΩ' },
     { at: 5.7, k: 'gpio_get_level(pin)', v: '0 or 1 · right now' },
     { at: 6.05, k: 'read every tick', v: 'one press, one count — bounce ignored' },
-    { at: 6.4, k: 'polling', v: 'next: let the pin tell you → interrupts' },
+    { at: 6.4, k: 'polling', v: 'next: two jobs at once → tasks' },
   ],
 };
 
@@ -560,8 +560,8 @@ export const VO: VoLine[] = [
     id: 'r1',
     scene: 'reset',
     at: 0.5,
-    text: "In app_main, start the same way as last time: gpio_reset_pin, with the button's pin.",
-    say: "In app main, start the same way as last time: GPIO reset pin, with the button's pin.",
+    text: "In app_main, start the same way as for an output: gpio_reset_pin, with the button's pin.",
+    say: "In app main, start the same way as for an output: GPIO reset pin, with the button's pin.",
   },
   {
     id: 'r2',
@@ -603,7 +603,7 @@ export const VO: VoLine[] = [
     id: 's4',
     scene: 'direction',
     at: 25.3,
-    text: 'Input mode works on every GPIO, even thirty-four to thirty-nine. The error from last time was only for outputs.',
+    text: "Input mode works on every GPIO, even thirty-four to thirty-nine. The pin thirty-four error you've seen was only for outputs.",
   },
 
   {

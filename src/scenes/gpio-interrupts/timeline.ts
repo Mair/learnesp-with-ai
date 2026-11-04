@@ -405,7 +405,7 @@ export const PAYOFF = {
     { at: 4.75, k: 'gpio_install_isr_service(0)', v: 'once, at start-up' },
     { at: 5.1, k: 'gpio_isr_handler_add(pin, fn, arg)', v: 'your function, for that pin' },
     { at: 5.45, k: 'xQueueSendFromISR → xQueueReceive', v: 'the task sleeps until it happens' },
-    { at: 5.8, k: 'wait · xQueueReset · read once', v: 'bounce handled · next: PWM' },
+    { at: 5.8, k: 'wait · xQueueReset · read once', v: 'bounce handled' },
   ],
 };
 

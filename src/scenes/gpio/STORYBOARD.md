@@ -112,6 +112,6 @@ Cards: `pdMS_TO_TICKS(500)` (ms → ticks) and `vTaskDelay` (blocks your task).
 
 ## 11 · Payoff
 
-"Make it an output. Set its level. That's GPIO." — recap: `gpio_reset_pin` → a known state · `gpio_set_direction` → output driver on · `gpio_set_level` → one bit, one register · `vTaskDelay(pdMS_TO_TICKS(ms))` → ticks, CPU free · HIGH or LOW → nothing in between → next: PWM.
+"Make it an output. Set its level. That's GPIO." — recap: `gpio_reset_pin` → a known state · `gpio_set_direction` → output driver on · `gpio_set_level` → the pin holds it · returns ESP_OK · `vTaskDelay(pdMS_TO_TICKS(ms))` → ticks, CPU free · HIGH or LOW → nothing in between → next: PWM.
 
 Scenes 2, 3 and 9 (answer, circuit, current) are unchanged from v1.

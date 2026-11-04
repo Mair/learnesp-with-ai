@@ -75,15 +75,21 @@ a `FACTS.md` cites comes from **ESP-IDF v6.0 or later**, never v5.x or older.
 A video may only use APIs and concepts that earlier videos taught.
 The order so far:
 
-1. `gpio` (output) → 2. `gpio-input` (polled input) →
-3. **FreeRTOS series**: `freertos-tasks` → scheduler & priorities →
+1. `gpio` (output) → 2. `pwm` (dimming: LEDC) → 3. `gpio-input` (polled input) →
+4. **FreeRTOS series**: `freertos-tasks` → scheduler & priorities →
    delay-until → two cores → stacks & watchdog → queues → mutexes →
    priority inversion → semaphores → task notifications → event groups →
    timers → critical sections → task stats →
-4. `gpio-interrupts`, which **needs** FreeRTOS: tasks, queues, `…FromISR`,
+5. `gpio-interrupts`, which **needs** FreeRTOS: tasks, queues, `…FromISR`,
    `portYIELD_FROM_ISR`.
 
-So in the FreeRTOS videos, GPIO is limited to what videos 1–2 taught:
+`pwm` comes straight after `gpio`, which ends on "a pin is only high or low,
+nothing in between". It may only use what `gpio` taught: `app_main`,
+`vTaskDelay(pdMS_TO_TICKS(ms))`, "your task waits, the CPU is free",
+`esp_err_t` / `ESP_ERROR_CHECK`, `ESP_LOGx`. Anything new (a struct of
+settings, `&` to hand it over) is explained in the video where it first appears.
+
+So in the FreeRTOS videos, GPIO is limited to what `gpio` and `gpio-input` taught:
 `gpio_reset_pin`, `gpio_set_direction`, `gpio_set_level`,
 `gpio_set_pull_mode`, `gpio_get_level`, polled in a loop. No `gpio_config`
 with `intr_type`, no ISR service, no interrupts. Each task drives its own
