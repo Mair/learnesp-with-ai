@@ -28,6 +28,12 @@ For a new topic, map onto these meanings (ADC: input voltage = magenta signal; r
 - Live numbers: `padStart(n, '\u2007')` so digits don't jitter; `tabular-nums` in HTML.
 - `GRAD_TEXT` (cyan → white → magenta → amber) only for hero moments: P·W·M, `2⁸`, the payoff line.
 
+## Code on screen
+
+- **Full ESP-IDF names, always.** Write `LEDC_LOW_SPEED_MODE`, `LEDC_CHANNEL_0`, `GPIO_MODE_OUTPUT`, never a `#define` shorthand for them (`MODE`, `CH`), so every line matches the ESP-IDF docs the learner will look up. (`#define LED GPIO_NUM_2` for *your* pin is fine — it names a wire on your board, not an API constant.)
+- **Highlight the value that matters.** In each call, the argument the scene is about (the duty `128`, the time `2800`, the frequency `440`) is drawn in amber (`C.amber`, bold, tinted background) every time it appears, so it never gets lost among the long constants.
+- **Long calls wrap one argument per line** in the Explainer call line rather than shrinking the font; the highlighted value stays on its own line.
+
 ## Shot types
 
 | Shot | Component | Use for |
