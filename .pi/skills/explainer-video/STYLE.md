@@ -22,7 +22,7 @@ For a new topic, map onto these meanings (ADC: input voltage = magenta signal; r
 
 ## Type
 
-- `FONT.sans` (Inter) for narration-like text; `FONT.mono` (JetBrains Mono) for code, numbers, axis labels, register names.
+- `FONT.sans` (Inter) for narration-like text; `FONT.mono` (JetBrains Mono) for code, numbers, axis labels.
 - `Kicker` — scene title, uppercase, spaced, top centre (`Setting up the pin · ledcAttach()`).
 - Explainer call line: mono 50 px. Card value 36 px bold, card title 15 px mono uppercase. Caption 32 px (36 in CodeToHardware), bottom centre.
 - Live numbers: `padStart(n, '\u2007')` so digits don't jitter; `tabular-nums` in HTML.
@@ -36,7 +36,6 @@ For a new topic, map onto these meanings (ADC: input voltage = magenta signal; r
 | **Code mutation** | `CodeAndViews` with `code` computed from `t` | "the other way to write it": the code panel's lines change on cue (`while (1) {` → `for (…) {`, a line inserted) with a `strong` mark + label on each changed line (`freertos-tasks/Fn.tsx`). The view beside it shows before → after chips (struck-through red → green). |
 | **CodeToHardware** | `CodeToHardware` | code on the left, the physical result (LED / speaker) on the right, scope underneath; `beats` with token `marks`; `timescale` for slow motion |
 | **Scope** | `Scope` | a rolling square wave; the right edge is "now" |
-| **Layer descent** | `UnderTheHood` pattern | real source quoted per layer (path in the panel header, "…" for trimmed lines), arrows labelled with the call, camera framing each new layer with its caller |
 | **Marks** | `CodeLine` | underline a token and hang a short label under it, one per spoken word |
 | Props | `Led`, `Speaker`, `Panel` | |
 
@@ -46,7 +45,7 @@ Diagram vocabulary that worked — reach for these first:
 - **staircase** where a value is quantised (fade steps, 4-bit vs 8-bit bars) — the natural picture for ADC
 - **✗ / ✓ side-by-side cards** for a misconception vs the truth
 - **budget bars** against a limit line, overflow drawn in RED past the line
-- **register card**: field · value · meaning, rows lighting on their spoken word
+- **state card**: setting · value · meaning (e.g. what `gpio_reset_pin` leaves the pin as), rows lighting on their spoken word — plain words, not register fields
 - **CPU lane**: your call as a short box, `loop()` boxes carrying on, the interrupt callback at the end
 
 ## Motion

@@ -25,7 +25,6 @@ export type InSceneId =
   | 'demo'
   | 'count'
   | 'pulls'
-  | 'idf'
   | 'payoff';
 
 export const FPS = 30;
@@ -43,7 +42,6 @@ export const SCENES: { id: InSceneId; dur: number }[] = [
   { id: 'demo', dur: 32.6 },
   { id: 'count', dur: 57.3 },
   { id: 'pulls', dur: 25.7 },
-  { id: 'idf', dur: 35.4 },
   { id: 'payoff', dur: 9.6 },
 ];
 export type SceneId = InSceneId;
@@ -72,8 +70,6 @@ export const VIL = 0.25 * VDD; // 0.825
 export const R_PULL_K = 45;
 export const PULL_UA = (VDD / (R_PULL_K * 1000)) * 1e6; // ≈ 73
 export const TICK_MS = 10; // pdMS_TO_TICKS(10) = 1 tick at CONFIG_FREERTOS_HZ = 100
-export const IN_ADDR = '0x3FF4403C';
-export const IOMUX18_ADDR = '0x3FF49070';
 
 /** a floating input: wanders through the undefined band (illustrative, deterministic) */
 export function floatV(s: number): number {
@@ -491,64 +487,7 @@ export const PULLS = {
   ] as Caption[],
 };
 
-// ── 11. under the hood ────────────────────────────────────────────────────
-
-/** a mark on a specific line of a layer's code */
-export type LineMark = Mark & { line: number };
-export type Layer = { at: number; name: string; path: string; via?: string; code: string[]; marks: LineMark[] };
-
-export const IDF_VERSION = 'ESP-IDF v6.0.2 · real source, trimmed with …';
-
-export const IDF = {
-  layers: [
-    {
-      at: 0.3,
-      name: 'your code',
-      path: 'main/main.c',
-      code: ['int level = gpio_get_level(BUTTON);'],
-      marks: [{ line: 0, at: 1.0, token: 'gpio_get_level' }], // "gpio_get_level" 0.5+0.50
-    },
-    {
-      at: 4.84, // "ESP-IDF driver" 4.52+0.32
-      name: 'ESP-IDF · GPIO driver',
-      path: 'components/esp_driver_gpio/src/gpio.c',
-      via: 'gpio_get_level()',
-      code: ['int gpio_get_level(gpio_num_t gpio_num)', '{', '    return gpio_hal_get_level(gpio_context.gpio_hal, gpio_num);', '}'],
-      marks: [
-        { line: 0, at: 6.5, token: 'int', label: 'no esp_err_t · no GPIO_CHECK' }, // "no checking at all" 4.52+1.98
-        { line: 2, at: 8.14, token: 'gpio_hal_get_level', label: 'straight down to the hardware layer', strong: true }, // "straight" 4.52+3.62
-      ],
-    },
-    {
-      at: 10.3, // "And at the bottom" 10.3+0
-      name: 'HAL · one load',
-      path: 'components/esp_hal_gpio/esp32/include/hal/gpio_ll.h',
-      via: 'gpio_hal_get_level() → gpio_ll_get_level()',
-      code: ['if (gpio_num < 32) {', '    return (hw->in >> gpio_num) & 0x1;', '} else {', '    return (… hw->in1 …) >> (gpio_num - 32)) & 0x1;', '}'],
-      marks: [
-        { line: 1, at: 12.9, token: 'hw->in', label: 'read GPIO_IN · shift · keep one bit', strong: true }, // "Read the input register" 10.3+2.60
-        { line: 1, at: 14.34, token: '>> gpio_num' }, // "shift it right" 10.3+4.04
-        { line: 1, at: 15.96, token: '& 0x1' }, // "keep one bit" 10.3+5.66
-      ],
-    },
-  ] as Layer[],
-  register: 17.48, // "That register" 17.48+0
-  all32: 20.08, // "all thirty-two" 17.48+2.60
-  bit18: 22.46, // "Bit eighteen" 17.48+4.98
-  /** the button pressed while we look at the register */
-  presses: [
-    [22.9, 23.7],
-    [26.0, 26.6],
-  ] as [number, number][],
-  setup: 24.48, // "And the setup calls" 24.48+0
-  iomux: 27.94, // "IO MUX register" 24.48+3.46
-  ie: 30.06, // "bit nine" 24.48+5.58
-  wpu: 32.02, // "bit eight" 24.48+7.54
-  /** the other 31 pins' levels — arbitrary, dimmed: not our business */
-  inOthers: 0b1010_0000_0000_0010_0000_0001_0011_0001,
-};
-
-// ── 12. payoff ─────────────────────────────────────────────────────────────
+// ── 11. payoff ─────────────────────────────────────────────────────────────
 
 export const PAYOFF = {
   input: 1.0, // "Make it an input" 0.6+0.40
@@ -558,7 +497,7 @@ export const PAYOFF = {
   recap: [
     { at: 5.0, k: 'gpio_set_direction(…, INPUT)', v: 'input buffer on' },
     { at: 5.35, k: 'gpio_set_pull_mode(…, PULLUP_ONLY)', v: 'a default level · 45 kΩ' },
-    { at: 5.7, k: 'gpio_get_level(pin)', v: 'one bit · a snapshot' },
+    { at: 5.7, k: 'gpio_get_level(pin)', v: '0 or 1 · right now' },
     { at: 6.05, k: 'read every tick', v: 'one press, one count — bounce ignored' },
     { at: 6.4, k: 'polling', v: 'next: let the pin tell you → interrupts' },
   ],
@@ -783,29 +722,6 @@ export const VO: VoLine[] = [
     scene: 'pulls',
     at: 15.3,
     text: "Just never turn on both. Two equal resistors split the voltage in half, about one point six five volts, right in the zone the datasheet doesn't promise.",
-  },
-
-  {
-    id: 'i1',
-    scene: 'idf',
-    at: 0.5,
-    text: "So what does gpio_get_level really do? Let's follow it down.",
-    say: "So what does GPIO get level really do? Let's follow it down.",
-  },
-  { id: 'i2', scene: 'idf', at: 4.52, text: "In the ESP-IDF driver, there's no checking at all. It goes straight to the hardware layer." },
-  {
-    id: 'i3',
-    scene: 'idf',
-    at: 10.3,
-    text: "And at the bottom, it's one line: read the input register, shift it right by the pin number, and keep one bit.",
-  },
-  { id: 'i4', scene: 'idf', at: 17.48, text: 'That register holds the level of all thirty-two lower pins at once. Bit eighteen is your button.' },
-  {
-    id: 'i5',
-    scene: 'idf',
-    at: 24.48,
-    text: "And the setup calls each set one bit in the pin's own IO MUX register: bit nine turns the input on, and bit eight connects the pull-up.",
-    say: "And the setup calls each set one bit in the pin's own I O mux register: bit nine turns the input on, and bit eight connects the pull up.",
   },
 
   {

@@ -4,7 +4,7 @@
 
 Every explainer is **pure ESP-IDF** — `app_main`, driver APIs, `vTaskDelay(pdMS_TO_TICKS(ms))`, no Arduino (the PWM video's Arduino calls are legacy; its *structure* still applies).
 
-Every explainer follows the arc the PWM video used (310 s):
+Every explainer follows this arc (the PWM video, 310 s, minus its cut under-the-hood scene):
 
 | # | Scene | Job | PWM video |
 |---|---|---|---|
@@ -14,12 +14,11 @@ Every explainer follows the arc the PWM video used (310 s):
 | 4 | **Demo** | real code runs, the hardware responds on the same frame (`CodeToHardware`), slowed if needed | knob 1: duty → brightness, slowed 500× |
 | 5 | **Deeper calls** | any call that hides machinery gets its own Explainer after the demo that used it | `ledcFade` |
 | 6 | **Second knob** | the other dimension, contrasted with the first | frequency → pitch, on a speaker |
-| 7 | **Under the hood** *(optional)* | descend the real call path: `app_main` → ESP-IDF driver (+ its API doc) → HAL register writes → silicon | `ledc_update_duty` → `ledc_ll_set_duty_start` → `duty_start = 1` |
-| 8 | **Payoff** | one spoken line, then a 3–4 item recap | "That's PWM." |
+| 7 | **Payoff** | one spoken line, then a 3–4 item recap | "That's PWM." |
 
-The under-the-hood scene earns its place when the register writes *are* the lesson (PWM, GPIO). When the audience is new to the whole subject (the first FreeRTOS video) it reads as "complicated" and gets cut in review — research it anyway, keep its facts in `FACTS.md`, and offer it as a candidate rather than a given.
+**There is no under-the-hood scene.** The course teaches how to *use* the ESP32 — you don't need to know how an engine works to drive a car. Never descend into driver source, HAL/LL functions, registers or bit fields. Research them (they keep `FACTS.md` honest), then say only what the learner will notice and what to do about it.
 
-Mapping a new topic means finding its problem, its one-image answer, its calls, and its two knobs. For **A-to-D conversion** a plausible arc (verify every call in step 1) is: problem — a sensor gives a smooth voltage but the CPU only knows numbers → answer — sample it, chop it into steps → Explainers for the resolution / attenuation / read calls → demo: a potentiometer turning while the number tracks → second knob: attenuation (input range) vs resolution (step size) → under the hood: `esp32-hal-adc.c` → `adc_oneshot_read` → SAR conversion → payoff.
+Mapping a new topic means finding its problem, its one-image answer, its calls, and its two knobs. For **A-to-D conversion** a plausible arc (verify every call in step 1) is: problem — a sensor gives a smooth voltage but the CPU only knows numbers → answer — sample it, chop it into steps → Explainers for the resolution / attenuation / read calls → demo: a potentiometer turning while the number tracks → second knob: attenuation (input range) vs resolution (step size) → payoff.
 
 ## The depth standard
 
@@ -31,7 +30,7 @@ Apply every point to **every argument of every call** and every concept a scene 
 4. **Range, and where the range comes from** (8 bits → 0…255; 10 bits → 0…1023: "the same half becomes 512").
 5. **Edge values** — 0, the max, out-of-range — and what really happens (255 is bumped to 256 = fully on).
 6. **Limits and trade-offs** with the arithmetic (frequency × 2^bits must fit in 80 MHz → 1 kHz × 17 bits ✗).
-7. **What the code really does**, from the source — rounding, clamping, defaults, the return value (fade really takes 2.76 s; `ledcAttach` returns false if it can't fit).
+7. **What you'll actually get** — rounding, clamping, defaults, the return value, as the learner sees them (the fade really takes 2.76 s; the config returns `ESP_FAIL` if it can't fit). Say *what* happens, not the code path that makes it happen.
 8. **Who does the work** — your code or the peripheral; does the call block; what the CPU is free to do.
 9. **A callback** to an earlier image when a new idea is the same mechanism ("it's the line across the counter from before").
 

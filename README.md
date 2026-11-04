@@ -3,11 +3,12 @@
 Narrated, animated explainer videos for the ESP32 course, built in
 [Remotion](https://www.remotion.dev/). Picture, narration and sound are all
 generated from one timeline per video; every fact on screen is checked against
-the arduino-esp32 / ESP-IDF source.
+the ESP-IDF source (v6.0+). The videos teach how to *use* the ESP32, not how the
+driver works inside: no under-the-hood scenes (see `AGENTS.md`).
 
 | Video | Composition | Length | What it covers |
 |---|---|---|---|
-| PWM (Module 01) | `PWM` | 5:10 | why a pin can't dim → PWM → `ledcAttach` (frequency, resolution, clock budget) → `ledcWrite` (the duty) → LED demo → `ledcFade` (staircase, fade engine) → `ledcWriteTone` → under the hood → payoff |
+| PWM (Module 01, legacy Arduino — ESP-IDF rewrite in progress) | `PWM` | 4:25 | why a pin can't dim → PWM → `ledcAttach` (frequency, resolution, clock budget) → `ledcWrite` (the duty) → LED demo → `ledcFade` (staircase, fade engine) → `ledcWriteTone` → payoff |
 
 ## Making a video
 
@@ -50,7 +51,7 @@ src/
     pwm/
       timeline.ts            single source of truth: scenes, cues, VO, shared maths
       FACTS.md               every claim and the source file it came from
-      Problem Answer Setup Write Fade UnderTheHood Payoff .tsx
+      Problem Answer Setup Write Fade Payoff .tsx
 scripts/
   lib/audio.ts             synthesis, voice-over, SFX, music, mastering (shared)
   pwm-audio.ts             the PWM soundtrack

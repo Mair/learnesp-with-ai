@@ -19,10 +19,10 @@
  *           speaker scene stays the only place PWM is heard as pitch.
  *   TONE    knob 2: the literal square wave ledcWriteTone() would put on the
  *           pin — A4 C5 E5 A5. What you hear is what the pin does.
- *   SFX     ticks as code lines run / layers land, a latch click on the
- *           register write, sub thumps on the big moments
+ *   SFX     ticks as code lines run / cards land, sub thumps on the big
+ *           moments
  *   MUSIC   C3·E3·A3 pad over A2 → A minor; ducked under VO and under the
- *           literal tones; machinery pulse under the IDF; cut dead before the
+ *           literal tones; cut dead before the
  *           payoff, resolves to A major under "That's PWM."
  *
  *   SETUP   (ledcAttach scene) 5 Hz clicks under the blinking LED that fuse
@@ -57,7 +57,6 @@ import { apparentHz, dutyAt, fusion, hzAt, type Beat } from '../src/components/p
 import {
   ANSWER,
   DUTY,
-  IDF,
   MAX,
   PAYOFF,
   PROBLEM,
@@ -114,7 +113,7 @@ const wish = new Float32Array(N);
   level(wish, -27, abs('problem', P.pitch[0] + 0.3), abs('problem', P.pitch[1]));
 }
 
-// ── 3. PWM sonification (answer, knob 1, under the hood) ──────────────────
+// ── 3. PWM sonification (answer, knob 1) ───────────────────────────────────
 
 console.log('── pwm sonification ──');
 const pwm = new Float32Array(N);
@@ -122,9 +121,6 @@ const pwm = new Float32Array(N);
   const aS = sceneStart('answer');
   const dS = sceneStart('duty');
   const dE = dS + sceneDur('duty');
-  const hS = abs('idf', IDF.hardware);
-  const hE = abs('idf', sceneDur('idf') - 0.3);
-  const hwDuty = IDF.duty / MAX;
   const sS = sceneStart('setup');
   const flickA = sS + SETUP.views.flicker;
   const flickFast = sS + SETUP.flicker.fast;
@@ -165,11 +161,6 @@ const pwm = new Float32Array(N);
       const g = pwmGain(duty) * (1 - fusion(fd));
       if (g < 1e-4) return null;
       return { f: Math.min(fd, TONE_HZ), duty, g };
-    }
-    // under the hood: the hardware quietly doing it on its own
-    if (t >= hS && t < hE) {
-      const env = smooth((t - hS) / 1.5) * (1 - smooth((t - (hE - 1.2)) / 1.2));
-      return { f: TONE_HZ, duty: hwDuty, g: pwmGain(hwDuty) * env * 0.5 };
     }
     return null;
   });
@@ -305,21 +296,9 @@ thump(abs('answer', ANSWER.letters[2]), 0.3);
 DUTY.beats.forEach((b) => tick(abs('duty', b.at)));
 thump(abs('duty', DUTY.beats[0].at), 0.3);
 TONE.beats.forEach((b) => tick(abs('tone', b.at), 2350, 0.09));
-// under the hood: each layer lands a little lower — we're descending
-IDF.layers.forEach((l, i) => tick(abs('idf', l.at), 2300 - 260 * i, 0.15));
 // marks: a soft tick as each token gets pointed at; a thump on the big ones
 for (const b of [...DUTY.beats]) for (const m of b.marks ?? []) tick(abs('duty', m.at), 3100, 0.05);
 for (const b of [...TONE.beats]) for (const m of b.marks ?? []) if (b.duty === 0) tick(abs('tone', m.at), 3100, 0.05);
-for (const l of IDF.layers)
-  for (const m of l.marks) {
-    tick(abs('idf', m.at), 3100, 0.05);
-    if (m.strong) thump(abs('idf', m.at), 0.22);
-  }
-// the register bit itself: a latch clack
-const go = IDF.layers[IDF.layers.length - 1].marks.find((m) => m.strong);
-if (go) clack(abs('idf', go.at), 0.2);
-tick(abs('idf', IDF.hardware), 1200, 0.15);
-blip(abs('idf', IDF.free), 660, 990, 0.08);
 // payoff
 thump(abs('payoff', PAYOFF.line), 0.45);
 PAYOFF.recap.forEach((r, i) => tick(abs('payoff', r.at), 1600 + 200 * i, 0.08));
@@ -331,14 +310,6 @@ const music = new Float32Array(N);
 const MUSIC_CUT = abs('payoff', 0) - 0.15;
 {
   pad(music, [130.81, 164.81, 220.0], 0, MUSIC_CUT, 1, 3, 0.08);
-  // machinery: a soft gated A1 pulse under the IDF descent (100 BPM 8ths)
-  const iS = sceneStart('idf');
-  for (let i = S(iS); i < S(MUSIC_CUT); i++) {
-    const t = i / SR;
-    const gate = ((t - iS) * (100 / 60) * 2) % 1;
-    const env = Math.exp(-gate * 7) * smooth((t - iS) / 2) * Math.min(1, (MUSIC_CUT - t) / 0.08);
-    music[i] += 1.4 * env * Math.sin(2 * Math.PI * 55 * t);
-  }
   // payoff: resolve to A major
   pad(music, [110.0, 164.81, 220.0, 277.18], abs('payoff', PAYOFF.line), SECONDS, 1.15, 0.35, 2.5);
   biquad(music, 'lp', 1400, 0.6);

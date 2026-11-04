@@ -16,8 +16,7 @@
  *   SFX     ticks as lines run / cards land / views change, clacks when a
  *           switch or register bit latches, buzzes on the rejected ideas,
  *           blips when it works, thumps on the big moments
- *   MUSIC   the house pad (C3·E3·A3 over A2), ducked under VO, a gated pulse
- *           under the IDF descent, cut before the payoff, resolving to A major
+ *   MUSIC   the house pad (C3·E3·A3 over A2), ducked under VO, cut before the payoff, resolving to A major
  *
  * Output: public/gpio/mix.wav (−16 LUFS, −1.5 dBTP) + stems in out/gpio-stems/.
  */
@@ -32,7 +31,6 @@ import {
   DELAY,
   DELAY_MS,
   DIRECTION,
-  IDF,
   msToTicks,
   PAYOFF,
   PROBLEM,
@@ -238,20 +236,6 @@ tick(abs('blink', BLINK.second), 3100, 0.05);
   blip(at(K.budget.load), 660, 990, 0.07);
 }
 
-// under the hood: each layer lands a little lower — we're descending
-IDF.layers.forEach((l, i) => tick(abs('idf', l.at), 2300 - 260 * i, 0.15));
-for (const l of IDF.layers)
-  for (const m of l.marks) {
-    tick(abs('idf', m.at), 3100, 0.05);
-    if (m.strong) thump(abs('idf', m.at), 0.2);
-  }
-tick(abs('idf', IDF.register), 1200, 0.15);
-clack(abs('idf', IDF.write), 0.22); // the bit latches
-blip(abs('idf', IDF.others), 660, 990, 0.06);
-tick(abs('idf', IDF.direction), 1200, 0.12);
-clack(abs('idf', IDF.route), 0.14);
-clack(abs('idf', IDF.enable), 0.16);
-
 // payoff
 tick(abs('payoff', PAYOFF.output), 1800, 0.08);
 tick(abs('payoff', PAYOFF.level), 2100, 0.08);
@@ -265,13 +249,6 @@ const music = new Float32Array(N);
 const MUSIC_CUT = abs('payoff', 0) - 0.15;
 {
   pad(music, [130.81, 164.81, 220.0], 0, MUSIC_CUT, 1, 3, 0.08);
-  const iS = sceneStart('idf');
-  for (let i = S(iS); i < S(MUSIC_CUT); i++) {
-    const t = i / SR;
-    const gate = ((t - iS) * (100 / 60) * 2) % 1;
-    const env = Math.exp(-gate * 7) * smooth((t - iS) / 2) * Math.min(1, (MUSIC_CUT - t) / 0.08);
-    music[i] += 1.4 * env * Math.sin(2 * Math.PI * 55 * t);
-  }
   pad(music, [110.0, 164.81, 220.0, 277.18], abs('payoff', PAYOFF.line), SECONDS, 1.15, 0.35, 2.5);
   biquad(music, 'lp', 1400, 0.6);
   level(music, -30, 3, 6);

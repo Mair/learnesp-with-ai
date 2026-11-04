@@ -1,5 +1,7 @@
 # GPIO — storyboard v2 (pure ESP-IDF, draft for approval)
 
+> **Under-the-hood scene cut** (rule "teach driving, not the engine", `AGENTS.md`). The scene, its VO and its sound were removed; the video goes straight from the second knob to the payoff. Its storyboard rows and facts are kept below, marked *(cut)*, for reference only.
+
 Slug `gpio` · composition `GPIO` · `out/gpio.mp4` · ~5½ min · every claim → `FACTS.md`.
 **No Arduino**: `app_main`, ESP-IDF driver calls, `vTaskDelay(pdMS_TO_TICKS(ms))`.
 
@@ -39,7 +41,7 @@ void app_main(void)
 | 7 | Blink | the whole `app_main`, real time | rewritten |
 | 8 | `vTaskDelay(pdMS_TO_TICKS(500))` | ticks (100 Hz → 50 ticks), rounding down to 0, blocked = CPU free, no delay → watchdog + dimmer | rewritten (was delay) |
 | 9 | Second knob: current | code = on/off, resistor = how much; signal, not supply | same |
-| 10 | Under the hood | `gpio_set_level` → `gpio_ll_set_level` → `out_w1ts` → register; `gpio_set_direction`'s writes | Arduino layer removed |
+| 10 | ~~Under the hood~~ *(cut)* | `gpio_set_level` → `gpio_ll_set_level` → `out_w1ts` → register; `gpio_set_direction`'s writes | Arduino layer removed |
 | 11 | Payoff | "Make it an output. Set its level. That's GPIO." | recap updated |
 
 ## 1 · Problem
@@ -98,7 +100,7 @@ Cards: `pdMS_TO_TICKS(500)` (ms → ticks) and `vTaskDelay` (blocks your task).
 | y5 "Take the delays out, and the task watchdog complains after five seconds, because your loop never lets the idle task run." | delays struck; 5 s timer; `E (…) task_wdt: Task watchdog got triggered…` `IDLE0 (CPU 0)` |
 | y6 "And the pin flips far too fast to see. The LED just looks dimmer. Hold that thought." | scope blurs; LED dims |
 
-## 10 · Under the hood
+## 10 · Under the hood *(cut)*
 
 | VO | Visual |
 |---|---|

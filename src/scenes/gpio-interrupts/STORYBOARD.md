@@ -1,5 +1,7 @@
 # GPIO interrupts — storyboard v1 (pure ESP-IDF)
 
+> **Under-the-hood scene cut** (rule "teach driving, not the engine", `AGENTS.md`). The scene, its VO and its sound were removed; the video goes straight from the second knob to the payoff. Its storyboard rows and facts are kept below, marked *(cut)*, for reference only.
+
 Slug `gpio-interrupts` · composition `GPIOInterrupts` · `out/gpio-interrupts.mp4` · ~6 min · every claim → `FACTS.md`.
 Third in the series: same board, same button on GPIO 18 (pull-up, active low).
 Planned and built without a stop for approval (user's request); decisions noted at the end.
@@ -66,7 +68,7 @@ void app_main(void)
 | 8 | Demo | press → status bit → dispatcher → button_isr → queue → task logs; 100 wake-ups/s vs one per press |
 | 9 | Bounce | one press = five interrupts; release bounces too; fix in the task: wait 30 ms, xQueueReset, read once |
 | 10 | Second knob: the trigger | NEG / POS / ANY edge; level types keep firing while held → for waking from light sleep |
-| 11 | Under the hood | GPIO_PIN18_REG INT_TYPE = 2, INT_ENA = PRO CPU → GPIO_STATUS bit 18 → `gpio_intr_service` → `__builtin_ffs` → clear first (edge) → `fn(args)` |
+| 11 | ~~Under the hood~~ *(cut)* | GPIO_PIN18_REG INT_TYPE = 2, INT_ENA = PRO CPU → GPIO_STATUS bit 18 → `gpio_intr_service` → `__builtin_ffs` → clear first (edge) → `fn(args)` |
 | 12 | Payoff | "Don't keep asking. Let the pin tell you." |
 
 Narration and per-line cues: `timeline.ts` (VO + cue objects, each cue noted with its word).

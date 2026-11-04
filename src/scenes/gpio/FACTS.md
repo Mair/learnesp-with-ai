@@ -48,14 +48,14 @@ which writes the `func_sel` field = 256.
 | No delay at all: the main task (prio 1, CPU 0) never blocks → IDLE0 (prio 0) never runs → the Task Watchdog (on by default, 5 s, watches IDLE0 and IDLE1, panic off) prints `E (…) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:` … `IDLE0 (CPU 0)` — and the program keeps running | `esp_system/Kconfig` l.295–355 (`ESP_TASK_WDT_EN/INIT` y, `TIMEOUT_S` 5, `CHECK_IDLE_TASK_CPU0/1` y, `PANIC` n); `esp_system/task_wdt/task_wdt.c` l.790–791 |
 | The pin toggling with no delay is far too fast to see → the LED looks dimmer (persistence of vision) | physics — **not yet verified on hardware** |
 
-## What `gpio_set_direction(…, GPIO_MODE_OUTPUT)` does to the hardware
+## What `gpio_set_direction(…, GPIO_MODE_OUTPUT)` does to the hardware *(cut: the under-the-hood scene was removed; kept for reference)*
 
 | Fact | Source |
 |---|---|
 | `gpio_output_enable`: ① route "simple GPIO output" through the GPIO matrix (`SIG_GPIO_OUT_IDX` = 256 → `GPIO_FUNC2_OUT_SEL_CFG_REG` for pin 2), ② set the pin's bit in the output-enable register, ③ IO MUX function → GPIO | `gpio.c` l.225–232; `gpio_hal.h` `gpio_hal_matrix_out_default` l.195 → `gpio_ll.h` `gpio_ll_set_output_signal_matrix_source` l.744–748, `gpio_ll_output_enable` l.390–397, `gpio_ll_func_sel` l.478–481; `soc/esp32/include/soc/gpio_sig_map.h` l.399 |
 | Output enable = `hw->enable_w1ts = 1 << pin` → `GPIO_ENABLE_W1TS_REG` @ `0x3FF44024` | `gpio_ll.h` l.393; TRM v5.9 GPIO register summary |
 
-## What `gpio_set_level` does to the hardware
+## What `gpio_set_level` does to the hardware *(cut: the under-the-hood scene was removed; kept for reference)*
 
 | Fact | Source |
 |---|---|

@@ -14,7 +14,7 @@
  */
 import type { Caption, Mark } from '../../components/pwm';
 
-export type IrqSceneId = 'problem' | 'answer' | 'config' | 'service' | 'handler' | 'isr' | 'queue' | 'demo' | 'bounce' | 'types' | 'idf' | 'payoff';
+export type IrqSceneId = 'problem' | 'answer' | 'config' | 'service' | 'handler' | 'isr' | 'queue' | 'demo' | 'bounce' | 'types' | 'payoff';
 export type SceneId = IrqSceneId;
 
 export const FPS = 30;
@@ -30,7 +30,6 @@ export const SCENES: { id: IrqSceneId; dur: number }[] = [
   { id: 'demo', dur: 23.4 },
   { id: 'bounce', dur: 31.2 },
   { id: 'types', dur: 28.8 },
-  { id: 'idf', dur: 36.8 },
   { id: 'payoff', dur: 9.6 },
 ];
 
@@ -54,9 +53,6 @@ export const READS_PER_HOUR = 100 * 3600; // 360 000
 export const ISR_STACK = 1536; // CONFIG_FREERTOS_ISR_STACKSIZE default
 export const QUEUE_LEN = 10;
 export const SETTLE_MS = 30; // pdMS_TO_TICKS(30) = 3 ticks
-export const STATUS_ADDR = '0x3FF44044';
-export const PCPU_INT_ADDR = '0x3FF44068';
-export const PIN18_ADDR = '0x3FF440D0';
 
 /** the program, as shown in the code panels */
 export const ISR_CODE = [
@@ -398,46 +394,7 @@ export const TYPES = {
   ] as Caption[],
 };
 
-// ── 11. under the hood ────────────────────────────────────────────────────
-
-export type LineMark = Mark & { line: number };
-
-export const IDF_VERSION = 'ESP-IDF v6.0.2 · ESP32 TRM · real source, trimmed with …';
-
-export const IDF = {
-  pin18: 4.58, // "Pin eighteen's register" 4.58+0
-  type: 8.26, // "interrupt type" 4.58+3.68
-  two: 9.46, // "two for a falling edge" 4.58+4.88
-  ena: 11.44, // "an enable bit" 4.58+6.86
-  cpu0: 12.34, // "CPU zero" 4.58+7.76
-  status: 13.66, // "The edge sets" 13.66+0
-  bit18: 14.76, // "bit eighteen" 13.66+1.10
-  takes: 18.1, // "the CPU takes the GPIO interrupt" 13.66+4.44
-  driver: 20.52, // "The driver's handler" 20.52+0
-  code: [
-    'static void IRAM_ATTR gpio_intr_service(void *arg)',
-    '    gpio_hal_get_intr_status(…, core_id, &gpio_intr_status);   // pcpu_int',
-    '    gpio_isr_loop(gpio_intr_status, 0);',
-    '…',
-    'while (status) {',
-    '    int nbit = __builtin_ffs(status) - 1;',
-    '    if ((1ULL << gpio_num) & gpio_context.isr_clr_on_entry_mask)',
-    '        gpio_hal_clear_intr_status_bit(…, gpio_num);   // edge: clear first',
-    '    gpio_context.gpio_isr_func[gpio_num].fn(… .args);',
-    '    …',
-  ],
-  marks: [
-    { line: 1, at: 21.42, token: 'gpio_hal_get_intr_status', label: 'which bits are set?' }, // "reads" 20.52+0.90
-    { line: 5, at: 23.52, token: '__builtin_ffs', label: 'find the lowest set bit → 18', strong: true }, // "finds eighteen" 20.52+3.00
-    { line: 7, at: 25.02, token: 'gpio_hal_clear_intr_status_bit', label: 'clear it' }, // "clears it" 20.52+4.50
-    { line: 8, at: 26.04, token: 'fn', label: 'button_isr((void *) 18)', strong: true }, // "calls your function" 20.52+5.52
-    { line: 6, at: 30.1, token: 'isr_clr_on_entry_mask', label: 'edge types: before the call' }, // "before it calls you" 27.94+2.16
-  ] as LineMark[],
-  again: 31.82, // "a new edge" 27.94+3.88
-  fires: 34.56, // "it fires again" 27.94+6.62
-};
-
-// ── 12. payoff ─────────────────────────────────────────────────────────────
+// ── 11. payoff ─────────────────────────────────────────────────────────────
 
 export const PAYOFF = {
   ask: 0.92, // "Don't keep asking" 0.6+0.32
@@ -445,7 +402,7 @@ export const PAYOFF = {
   line: 3.16, // "That's an interrupt" 0.6+2.56
   recap: [
     { at: 4.4, k: 'gpio_config(.intr_type = NEGEDGE)', v: 'the pin watches for the edge' },
-    { at: 4.75, k: 'gpio_install_isr_service(0)', v: 'one interrupt, the driver dispatches' },
+    { at: 4.75, k: 'gpio_install_isr_service(0)', v: 'once, at start-up' },
     { at: 5.1, k: 'gpio_isr_handler_add(pin, fn, arg)', v: 'your function, for that pin' },
     { at: 5.45, k: 'xQueueSendFromISR → xQueueReceive', v: 'the task sleeps until it happens' },
     { at: 5.8, k: 'wait · xQueueReset · read once', v: 'bounce handled · next: PWM' },
@@ -653,27 +610,6 @@ export const VO: VoLine[] = [
     at: 20.86,
     text: 'Levels are for waking the chip from light sleep: gpio_wakeup_enable only accepts the two level types.',
     say: 'Levels are for waking the chip from light sleep: GPIO wake-up enable only accepts the two level types.',
-  },
-
-  { id: 'u1', scene: 'idf', at: 0.5, text: 'So what happens between the edge and your function? Follow it down.' },
-  {
-    id: 'u2',
-    scene: 'idf',
-    at: 4.58,
-    text: "Pin eighteen's register in the GPIO peripheral holds its interrupt type, two for a falling edge, and an enable bit for CPU zero.",
-  },
-  { id: 'u3', scene: 'idf', at: 13.66, text: 'The edge sets bit eighteen in the interrupt status register, and the CPU takes the GPIO interrupt.' },
-  {
-    id: 'u4',
-    scene: 'idf',
-    at: 20.52,
-    text: "The driver's handler reads which bits are set, finds eighteen, clears it, and calls your function with its argument.",
-  },
-  {
-    id: 'u5',
-    scene: 'idf',
-    at: 27.94,
-    text: "For edges, it clears the bit before it calls you. So a new edge during your function isn't lost: it fires again.",
   },
 
   { id: 'x1', scene: 'payoff', at: 0.6, text: "Don't keep asking. Let the pin tell you. That's an interrupt." },

@@ -14,8 +14,7 @@
  *   8 demo       one press end to end; 100 wake-ups/s vs one per press
  *   9 bounce     5 edges → 5 interrupts; fix: wait 30 ms, xQueueReset, read once
  *  10 types      knob 2: NEG / POS / ANY edge; levels repeat → wake-up only
- *  11 the IDF    GPIO_PIN18_REG → GPIO_STATUS bit 18 → gpio_intr_service → fn(args)
- *  12 payoff     "Don't keep asking. Let the pin tell you."
+ *  11 payoff     "Don't keep asking. Let the pin tell you."
  *
  * Everything — picture AND soundtrack — is driven by ./gpio-interrupts/timeline.ts.
  */
@@ -33,7 +32,6 @@ import { Queue } from './gpio-interrupts/Queue';
 import { Service } from './gpio-interrupts/Service';
 import { FPS, IRQ_FRAMES, sceneDur, SCENES, SceneId, sceneStart } from './gpio-interrupts/timeline';
 import { Types } from './gpio-interrupts/Types';
-import { UnderTheHood } from './gpio-interrupts/UnderTheHood';
 
 export { IRQ_FRAMES };
 
@@ -50,7 +48,6 @@ const SCENE_COMPONENTS: Record<SceneId, React.FC> = {
   demo: Demo,
   bounce: Bounce,
   types: Types,
-  idf: UnderTheHood,
   payoff: Payoff,
 };
 

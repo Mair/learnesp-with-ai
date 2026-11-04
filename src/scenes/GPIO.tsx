@@ -12,8 +12,7 @@
  *   7 blink      the whole app_main, real time
  *   8 delay      vTaskDelay(pdMS_TO_TICKS(500)): 50 ticks of 10 ms, rounding down, blocked = CPU free, watchdog, dimmer
  *   9 current    knob 2: the resistor sets the current; a pin is a signal, not a supply
- *  10 the IDF    gpio_set_level → gpio_ll_set_level → out_w1ts → one bit in GPIO_OUT_REG
- *  11 payoff     "Make it an output. Set its level. That's GPIO."
+ *  10 payoff     "Make it an output. Set its level. That's GPIO."
  *
  * Everything — picture AND soundtrack — is driven by ./gpio/timeline.ts.
  * Edit that, then `npm run gpio`.
@@ -30,7 +29,6 @@ import { Direction } from './gpio/Direction';
 import { Problem } from './gpio/Problem';
 import { Reset } from './gpio/Reset';
 import { FPS, GPIO_FRAMES, sceneDur, SCENES, SceneId, sceneStart } from './gpio/timeline';
-import { UnderTheHood } from './gpio/UnderTheHood';
 import { Write } from './gpio/Write';
 
 export { GPIO_FRAMES };
@@ -47,7 +45,6 @@ const SCENE_COMPONENTS: Record<SceneId, React.FC> = {
   blink: Blink,
   delay: Delay,
   current: Current,
-  idf: UnderTheHood,
   payoff: Payoff,
 };
 

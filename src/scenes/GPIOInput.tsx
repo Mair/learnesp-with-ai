@@ -13,8 +13,7 @@
  *   8 demo       button → LED, read once a tick, real time
  *   9 count      level vs edge; bounce (Ganssle); the 10 ms poll debounces
  *  10 pulls      knob 2: pull-up vs pull-down; never both (1.65 V)
- *  11 the IDF    gpio_get_level → (hw->in >> 18) & 1 → GPIO_IN_REG; IO_MUX FUN_IE / FUN_WPU
- *  12 payoff     "Make it an input. Give it a pull. Read its level."
+ *  11 payoff     "Make it an input. Give it a pull. Read its level."
  *
  * Everything — picture AND soundtrack — is driven by ./gpio-input/timeline.ts.
  * Edit that, then `npm run gpio-input`.
@@ -33,7 +32,6 @@ import { Pulls } from './gpio-input/Pulls';
 import { Read } from './gpio-input/Read';
 import { Reset } from './gpio-input/Reset';
 import { FPS, INPUT_FRAMES, sceneDur, SCENES, SceneId, sceneStart } from './gpio-input/timeline';
-import { UnderTheHood } from './gpio-input/UnderTheHood';
 
 export { INPUT_FRAMES };
 
@@ -50,7 +48,6 @@ const SCENE_COMPONENTS: Record<SceneId, React.FC> = {
   demo: Demo,
   count: Count,
   pulls: Pulls,
-  idf: UnderTheHood,
   payoff: Payoff,
 };
 

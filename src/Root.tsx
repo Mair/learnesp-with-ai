@@ -26,7 +26,7 @@ const Stage: React.FC<{ children: React.ReactNode; floor?: boolean }> = ({ child
  */
 export const RemotionRoot: React.FC = () => (
   <>
-    {/* Module 01 · PWM: ledcAttach → ledcWrite → ledcFade → ledcWriteTone → under the hood */}
+    {/* Module 01 · PWM: ledcAttach → ledcWrite → ledcFade → ledcWriteTone */}
     <Composition
       id="PWM"
       component={() => (
@@ -40,7 +40,7 @@ export const RemotionRoot: React.FC = () => (
       height={H}
     />
 
-    {/* GPIO (pure ESP-IDF): circuit → gpio_reset_pin → gpio_set_direction → gpio_set_level → blink → vTaskDelay → current → under the hood */}
+    {/* GPIO (pure ESP-IDF): circuit → gpio_reset_pin → gpio_set_direction → gpio_set_level → blink → vTaskDelay → current */}
     <Composition
       id="GPIO"
       component={() => (
@@ -54,7 +54,7 @@ export const RemotionRoot: React.FC = () => (
       height={H}
     />
 
-    {/* GPIO input (pure ESP-IDF): floating → pull-up → gpio_set_direction(INPUT) → gpio_set_pull_mode → gpio_get_level → demo → bounce → under the hood */}
+    {/* GPIO input (pure ESP-IDF): floating → pull-up → gpio_set_direction(INPUT) → gpio_set_pull_mode → gpio_get_level → demo → bounce */}
     <Composition
       id="GPIOInput"
       component={() => (
@@ -68,7 +68,7 @@ export const RemotionRoot: React.FC = () => (
       height={H}
     />
 
-    {/* GPIO interrupts (pure ESP-IDF): gpio_config → gpio_install_isr_service → gpio_isr_handler_add → ISR → queue → bounce → under the hood */}
+    {/* GPIO interrupts (pure ESP-IDF): gpio_config → gpio_install_isr_service → gpio_isr_handler_add → ISR → queue → bounce */}
     <Composition
       id="GPIOInterrupts"
       component={() => (
@@ -81,7 +81,7 @@ export const RemotionRoot: React.FC = () => (
       width={W}
       height={H}
     />
-    {/* FreeRTOS tasks (pure ESP-IDF): xTaskCreate's six arguments, vTaskDelay underneath, under the hood */}
+    {/* FreeRTOS tasks (pure ESP-IDF): xTaskCreate's six arguments, vTaskDelay */}
     <Composition
       id="FreeRTOSTasks"
       component={() => (

@@ -32,7 +32,6 @@ export const SCENES = [
   { id: 'duty', dur: 34.4 },
   { id: 'fade', dur: 64.0 },
   { id: 'tone', dur: 15.4 },
-  { id: 'idf', dur: 45.0 },
   { id: 'payoff', dur: 7.0 },
 ] as const;
 export type SceneId = (typeof SCENES)[number]['id'];
@@ -444,101 +443,7 @@ export const TONE = {
   windowMs: 10,
 };
 
-// ── 8. under the hood: the IDF does the work ──────────────────────────────
-
-/** a mark on a specific line of a layer's code */
-export type LineMark = Mark & { line: number };
-
-export type Layer = {
-  at: number;
-  name: string;
-  path: string;
-  /** arrow label from the layer above — the call that gets us here */
-  via?: string;
-  code: string[];
-  marks: LineMark[];
-};
-
-export const IDF_VERSION = 'arduino-esp32 3.3 · ESP-IDF v5.5 · real source, trimmed with …';
-
-export const IDF = {
-  layers: [
-    {
-      at: 0.3,
-      name: 'your sketch',
-      path: 'sketch.ino',
-      code: ['ledcWrite(LED, 64);'],
-      marks: [
-        { line: 0, at: 0.8, token: 'LED', label: 'pin' },
-        { line: 0, at: 1.1, token: '64', label: 'duty: on for 64 of 256 steps' },
-      ],
-    },
-    {
-      at: 5.9, // "LED-C write is a thin wrapper" 5.1+0.09
-      name: 'Arduino core',
-      path: 'cores/esp32/esp32-hal-ledc.c',
-      via: 'ledcWrite()',
-      code: [
-        'bool ledcWrite(uint8_t pin, uint32_t duty) {',
-        '  // … finds the LEDC channel this pin is attached to …',
-        '  ledc_set_duty(group, channel, duty);',
-        '  ledc_update_duty(group, channel);',
-        '}',
-      ],
-      marks: [
-        { line: 1, at: 7.0 }, // "thin wrapper" 5.1+1.84
-        { line: 2, at: 12.7, token: 'ledc_set_duty', label: '① load the new number — nothing changes yet' }, // "LED-C set duty" 12.3+0.07
-        { line: 3, at: 17.5, token: 'ledc_update_duty', label: '② go — this makes it take effect', strong: true }, // "update duty" 16.9+0.61
-      ],
-    },
-    {
-      at: 19.6, // "ESP-IDF's own header" 19.6+0.1
-      name: 'ESP-IDF · public API',
-      path: 'components/esp_driver_ledc/include/driver/ledc.h',
-      via: 'ledc_update_duty()',
-      code: [
-        '/**',
-        ' * @brief LEDC update channel parameters',
-        ' *',
-        ' * @note  Call this function to activate the LEDC updated parameters.',
-        ' *        After ledc_set_duty, we need to call this function to update the settings.',
-        " *        And the new LEDC parameters don't take effect until the next PWM cycle.",
-        ' */',
-        'esp_err_t ledc_update_duty(ledc_mode_t speed_mode, ledc_channel_t channel);',
-      ],
-      marks: [
-        { line: 7, at: 20.2, token: 'ledc_update_duty' },
-        { line: 3, at: 22.6, token: 'Call this function to activate the LEDC updated parameters.', strong: true }, // "call this to activate" 19.6+2.98
-        { line: 5, at: 25.7, token: "don't take effect until the next PWM cycle" }, // "next PWM cycle" 19.6+6.14
-      ],
-    },
-    {
-      at: 27.5, // "Underneath, that's two register writes" 27.5+0.1
-      name: 'HAL · two register writes',
-      path: 'components/hal/esp32/include/hal/ledc_ll.h',
-      via: 'both calls bottom out in the HAL',
-      code: [
-        '// ledc_set_duty()    →  ledc_ll_set_duty_int_part()',
-        'hw->channel_group[speed_mode].channel[channel_num].duty.duty = duty_val << 4;',
-        '// ledc_update_duty() →  ledc_ll_set_duty_start()',
-        'hw->channel_group[speed_mode].channel[channel_num].conf1.duty_start = 1;',
-      ],
-      marks: [
-        { line: 1, at: 30.9, token: 'duty.duty = duty_val', label: '① your 64 → duty register' }, // "sixty-four" 27.5+3.58, checked against Whisper
-        { line: 1, at: 31.9, token: '<< 4', label: '(low 4 bits = fraction)' },
-        { line: 3, at: 34.2, token: 'conf1.duty_start = 1', label: '② one bit: go', strong: true }, // "duty start" 27.5+6.39(+0.3 per Whisper)
-      ],
-    },
-  ] as Layer[],
-  /** the LEDC peripheral: counter vs duty → pin */
-  hardware: 35.6, // "the LED-C hardware" 35.4+1.25
-  counter: 39.4, // "a counter" 35.4+4.01
-  compare: 40.2, // "compared against your duty" 35.4+4.84
-  free: 42.85, // "free" 41.9+0.95
-  duty: 64,
-};
-
-// ── 9. payoff ──────────────────────────────────────────────────────────────
+// ── 8. payoff ──────────────────────────────────────────────────────────────
 
 export const PAYOFF = {
   line: 0.7,
@@ -697,43 +602,6 @@ export const VO: VoLine[] = [
     say: 'Second knob. LED-C write tone keeps the width at half, and changes how often it repeats.',
   },
   { id: 't2', scene: 'tone', at: 10.8, text: 'Pulse width sets brightness. Frequency sets pitch.' },
-
-  { id: 'i1', scene: 'idf', at: 0.5, text: "So who's actually flipping the pin, a thousand times a second? Not your code." },
-  {
-    id: 'i2',
-    scene: 'idf',
-    at: 5.1,
-    text: 'ledcWrite is a thin wrapper. It makes two calls into the ESP-IDF LEDC driver.',
-    say: 'LED-C write is a thin wrapper. It makes two calls into the ESP-IDF LED-C driver.',
-  },
-  {
-    id: 'i3',
-    scene: 'idf',
-    at: 12.3,
-    text: 'ledc_set_duty loads the new number. Nothing changes yet.',
-    say: 'LED-C set duty loads the new number. Nothing changes yet.',
-  },
-  { id: 'i4', scene: 'idf', at: 16.9, text: 'ledc_update_duty says go.', say: 'LED-C update duty says go.' },
-  {
-    id: 'i5',
-    scene: 'idf',
-    at: 19.6,
-    text: "ESP-IDF's own header spells it out: call this to activate the new settings. They take effect on the next PWM cycle.",
-  },
-  {
-    id: 'i6',
-    scene: 'idf',
-    at: 27.5,
-    text: "Underneath, that's two register writes. One stores your sixty-four. The other sets a single bit: duty start.",
-  },
-  {
-    id: 'i7',
-    scene: 'idf',
-    at: 35.4,
-    text: 'From then on, the LEDC hardware does the switching: a counter, compared against your duty.',
-    say: 'From then on, the LED-C hardware does the switching: a counter, compared against your duty.',
-  },
-  { id: 'i8', scene: 'idf', at: 41.9, text: 'Your code is free to do something else.' },
 
   { id: 'z1', scene: 'payoff', at: 0.7, text: "That's PWM." },
 ];

@@ -119,7 +119,7 @@ Facts already proven in `src/scenes/gpio/FACTS.md` (output video) are referenced
 |---|---|
 | ESP32-S3 / C3 define `SOC_GPIO_SUPPORT_PIN_GLITCH_FILTER` (filters pulses < 2 IO_MUX clock cycles — far too short for switch bounce); C6 / H2 / P4 also have 8 configurable "flex" glitch filters | `soc/<chip>/include/soc/soc_caps.h` (v6.0.2); `gpio.rst` l.113–125 |
 
-## Under the hood (as shown)
+## Under the hood (as shown) *(cut: the under-the-hood scene was removed; kept for reference)*
 
 | Fact | Source |
 |---|---|

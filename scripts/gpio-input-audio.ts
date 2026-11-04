@@ -11,8 +11,7 @@
  *           release, from the same press windows the picture uses; the reads
  *           in the problem scene and the 100 reads of the 1-second hold as
  *           soft ticks; the bounce as a rattle phase-locked to its sweep
- *   MUSIC   the house pad, ducked under VO, a gated pulse under the IDF
- *           descent, cut before the payoff, resolving to A major
+ *   MUSIC   the house pad, ducked under VO, cut before the payoff, resolving to A major
  *
  * No sustained tones: nothing here is about pitch (SOUND.md).
  * Output: public/gpio-input/mix.wav (−16 LUFS, −1.5 dBTP) + stems in out/gpio-input-stems/.
@@ -25,7 +24,6 @@ import {
   COUNT,
   DEMO,
   DIRECTION,
-  IDF,
   PAYOFF,
   PROBLEM,
   PULL,
@@ -249,21 +247,6 @@ function explainer(scene: SceneId, x: { run: number; args: { at: number }[]; vie
   buzz(at(K.both.v165), 0.07);
 }
 
-// under the hood: each layer lands a little lower
-IDF.layers.forEach((l, i) => tick(abs('idf', l.at), 2300 - 260 * i, 0.15));
-for (const l of IDF.layers)
-  for (const m of l.marks) {
-    tick(abs('idf', m.at), 3100, 0.05);
-    if (m.strong) thump(abs('idf', m.at), 0.2);
-  }
-tick(abs('idf', IDF.register), 1200, 0.15);
-tick(abs('idf', IDF.all32), 2400, 0.07);
-clack(abs('idf', IDF.bit18), 0.18);
-presses('idf', IDF.presses, 0.1);
-tick(abs('idf', IDF.setup), 1200, 0.12);
-clack(abs('idf', IDF.ie), 0.14);
-clack(abs('idf', IDF.wpu), 0.16);
-
 // payoff
 tick(abs('payoff', PAYOFF.input), 1800, 0.08);
 tick(abs('payoff', PAYOFF.pull), 2000, 0.08);
@@ -278,13 +261,6 @@ const music = new Float32Array(N);
 const MUSIC_CUT = abs('payoff', 0) - 0.15;
 {
   pad(music, [130.81, 164.81, 220.0], 0, MUSIC_CUT, 1, 3, 0.08);
-  const iS = sceneStart('idf');
-  for (let i = S(iS); i < S(MUSIC_CUT); i++) {
-    const t = i / SR;
-    const gate = ((t - iS) * (100 / 60) * 2) % 1;
-    const env = Math.exp(-gate * 7) * smooth((t - iS) / 2) * Math.min(1, (MUSIC_CUT - t) / 0.08);
-    music[i] += 1.4 * env * Math.sin(2 * Math.PI * 55 * t);
-  }
   pad(music, [110.0, 164.81, 220.0, 277.18], abs('payoff', PAYOFF.line), SECONDS, 1.15, 0.35, 2.5);
   biquad(music, 'lp', 1400, 0.6);
   level(music, -30, 3, 6);

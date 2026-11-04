@@ -25,6 +25,28 @@ plain ESP-IDF C:
   its API; it needs an ESP-IDF rewrite (`ledc_timer_config`,
   `ledc_channel_config`, `ledc_set_duty` + `ledc_update_duty`, …).
 
+## Teach driving, not the engine
+
+The course teaches people **how to use** the ESP32. You don't need to know how
+an engine works to drive a car, and you don't need to know how the driver
+writes registers to use `gpio_set_level`. Keep it simple enough that a
+beginner follows every line the first time.
+
+- **No under-the-hood scenes.** No descent from your call → driver source →
+  HAL/LL → registers → silicon. No register names, addresses, bit fields,
+  `_ll_` / `_hal_` functions or driver source code on screen or in the VO.
+- **Show what the learner types and what they get**: the call, each argument
+  in plain words, what the pin / LED / speaker / log does, the mistakes
+  people make (with the error they'll see and the fix).
+- A behaviour the learner will *notice* is in, even if the reason is deep:
+  "the fade takes 2.76 s, not 2.8", "255 isn't fully on, 256 is", "this
+  call blocks your task". Say *what* happens and what to do about it, not the
+  code path that causes it.
+- Plain words over jargon; one idea per line; fewer numbers. If a detail
+  doesn't change what the learner types or expects, cut it.
+- **Research still goes all the way down** (driver source, TRM) so every claim
+  is true, but it stays in `FACTS.md`; it doesn't go on screen.
+
 ## ESP-IDF v6.0 or later. Always.
 
 Every API, default, file path, line number and log message a video shows or

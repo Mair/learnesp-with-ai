@@ -91,7 +91,7 @@ Input-video facts (pull-ups, thresholds, bounce numbers, GPIO 18 choice) are in
 | Ganssle: "a debounce period in the 20 to 50 msec range" | Ganssle pdf l.858–859 |
 | Bounce happens on release too ("Seven of the switches consistently bounced much longer when closed than when opened" — both directions bounce; one switch's worst was 157 ms on opening) → a release can produce a falling edge | Ganssle pdf l.118–134 |
 
-## Under the hood
+## Under the hood *(cut: the under-the-hood scene was removed; kept for reference)*
 
 | Fact | Source |
 |---|---|

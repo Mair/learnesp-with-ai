@@ -1,5 +1,7 @@
 # GPIO input — storyboard v1 (as built)
 
+> **Under-the-hood scene cut** (rule "teach driving, not the engine", `AGENTS.md`). The scene, its VO and its sound were removed; the video goes straight from the second knob to the payoff. Its storyboard rows and facts are kept below, marked *(cut)*, for reference only.
+
 Slug `gpio-input` · composition `GPIOInput` · `out/gpio-input.mp4` · ~6 min · every claim → `FACTS.md`.
 Sequel to the `gpio` (output) video: same board, same LED on GPIO 2, same visual language.
 **No Arduino**: `app_main`, ESP-IDF driver calls, `vTaskDelay(pdMS_TO_TICKS(ms))`.
@@ -48,7 +50,7 @@ Scene 9 extends the loop to count presses (edge + `ESP_LOGI`).
 | 8 | Demo: button → LED | the whole program, real time; reads 100×/s; ≤ 10 ms feels instant |
 | 9 | Counting presses | level vs edge; bounce (Ganssle's numbers); polling every 10 ms is the debouncer |
 | 10 | Second knob: pull-up vs pull-down | wiring + one word in code flips the logic; never both |
-| 11 | Under the hood | `gpio_get_level` → `(hw->in >> 18) & 1` → GPIO_IN_REG; FUN_IE / FUN_WPU bits in IO_MUX_GPIO18_REG |
+| 11 | ~~Under the hood~~ *(cut)* | `gpio_get_level` → `(hw->in >> 18) & 1` → GPIO_IN_REG; FUN_IE / FUN_WPU bits in IO_MUX_GPIO18_REG |
 | 12 | Payoff | "Make it an input. Give it a pull. Read its level." → next: interrupts |
 
 ## 1 · Problem
@@ -154,7 +156,7 @@ while (1) {
 | k2 "Now released is zero, and pressed is one. Same resistor, same tiny current, opposite logic." | truth tables side by side: `released 1 / pressed 0` vs `released 0 / pressed 1`; `== 0` vs `== 1` |
 | k3 "Just never turn on both. Two equal resistors split the voltage in half, about one point six five volts, right in the zone the datasheet doesn't promise." | `GPIO_PULLUP_PULLDOWN`: 45 k / 45 k divider → 1.65 V dot in the grey band (callback to c3) |
 
-## 11 · Under the hood
+## 11 · Under the hood *(cut)*
 
 | VO | Visual |
 |---|---|

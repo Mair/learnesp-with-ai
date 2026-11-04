@@ -37,7 +37,6 @@ export const SCENES = [
   { id: 'blink', dur: 19.0 },
   { id: 'delay', dur: 52.4 },
   { id: 'current', dur: 33.7 },
-  { id: 'idf', dur: 37.7 },
   { id: 'payoff', dur: 8.7 },
 ] as const;
 export type SceneId = (typeof SCENES)[number]['id'];
@@ -68,7 +67,6 @@ export const VOH_MIN = 2.64; // 0.8 × VDD
 export const VOL_MAX = 0.33; // 0.1 × VDD
 export const DRIVE_DEFAULT_MA = 20;
 export const DRIVE_MAX_MA = 40;
-export const W1TS_ADDR = '0x3FF44008';
 /** FreeRTOS: CONFIG_FREERTOS_HZ default */
 export const TICK_HZ = 100;
 export const DELAY_MS = 500;
@@ -411,85 +409,7 @@ export const CURRENT = {
   ] as Caption[],
 };
 
-// ── 10. under the hood ────────────────────────────────────────────────────
-
-/** a mark on a specific line of a layer's code */
-export type LineMark = Mark & { line: number };
-
-export type Layer = {
-  at: number;
-  name: string;
-  path: string;
-  /** arrow label from the layer above — the call that gets us here */
-  via?: string;
-  code: string[];
-  marks: LineMark[];
-};
-
-export const IDF_VERSION = 'ESP-IDF v6.0.2 · real source, trimmed with …';
-
-export const IDF = {
-  layers: [
-    {
-      at: 0.3,
-      name: 'your code',
-      path: 'main/main.c',
-      code: ['gpio_set_level(LED, 1);'],
-      marks: [
-        { line: 0, at: 1.04, token: 'gpio_set_level' }, // "gpio_set_level" 0.5+0.54
-      ],
-    },
-    {
-      at: 5.5, // "In the ESP-IDF driver" 5.18+0.32
-      name: 'ESP-IDF · GPIO driver',
-      path: 'components/esp_driver_gpio/src/gpio.c',
-      via: 'gpio_set_level()',
-      code: [
-        'esp_err_t gpio_set_level(gpio_num_t gpio_num, uint32_t level)',
-        '{',
-        '    GPIO_CHECK(GPIO_IS_VALID_OUTPUT_GPIO(gpio_num), "GPIO output gpio_num error", …);',
-        '    gpio_hal_set_level(gpio_context.gpio_hal, gpio_num, level);',
-        '    return ESP_OK;',
-        '}',
-      ],
-      marks: [
-        { line: 2, at: 7.24, token: 'GPIO_IS_VALID_OUTPUT_GPIO', label: 'can this pin be an output?' }, // "checks" 5.18+2.06
-        { line: 3, at: 9.34, token: 'gpio_hal_set_level', label: 'down to the hardware layer', strong: true }, // "passes it down" 5.18+4.16
-      ],
-    },
-    {
-      at: 11.52, // "And at the bottom" 11.52+0
-      name: 'HAL · one store',
-      path: 'components/esp_hal_gpio/esp32/include/hal/gpio_ll.h',
-      via: 'gpio_hal_set_level() → gpio_ll_set_level()',
-      code: [
-        'if (level) {',
-        '    hw->out_w1ts = 1 << gpio_num;      // pins 0–31',
-        '} else {',
-        '    hw->out_w1tc = 1 << gpio_num;',
-        '}',
-      ],
-      marks: [
-        { line: 1, at: 14.22, token: 'out_w1ts', label: 'high → the SET register', strong: true }, // "High writes" 11.52+2.70
-        { line: 1, at: 14.96, token: '1 << gpio_num' }, // "bit two" 11.52+3.44
-        { line: 3, at: 17.32, token: 'out_w1tc', label: 'low → the CLEAR register' }, // "Low writes" 11.52+5.80
-      ],
-    },
-  ] as Layer[],
-  /** the register in silicon: GPIO_OUT_W1TS_REG → GPIO_OUT_REG */
-  register: 19.32, // "Write-one-to-set" 19.32+0
-  write: 19.92, // the store lands
-  only: 21.14, // "only your pin's bit" 19.32+1.82
-  others: 22.86, // "Every other pin" 19.32+3.54
-  /** gpio_set_direction underneath */
-  direction: 26.18, // "gpio_set_direction, underneath" 26.18+0
-  route: 31.14, // "route the plain GPIO output" 26.18+4.96
-  enable: 33.6, // "set its bit in the output-enable register" 26.18+7.42
-  /** the other pins' existing levels — arbitrary, just has to stay put */
-  outBefore: 0b0000_0000_0010_0000_1000_0000_0001_0000,
-};
-
-// ── 11. payoff ─────────────────────────────────────────────────────────────
+// ── 10. payoff ─────────────────────────────────────────────────────────────
 
 export const PAYOFF = {
   output: 1.1, // "Make it an output" 0.7+0.40
@@ -498,7 +418,7 @@ export const PAYOFF = {
   recap: [
     { at: 4.0, k: 'gpio_reset_pin(pin)', v: 'a known state' },
     { at: 4.35, k: 'gpio_set_direction(…, OUTPUT)', v: 'output driver on' },
-    { at: 4.7, k: 'gpio_set_level(pin, 1)', v: 'one bit, one register' },
+    { at: 4.7, k: 'gpio_set_level(pin, 1)', v: 'the pin holds it · returns ESP_OK' },
     { at: 5.05, k: 'vTaskDelay(pdMS_TO_TICKS(ms))', v: 'ticks · the CPU is free' },
     { at: 5.4, k: 'HIGH or LOW', v: 'nothing in between → next: PWM' },
   ],
@@ -640,24 +560,6 @@ export const VO: VoLine[] = [
   { id: 'k2', scene: 'current', at: 7.0, text: "Two twenty ohms: about six milliamps. One kilohm: about one point three, and the LED is dimmer." },
   { id: 'k3', scene: 'current', at: 15.62, text: "But a pin is a signal, not a power supply. By default it's set to deliver about twenty milliamps, and about forty at most." },
   { id: 'k4', scene: 'current', at: 23.14, text: "A motor, a relay or a strip of LEDs needs far more. For those, the pin switches a transistor, and the transistor switches the load." },
-
-  {
-    id: 'i1',
-    scene: 'idf',
-    at: 0.5,
-    text: "So what does gpio_set_level really do? Let's follow it down.",
-    say: "So what does GPIO set level really do? Let's follow it down.",
-  },
-  { id: 'i2', scene: 'idf', at: 5.18, text: "In the ESP-IDF driver, it checks that the pin can be an output, and passes it down to the hardware layer." },
-  { id: 'i3', scene: 'idf', at: 11.52, text: "And at the bottom, it's one line. High writes a one to bit two of the set register. Low writes it to the clear register." },
-  { id: 'i4', scene: 'idf', at: 19.32, text: "Write-one-to-set means only your pin's bit changes. Every other pin stays exactly as it was." },
-  {
-    id: 'i5',
-    scene: 'idf',
-    at: 26.18,
-    text: "gpio_set_direction, underneath, is a few writes like this one: route the plain GPIO output to the pin, and set its bit in the output-enable register.",
-    say: "GPIO set direction, underneath, is a few writes like this one: route the plain GPIO output to the pin, and set its bit in the output enable register.",
-  },
 
   {
     id: 'x1',

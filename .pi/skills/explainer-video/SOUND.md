@@ -7,7 +7,7 @@ Everything except the VO is synthesised by `scripts/lib/audio.ts` from the same 
 | Layer | Level | Notes |
 |---|---|---|
 | VO | speech RMS −20 dBFS | `voiceover()` levels it and fit-checks every line against the next line and its scene end |
-| Music | `level(music, -30, …)`, ducked to 40 % under VO (`talkingEnvelope`) | `pad()`: a minor chord bed (C3·E3·A3 over A2), low-passed 1.4 kHz; cut dead ~0.15 s before the payoff, then resolve to the major chord under the payoff line. Optional gated low pulse under the "under the hood" descent. |
+| Music | `level(music, -30, …)`, ducked to 40 % under VO (`talkingEnvelope`) | `pad()`: a minor chord bed (C3·E3·A3 over A2), low-passed 1.4 kHz; cut dead ~0.15 s before the payoff, then resolve to the major chord under the payoff line. |
 | SFX | as below | `sfx(T)` |
 | Sonification / literal tones | −26 to −27 dBFS on their reference window | `pulse()` |
 | Master | −16 LUFS, −1.5 dBTP, stereo | `master()` |
@@ -24,7 +24,7 @@ Cue every SFX from the same timeline value as the visual it belongs to.
 | `tick(t, 3100, 0.05)` | a mark / label / bracket appears |
 | `tick(t, 2400–2800, 0.06–0.07)` | a term of an equation / a row appears |
 | `thump(t, 0.18–0.3)` | the key moment of a beat (≤ 1–2 per view); 0.45 on the payoff |
-| `clack(t, 0.14–0.2)` | something latches: a register bit, a value committed, a line dropping into place |
+| `clack(t, 0.14–0.2)` | something latches: a value committed, a switch closing, a line dropping into place |
 | `buzz(t, 0.07–0.09)` | a wrong idea rejected (✗ 1.65 V, out of clock) |
 | `blip(t, 660, 990, 0.06–0.08)` | it worked: steady, done(), CPU free |
 

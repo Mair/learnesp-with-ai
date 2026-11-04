@@ -3,7 +3,9 @@ name: explainer-video
 description: Make a narrated, animated ESP32 explainer video (Remotion + synthesized VO and sound) in the learnesp32 house style. Use when the user wants a new explainer video or lesson animation on a topic (e.g. "a video on A-to-D conversion"), or wants to add, re-time or deepen a scene in an existing one.
 ---
 
-An **explainer** teaches one peripheral the way the PWM video does: every number the learner types is pulled apart until they can *see* what it does to the pin, every claim is checked against the real source, and picture, narration and sound are all driven by one timeline.
+An **explainer** teaches someone **how to use** one peripheral: every number the learner types is pulled apart until they can *see* what it does to the pin, every claim is checked against the real source, and picture, narration and sound are all driven by one timeline.
+
+**Teach driving, not the engine** (see `AGENTS.md`). You don't need to know how an engine works to drive a car. No under-the-hood scenes: no driver source, HAL/LL calls, register names or bit fields on screen or in the VO. Show what to type, what each argument means in plain words, what the hardware does, and the mistakes people make with their fix. Research goes all the way down to keep every claim true, but it stays in `FACTS.md`. Keep it simple.
 
 **Project:** `/Users/mair/projects/learnesp32/learnesp-with-ai` (a git repo — start from a clean tree and commit at each approved milestone). The old spike at `~/projects/learnesp32.com/spike-course/esp32-remotion` is frozen; never edit it.
 
@@ -21,7 +23,6 @@ An **explainer** teaches one peripheral the way the PWM video does: every number
 | `src/scenes/pwm/Setup.tsx`, `Write.tsx`, `Fade.tsx` | the **Explainer** shot: one call, one card per argument, one view per idea |
 | `src/components/Explainer.tsx` | the shell + `mono()`, `ease`, `GREEN`, `RED`, `VIEW_W/H` |
 | `src/components/CodeToHardware.tsx`, `CodeLine.tsx`, `Gadgets.tsx`, `Panel.tsx`, `Type.tsx` | other shot types and parts |
-| `src/scenes/pwm/UnderTheHood.tsx` | descending real source, layer by layer |
 | `scripts/pwm-audio.ts` + `scripts/lib/audio.ts` | the soundtrack, built from the same timeline |
 
 Standards live in three files — load each at the step that points to it:
@@ -83,5 +84,5 @@ The user watches the render and reports critiques by timestamp. Map each timesta
 - a number that matters (×4) → its own short line and a big glyph;
 - a trap everyone hits (stack overflow) → three lines, not one;
 - every identifier the VO names ("its own b") must be defined on screen;
-- an under-the-hood descent is optional and is the first thing to cut when the audience is new to the topic.
+- no under-the-hood descents at all: they were cut from every video ("teach driving, not the engine").
 After the pass, update `STORYBOARD.md` (an "v2 (review pass)" note + the per-line tables) and `FACTS.md` (facts for cut scenes stay, marked as cut).

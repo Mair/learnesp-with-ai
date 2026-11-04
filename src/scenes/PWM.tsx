@@ -8,8 +8,7 @@
  *   3 knob 1    pulse width → brightness   (CodeToHardware, slow-mo LED)
  *   3½ fade     ledcFade: the duty ramp, the staircase, the hardware fade engine
  *   4 knob 2    frequency → pitch          (CodeToHardware, speaker)
- *   5 the IDF   ledcWrite → ledc_update_duty → one register bit → LEDC hardware
- *   6 payoff    "That's PWM."
+ *   5 payoff    "That's PWM."
  *
  * Everything — picture AND soundtrack — is driven by ./pwm/timeline.ts.
  * Edit that, then `npm run pwm`.
@@ -36,7 +35,6 @@ import {
   sceneStart,
   TONE,
 } from './pwm/timeline';
-import { UnderTheHood } from './pwm/UnderTheHood';
 
 export { PWM_FRAMES };
 
@@ -91,7 +89,6 @@ const SCENE_COMPONENTS: Record<SceneId, React.FC> = {
       />
     </Knob>
   ),
-  idf: UnderTheHood,
   payoff: Payoff,
 };
 
