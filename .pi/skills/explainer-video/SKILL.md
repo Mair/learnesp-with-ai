@@ -9,7 +9,7 @@ An **explainer** teaches someone **how to use** one peripheral: every number the
 
 **Teach driving, not the engine** (see `AGENTS.md`). You don't need to know how an engine works to drive a car. No under-the-hood scenes: no driver source, HAL/LL calls, register names or bit fields on screen or in the VO. Show what to type, what each argument means in plain words, what the hardware does, and the mistakes people make with their fix. Research goes all the way down to keep every claim true, but it stays in `FACTS.md`. Keep it simple.
 
-**Project:** `/Users/mair/projects/learnesp32/learnesp-with-ai` (a git repo — start from a clean tree and commit at each approved milestone). The old spike at `~/projects/learnesp32.com/spike-course/esp32-remotion` is frozen; never edit it.
+**Project:** `~/projects/learnesp32.com/Learn-ESP32-v-2` (a git repo — start from a clean tree and commit at each approved milestone). The old spike at `~/projects/learnesp32.com/spike-course/esp32-remotion` is frozen; never edit it.
 
 **Machine setup (check before step 4; a fresh clone has none of this):**
 - `npm install` (esbuild's postinstall warning from `allow-scripts` is harmless; `node -e "require('esbuild')"` to confirm).
@@ -17,12 +17,13 @@ An **explainer** teaches someone **how to use** one peripheral: every number the
 - `.cache/vo` is gitignored and machine-local: the first run regenerates every clip (edge-tts is deterministic, so word offsets come back identical) and downloads the whisper model — run it in the background (`nohup npm run vo -- <slug> > /tmp/vo.log 2>&1 &`) and poll; a killed run leaves a **0-byte .mp3** that must be deleted before retrying. The first render also downloads Chrome Headless Shell.
 - Renders (~4 min for 5 min of video) likewise go in the background with a log.
 - Stills are written to `/tmp/stills/…`, which the read tool only resolves as `/private/tmp/stills/…` on macOS.
-**Reference implementation — read before building, copy its *visual* patterns (its code is legacy Arduino; don't copy its API):**
+**Reference implementation — read before building (pure ESP-IDF LEDC):**
 
 | File | What it shows |
 |---|---|
 | `src/scenes/pwm/timeline.ts` | single source of truth: scenes, cues, VO, shared maths |
-| `src/scenes/pwm/Setup.tsx`, `Write.tsx`, `Fade.tsx` | the **Explainer** shot: one call, one card per argument, one view per idea |
+| `src/scenes/pwm/Context.tsx` | the whole program (`CodeAndViews`): code on the left, one view per call on the right |
+| `src/scenes/pwm/Timer.tsx`, `Channel.tsx`, `Write.tsx`, `Fade.tsx` | the **Explainer** shot: one call, one card per argument, one view per idea |
 | `src/components/Explainer.tsx` | the shell + `mono()`, `ease`, `GREEN`, `RED`, `VIEW_W/H` |
 | `src/components/CodeToHardware.tsx`, `CodeLine.tsx`, `Gadgets.tsx`, `Panel.tsx`, `Type.tsx` | other shot types and parts |
 | `scripts/pwm-audio.ts` + `scripts/lib/audio.ts` | the soundtrack, built from the same timeline |
@@ -53,6 +54,7 @@ Load `SCRIPT.md`. Write the arc and, per scene, a table of beats: VO line (`text
 
 ### 4. Time it to the voice
 Put every VO line in `VO` with a provisional `at`, then `npm run vo -- <slug> [scene]`. It generates each clip and prints `word@offset`. Set each line's `at` to the previous line's end + ~0.6 s, every cue to `line.at + word offset` with the arithmetic in a comment (`// "the period" 8.3+14.4`), and each scene's `dur` to its last line's end + ~1.5 s. Re-run after any wording change.
+**Faster: `node --disable-warning=ExperimentalWarning scripts/vo-plan.ts <slug>`** voices every line, gets Whisper word timings, lays the lines out (0.5 s lead, 0.6 s gap or a line's `pause`, `fixed` lines keep their `at`, scene `dur` = last end + `TAIL[scene]`) and rewrites the generated `VO_AT` / `SCENE_DUR` / `VO_WORDS` block at the top of `timeline.ts`. Cues then use `at(id)`, `w(id, word, n, plus)`, `end(id)` (see `pwm/timeline.ts`), so a wording change re-times everything.
 **Every time lives in `timeline.ts`** — never a literal second inside a view (`after(t, 13.3)`); when a scene is re-timed those are the cues that silently stay behind.
 **Done when** the sheet shows every line `FITS`, and every visual change in the storyboard has a cue tied to a spoken word.
 
@@ -66,6 +68,7 @@ Load `STYLE.md`. Build each scene from the house shot types; drive every animati
 
 ### 7. Sound
 Load `SOUND.md`. Write the scene's layers in the audio script; `npm run <slug>:audio`. Measure new layers with `ffmpeg -ss A -to B -i out/<section>/<slug>-stems/<layer>.wav -af volumedetect -f null -`.
+Check each layer against the VO at its loudest moments, not just its reference window: `level(x, target, a, b)` scales the **whole** layer to the window `a…b`, so a window that falls on near-silence (a signal faded out, clicks that have fused) blows everything else up by 20+ dB. Re-check the window whenever the beats it points at change.
 **Done when** the build prints every VO line `ok`, and each new layer is at its target level (silent where it should be silent).
 
 ### 8. Render and verify
