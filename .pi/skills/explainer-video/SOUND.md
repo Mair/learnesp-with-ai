@@ -38,4 +38,4 @@ Pitch is reserved for scenes where **sound is the subject** (the speaker scene),
 
 ## Checking
 
-`ffmpeg -hide_banner -ss A -to B -i out/<slug>-stems/<layer>.wav -af volumedetect -f null -` over the window in question: silence reads −91 dB. After any refactor of an audio script, compare `md5sum` of the stems before and after.
+`ffmpeg -hide_banner -ss A -to B -i out/<section>/<slug>-stems/<layer>.wav -af volumedetect -f null -` over the window in question: silence reads −91 dB. After any refactor of an audio script, compare `md5sum` of the stems before and after.

@@ -11,15 +11,15 @@
     "vo": "node --disable-warning=ExperimentalWarning scripts/vo.ts",
     "stills": "node scripts/stills.mjs",
     "pwm:audio": "node --disable-warning=ExperimentalWarning scripts/pwm-audio.ts",
-    "pwm": "npm run pwm:audio && remotion render PWM out/pwm.mp4",
+    "pwm": "npm run pwm:audio && remotion render PWM out/3-advanced-gpio/pwm.mp4",
     "gpio:audio": "node --disable-warning=ExperimentalWarning scripts/gpio-audio.ts",
-    "gpio": "npm run gpio:audio && remotion render GPIO out/gpio.mp4",
+    "gpio": "npm run gpio:audio && remotion render GPIO out/1-basic-gpio/gpio.mp4",
     "gpio-input:audio": "node --disable-warning=ExperimentalWarning scripts/gpio-input-audio.ts",
-    "gpio-input": "npm run gpio-input:audio && remotion render GPIOInput out/gpio-input.mp4",
+    "gpio-input": "npm run gpio-input:audio && remotion render GPIOInput out/1-basic-gpio/gpio-input.mp4",
     "gpio-interrupts:audio": "node --disable-warning=ExperimentalWarning scripts/gpio-interrupts-audio.ts",
-    "gpio-interrupts": "npm run gpio-interrupts:audio && remotion render GPIOInterrupts out/gpio-interrupts.mp4",
+    "gpio-interrupts": "npm run gpio-interrupts:audio && remotion render GPIOInterrupts out/3-advanced-gpio/gpio-interrupts.mp4",
     "freertos-tasks:audio": "node --disable-warning=ExperimentalWarning scripts/freertos-tasks-audio.ts",
-    "freertos-tasks": "npm run freertos-tasks:audio && remotion render FreeRTOSTasks out/freertos-tasks.mp4"
+    "freertos-tasks": "npm run freertos-tasks:audio && remotion render FreeRTOSTasks out/2-freertos/freertos-tasks.mp4"
   },
   "dependencies": {
     "@remotion/cli": "^4.0.535",

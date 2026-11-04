@@ -32,7 +32,7 @@
  *   WRITE   (ledcWrite scene) the "nope" buzz on "not a voltage"; the duty
  *           trace's edges as clicks, following the written value.
  *
- * Output: public/pwm/mix.wav (−16 LUFS, −1.5 dBTP) + stems in out/.
+ * Output: public/pwm/mix.wav (−16 LUFS, −1.5 dBTP) + stems in out/3-advanced-gpio/pwm-stems/.
  */
 import { join } from 'node:path';
 import {
@@ -78,7 +78,7 @@ import {
 } from '../src/scenes/pwm/timeline.ts';
 
 const PUBLIC = join(ROOT, 'public/pwm');
-const STEMS = join(ROOT, 'out/pwm-stems');
+const STEMS = join(ROOT, 'out/3-advanced-gpio/pwm-stems');
 const T = track(SECONDS);
 const N = T.N;
 const abs = (scene: SceneId, t: number) => sceneStart(scene) + t;

@@ -15,7 +15,7 @@
  *           to A major
  *
  * No sustained tones: nothing here is about pitch (SOUND.md).
- * Output: public/freertos-tasks/mix.wav (−16 LUFS, −1.5 dBTP) + stems in out/freertos-tasks-stems/.
+ * Output: public/freertos-tasks/mix.wav (−16 LUFS, −1.5 dBTP) + stems in out/2-freertos/freertos-tasks-stems/.
  */
 import { join } from 'node:path';
 import { biquad, level, master, pad, ROOT, sfx, talkingEnvelope, track, voiceover } from './lib/audio.ts';
@@ -41,7 +41,7 @@ import {
 } from '../src/scenes/freertos-tasks/timeline.ts';
 
 const PUBLIC = join(ROOT, 'public/freertos-tasks');
-const STEMS = join(ROOT, 'out/freertos-tasks-stems');
+const STEMS = join(ROOT, 'out/2-freertos/freertos-tasks-stems');
 const T = track(SECONDS);
 const N = T.N;
 const abs = (scene: SceneId, t: number) => sceneStart(scene) + t;

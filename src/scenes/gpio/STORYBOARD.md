@@ -4,7 +4,7 @@
 
 > **Under-the-hood scene cut** (rule "teach driving, not the engine", `AGENTS.md`). The scene, its VO and its sound were removed; the video goes straight from the second knob to the payoff. Its storyboard rows and facts are kept below, marked *(cut)*, for reference only.
 
-Slug `gpio` · composition `GPIO` · `out/gpio.mp4` · ~5½ min · every claim → `FACTS.md`.
+Slug `gpio` · composition `GPIO` · `out/1-basic-gpio/gpio.mp4` · ~5½ min · every claim → `FACTS.md`.
 **No Arduino**: `app_main`, ESP-IDF driver calls, `vTaskDelay(pdMS_TO_TICKS(ms))`.
 
 The program used throughout (same calls as ESP-IDF's own `get-started/blink` example):

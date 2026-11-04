@@ -47,8 +47,8 @@ Load `SCRIPT.md`. Write the arc and, per scene, a table of beats: VO line (`text
 - `src/scenes/<slug>/timeline.ts` — copy pwm's skeleton: `FPS`, `SCENES` (id + dur), `sceneStart`, `sceneDur`, `SECONDS`, `<NAME>_FRAMES`, one cue object per scene, `VoLine`/`VO`/`VOICE` (`en-US-AndrewMultilingualNeural`). Import-free (type-only imports allowed): Node runs it directly.
 - `src/scenes/<Name>.tsx` — sequences every scene over `<Audio src={staticFile('<slug>/mix.wav')}/>`, like `PWM.tsx`.
 - `src/Root.tsx` — a `<Composition>` wrapped in `<Stage floor={false}>`, 1920×1080 @ 30 fps.
-- `scripts/<slug>-audio.ts` — built on `scripts/lib/audio.ts`, structured like `pwm-audio.ts`; outputs `public/<slug>/mix.wav`, stems in `out/<slug>-stems/`.
-- `package.json` — `"<slug>:audio"` and `"<slug>": "npm run <slug>:audio && remotion render <Name> out/<slug>.mp4"`.
+- `scripts/<slug>-audio.ts` — built on `scripts/lib/audio.ts`, structured like `pwm-audio.ts`; outputs `public/<slug>/mix.wav`, stems in `out/<section>/<slug>-stems/`.
+- `package.json` — `"<slug>:audio"` and `"<slug>": "npm run <slug>:audio && remotion render <Name> out/<section>/<slug>.mp4"`.
 **Done when** `npx tsc --noEmit` passes and `npm run list` shows the composition.
 
 ### 4. Time it to the voice
@@ -65,11 +65,11 @@ Load `STYLE.md`. Build each scene from the house shot types; drive every animati
 **Done when** every view has been inspected at its busiest moment with nothing overlapping or unreadable.
 
 ### 7. Sound
-Load `SOUND.md`. Write the scene's layers in the audio script; `npm run <slug>:audio`. Measure new layers with `ffmpeg -ss A -to B -i out/<slug>-stems/<layer>.wav -af volumedetect -f null -`.
+Load `SOUND.md`. Write the scene's layers in the audio script; `npm run <slug>:audio`. Measure new layers with `ffmpeg -ss A -to B -i out/<section>/<slug>-stems/<layer>.wav -af volumedetect -f null -`.
 **Done when** the build prints every VO line `ok`, and each new layer is at its target level (silent where it should be silent).
 
 ### 8. Render and verify
-`npm run <slug>`. Transcribe the render (faster-whisper via `uv run --with faster-whisper`) and compare it with the script; listen-check any word Whisper hears differently (rephrase `say` if TTS is ambiguous). Grab a few frames with `ffmpeg -ss T -i out/<slug>.mp4 -frames:v 1`.
+`npm run <slug>` (writes `out/<section>/<slug>.mp4`; `<section>` = `1-basic-gpio` / `2-freertos` / `3-advanced-gpio`). Transcribe the render (faster-whisper via `uv run --with faster-whisper`) and compare it with the script; listen-check any word Whisper hears differently (rephrase `say` if TTS is ambiguous). Grab a few frames with `ffmpeg -ss T -i out/<slug>.mp4 -frames:v 1`.
 **Done when** the transcript matches the script and the frames match the stills.
 
 ### 9. Report

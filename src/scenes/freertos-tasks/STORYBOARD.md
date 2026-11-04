@@ -1,6 +1,6 @@
 # FreeRTOS tasks: storyboard v1 (pure ESP-IDF)
 
-- Slug `freertos-tasks`, composition `FreeRTOSTasks`, output `out/freertos-tasks.mp4`, about 5½ min.
+- Slug `freertos-tasks`, composition `FreeRTOSTasks`, output `out/2-freertos/freertos-tasks.mp4`, about 5½ min.
 - **v2 (review pass):** steps paced one at a time; the task-function code *mutates* to show ending a task; `xTaskCreate` is first shown inside `app_main`; ×4 is emphatic; the overflow trap gets three lines; "higher priority runs first" is said; `b` is defined in the demo; the under-the-hood scene is dropped.
 - Every claim is sourced in `FACTS.md`.
 - First video in the FreeRTOS series. It follows `gpio` and `gpio-input` and comes **before** `gpio-interrupts` (see `AGENTS.md`, "Course order").

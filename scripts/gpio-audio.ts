@@ -18,7 +18,7 @@
  *           blips when it works, thumps on the big moments
  *   MUSIC   the house pad (C3·E3·A3 over A2), ducked under VO, cut before the payoff, resolving to A major
  *
- * Output: public/gpio/mix.wav (−16 LUFS, −1.5 dBTP) + stems in out/gpio-stems/.
+ * Output: public/gpio/mix.wav (−16 LUFS, −1.5 dBTP) + stems in out/1-basic-gpio/gpio-stems/.
  */
 import { join } from 'node:path';
 import { biquad, db, level, master, pad, pulse, ROOT, S, sfx, smooth, SR, talkingEnvelope, track, voiceover } from './lib/audio.ts';
@@ -46,7 +46,7 @@ import {
 } from '../src/scenes/gpio/timeline.ts';
 
 const PUBLIC = join(ROOT, 'public/gpio');
-const STEMS = join(ROOT, 'out/gpio-stems');
+const STEMS = join(ROOT, 'out/1-basic-gpio/gpio-stems');
 const T = track(SECONDS);
 const N = T.N;
 const abs = (scene: SceneId, t: number) => sceneStart(scene) + t;

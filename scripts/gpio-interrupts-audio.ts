@@ -14,7 +14,7 @@
  *   MUSIC   the house pad, ducked under VO, cut before the payoff, resolving to A major
  *
  * No sustained tones: nothing here is about pitch (SOUND.md).
- * Output: public/gpio-interrupts/mix.wav (−16 LUFS, −1.5 dBTP) + stems in out/gpio-interrupts-stems/.
+ * Output: public/gpio-interrupts/mix.wav (−16 LUFS, −1.5 dBTP) + stems in out/3-advanced-gpio/gpio-interrupts-stems/.
  */
 import { join } from 'node:path';
 import { biquad, level, master, pad, ROOT, S, sfx, smooth, SR, talkingEnvelope, track, voiceover } from './lib/audio.ts';
@@ -41,7 +41,7 @@ import {
 } from '../src/scenes/gpio-interrupts/timeline.ts';
 
 const PUBLIC = join(ROOT, 'public/gpio-interrupts');
-const STEMS = join(ROOT, 'out/gpio-interrupts-stems');
+const STEMS = join(ROOT, 'out/3-advanced-gpio/gpio-interrupts-stems');
 const T = track(SECONDS);
 const N = T.N;
 const abs = (scene: SceneId, t: number) => sceneStart(scene) + t;

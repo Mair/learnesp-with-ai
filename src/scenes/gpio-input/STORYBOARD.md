@@ -4,7 +4,7 @@
 
 > **Under-the-hood scene cut** (rule "teach driving, not the engine", `AGENTS.md`). The scene, its VO and its sound were removed; the video goes straight from the second knob to the payoff. Its storyboard rows and facts are kept below, marked *(cut)*, for reference only.
 
-Slug `gpio-input` · composition `GPIOInput` · `out/gpio-input.mp4` · ~6 min · every claim → `FACTS.md`.
+Slug `gpio-input` · composition `GPIOInput` · `out/1-basic-gpio/gpio-input.mp4` · ~6 min · every claim → `FACTS.md`.
 Sequel to the `gpio` (output) video: same board, same LED on GPIO 2, same visual language.
 **No Arduino**: `app_main`, ESP-IDF driver calls, `vTaskDelay(pdMS_TO_TICKS(ms))`.
 

@@ -106,7 +106,9 @@ with `intr_type`, no ISR service, no interrupts. Each task drives its own
 pin(s), and no two tasks touch the same pin.
 
 - **Read, write, render here.** Paths: `src/scenes/<slug>/`,
-  `public/<slug>/`, `out/<slug>.mp4`, `out/<slug>-stems/`.
+  `public/<slug>/`, `out/<section>/<slug>.mp4`, `out/<section>/<slug>-stems/`,
+  where `<section>` is `1-basic-gpio`, `2-freertos` or `3-advanced-gpio`
+  (the course sections below).
 - **Never edit the old spike** at
   `~/projects/learnesp32.com/spike-course/esp32-remotion`. It's the
   pre-migration prototype ("first-light" there = "pwm" here), kept frozen as

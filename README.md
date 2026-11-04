@@ -27,8 +27,8 @@ npm install
 npm run dev                      # Remotion Studio: scrub, preview
 npm run typecheck
 
-npm run pwm                      # soundtrack + render → out/pwm.mp4
-npm run pwm:audio                # soundtrack only → public/pwm/mix.wav, stems in out/pwm-stems/
+npm run pwm                      # soundtrack + render → out/3-advanced-gpio/pwm.mp4
+npm run pwm:audio                # soundtrack only → public/pwm/mix.wav, stems in out/3-advanced-gpio/pwm-stems/
 
 npm run vo -- pwm [scene]        # TTS every VO line (cached) + Whisper word offsets → cue times
 npm run stills -- PWM 26 41.5    # stills at absolute seconds → /tmp/stills/
