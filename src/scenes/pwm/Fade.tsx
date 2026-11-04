@@ -1,23 +1,23 @@
 /**
- * 6 · FADE — what `ledcFade(LED, 230, 0, 2800)` actually does.
+ * 8 · FADE — three calls: ledc_fade_func_install, ledc_set_fade_with_time, ledc_fade_start.
  *
- *   intro    the call; four cards: pin · from · to · time
- *   ramp     the duty over 2.8 s (played in real time), and three snapshots of
- *            the pin along the way: still only ever on or off
- *   stairs   the duty is a whole number, so the fade is a staircase:
- *            2800 periods ÷ 230 steps → −1 every 12 periods (really 2.76 s)
- *   engine   ledcFade loads the LEDC fade engine (conf1.duty_inc / duty_num /
- *            duty_cycle / duty_scale), sets duty_start and returns; loop() keeps
- *            running; ledcFadeWithInterrupt's callback fires at the end
+ *   install  once, at start-up · 0 = the defaults
+ *   forget   "Fade service not installed" → ESP_FAIL
+ *   from     target 0 over 2800 ms · no starting value: it fades from the duty it has (230)
+ *   ramp     the duty over 2.8 s, and three snapshots of the pin: still only on or off
+ *   stairs   a whole number → a staircase: 2800 ÷ 230 → −1 every 12 periods → 2.76 s
+ *   engine   the LEDC hardware does the stepping, not your code
+ *   start    LEDC_FADE_WAIT_DONE: your task waits, the CPU is free
+ *   nowait   LEDC_FADE_NO_WAIT: returns at once · the next duty change waits for the fade
  *
- * The step maths is ESP-IDF's _ledc_set_fade_with_time() — see FADE_* in
- * timeline.ts. Register fields from components/hal/esp32/include/hal/ledc_ll.h.
+ * FACTS: ledc.c l.1352–1357, l.1426–1458, l.1462–1483; ledc.h l.448–457; ledc_types.h l.136–140.
  */
 import React from 'react';
 import { useCurrentFrame, useVideoConfig } from 'remotion';
-import { ease, Explainer, GREEN, mono, VIEW_H as H, VIEW_W as W } from '../../components/Explainer';
+import { ease, Explainer, GREEN, mono, RED, VIEW_H as H, VIEW_W as W } from '../../components/Explainer';
 import { Led } from '../../components/Gadgets';
 import { C, FONT, hexA } from '../../theme/palette';
+import { after, LogBox, Verdict } from './parts';
 import {
   FADE as F,
   FADE_CYCLE,
@@ -34,36 +34,126 @@ import {
 } from './timeline';
 
 const clamp01 = (x: number) => Math.min(1, Math.max(0, x));
-const COLORS = [C.pink, C.amber, C.amber, C.magenta];
 const DUTY = C.amber;
+const COLORS: Record<string, string> = { flags: C.cyan, 'speed mode': C.cyan, channel: C.pink, target: DUTY, time: DUTY, mode: GREEN };
 
 export const Fade: React.FC = () => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const t = frame / fps;
-  const engineRight = (t: number) => (t >= F.engine.run[0] ? 'slowed ~3× so you can watch it' : undefined);
+  const V = F.views;
+  let call = F.calls[0];
+  for (const c of F.calls) if (t >= c.from) call = c;
+  const noWait = t >= F.noWait && 'noWait' in call && call.noWait;
+  const code = noWait ? (call as { noWait: string }).noWait : call.code;
+  const args = call.args.map((a) => ({
+    ...a,
+    token: noWait && a.token === 'LEDC_FADE_WAIT_DONE' ? 'LEDC_FADE_NO_WAIT' : a.token,
+    value: noWait && a.title === 'mode' ? 'no wait' : a.value,
+    sub: noWait && a.title === 'mode' ? 'returns at once' : a.sub,
+    color: COLORS[a.title] ?? C.cyan,
+  }));
   return (
     <Explainer
       t={t}
       frames={Math.round(sceneDur('fade') * FPS)}
-      kicker="Fading · ledcFade()"
-      code={F.code}
-      run={F.run}
-      args={F.args.map((a, i) => ({ ...a, color: COLORS[i] }))}
+      kicker="Fading · three calls"
+      code={code}
+      run={call.run}
+      codeSize={call.size}
+      args={args}
       captions={F.captions}
       views={[
-        { at: F.views.ramp, component: RampView, active: [1, 2, 3], label: 'the duty over time', accent: DUTY, right: () => 'real time' },
+        { at: V.install, component: InstallView, active: [0], label: 'ledc_fade_func_install · once, at start-up', accent: C.cyan },
+        { at: V.forget, component: ForgetView, active: [0], label: 'forget it', accent: RED, right: () => 'idf.py monitor' },
+        { at: V.from, component: FromView, active: [2, 3], label: 'where to end, and how long', accent: DUTY },
+        { at: V.ramp, component: RampView, active: [2, 3], label: 'the duty over time', accent: DUTY, right: () => 'real time' },
         {
-          at: F.views.stairs,
+          at: V.stairs,
           component: StairsView,
-          active: [1, 2, 3],
+          active: [2, 3],
           label: 'zoomed in · the first 6 steps',
           accent: C.cyan,
           right: () => `${FADE_STEPS} steps · ${FADE_CYCLE} periods each`,
         },
-        { at: F.views.engine, component: EngineView, active: [1, 2, 3], label: 'who does the stepping', accent: C.magenta, right: engineRight },
+        { at: V.engine, component: EngineView, active: [2, 3], label: 'who does the stepping', accent: C.magenta },
+        { at: V.start, component: StartView, active: [2], label: 'ledc_fade_start · go', accent: GREEN, right: (t) => (t >= F.start.run[0] ? 'fade slowed ~2×' : undefined) },
+        { at: V.nowait, component: NoWaitView, active: [2], label: 'LEDC_FADE_NO_WAIT', accent: C.amber },
       ]}
     />
+  );
+};
+
+// ── install / forget ──────────────────────────────────────────────────────
+
+const InstallView: React.FC<{ t: number }> = ({ t }) => {
+  const I = F.install;
+  return (
+    <div style={{ position: 'absolute', inset: 0, display: 'grid', alignContent: 'center', gap: 26, padding: '0 30px' }}>
+      <div style={{ display: 'grid', gap: 6, ...mono(28, C.muted) }}>
+        <div>ESP_ERROR_CHECK(ledc_channel_config(&channel));</div>
+        <div style={{ color: '#fff', opacity: after(t, I.once) }}>
+          ESP_ERROR_CHECK(ledc_fade_func_install(<b style={{ color: C.cyan }}>0</b>));
+          <span style={{ fontFamily: FONT.sans, color: C.cyan, fontWeight: 700 }}>{'   '}← once, at start-up</span>
+        </div>
+      </div>
+      <div style={{ fontSize: 32, fontWeight: 700, color: C.ink, opacity: after(t, I.on) }}>it switches fading on, for every channel</div>
+      <div style={{ fontSize: 28, color: C.ink, opacity: after(t, I.zero) }}>
+        <b style={{ color: C.cyan }}>0</b> = the default settings
+      </div>
+    </div>
+  );
+};
+
+const ForgetView: React.FC<{ t: number }> = ({ t }) => {
+  const G = F.forget;
+  return (
+    <div style={{ position: 'absolute', inset: 0, display: 'grid', alignContent: 'start', gap: 22, paddingTop: 16 }}>
+      <div style={{ ...mono(28, C.muted), textDecoration: 'line-through', textDecorationColor: RED, textDecorationThickness: 3 }}>
+        ESP_ERROR_CHECK(ledc_fade_func_install(0));
+      </div>
+      <LogBox
+        t={t}
+        at={G.logs}
+        width={1480}
+        lines={[
+          { text: 'E (318) ledc: Fade service not installed, call ledc_fade_func_install' },
+          { text: 'E (318) ledc: ledc_set_fade_with_time(1491): LEDC fade channel init error, not enough memory or service not installed' },
+        ]}
+      />
+      <div style={{ ...mono(32, RED, { fontWeight: 700 }), opacity: after(t, G.fail) }}>the fade call → ESP_FAIL</div>
+    </div>
+  );
+};
+
+// ── from: where to end, how long, and where it starts ─────────────────────
+
+const FromView: React.FC<{ t: number }> = ({ t }) => {
+  const P = F.from;
+  const none = after(t, P.none);
+  const now = after(t, P.v230);
+  return (
+    <div style={{ position: 'absolute', inset: 0, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 40, alignItems: 'center', padding: '0 30px' }}>
+      <div style={{ display: 'grid', gap: 22 }}>
+        <div style={{ ...mono(30, C.ink), opacity: after(t, P.end) }}>
+          target = <b style={{ color: DUTY }}>0</b> · where to end
+        </div>
+        <div style={{ ...mono(30, C.ink), opacity: after(t, P.long) }}>
+          time = <b style={{ color: DUTY }}>2800</b> ms · how long
+        </div>
+        <div style={{ fontSize: 30, fontWeight: 700, color: C.pink, opacity: none }}>✗ no starting value</div>
+        <div style={{ fontSize: 26, color: C.ink, opacity: after(t, P.now) }}>it fades from wherever the duty is now</div>
+      </div>
+      <div style={{ display: 'grid', justifyItems: 'center', gap: 18, opacity: now }}>
+        <div style={mono(24, C.muted)}>the duty right now</div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 24 }}>
+          <div style={mono(80, DUTY, { fontWeight: 800 })}>230</div>
+          <div style={{ fontSize: 60, color: C.muted }}>→</div>
+          <div style={mono(80, DUTY, { fontWeight: 800 })}>0</div>
+        </div>
+        <div style={mono(24, C.muted)}>over 2800 ms</div>
+      </div>
+    </div>
   );
 };
 
@@ -192,7 +282,7 @@ const StairsView: React.FC<{ t: number }> = ({ t }) => {
   const stairs = ease((t - S.stairs) / 0.6);
   const every = ease((t - S.every) / 0.4);
   const eq = [S.time, S.periods, S.steps, S.drop, S.every].map((a) => ease((t - a) / 0.4));
-  const note = ease((t - (S.every + 0.6)) / 0.4);
+  const note = ease((t - S.rounds) / 0.4);
 
   let st = `M ${px(0)} ${dy(FADE_FROM)}`;
   for (let k = 0; k < N; k++) st += ` H ${px((k + 1) * FADE_CYCLE)}${k + 1 < N ? ` V ${dy(FADE_FROM - k - 1)}` : ''}`;
@@ -266,147 +356,127 @@ const StairsView: React.FC<{ t: number }> = ({ t }) => {
 
 const EngineView: React.FC<{ t: number }> = ({ t }) => {
   const E = F.engine;
-  const [r0, r1] = E.run;
-  const u = clamp01((t - r0) / (r1 - r0));
-  const running = t >= r0;
-  const periods = u * FADE_STEPS * FADE_CYCLE;
-  const stepsDone = Math.min(FADE_STEPS, Math.floor(periods / FADE_CYCLE));
-  const duty = FADE_FROM - stepsDone;
-  const done = t >= r1;
-
-  const card = ease((t - E.card) / 0.5);
-  const rows = [
-    { f: 'duty_inc', v: '0', m: 'count down' },
-    { f: 'duty_num', v: String(FADE_STEPS), m: 'steps' },
-    { f: 'duty_cycle', v: String(FADE_CYCLE), m: 'periods per step' },
-    { f: 'duty_scale', v: '1', m: 'change per step' },
-  ];
-  const go = ease((t - E.returns) / 0.4);
-  const hands = ease((t - E.hands) / 0.4);
-
-  // the CPU lane
-  const LX0 = 150;
-  const LX1 = W - 30;
-  const LY = 400;
-  const laneX = (uu: number) => LX0 + 150 + uu * (LX1 - LX0 - 150);
-  const loopIn = ease((t - E.loop) / 0.4);
-  const cb = ease((t - E.callback) / 0.4);
-  const loops: React.ReactNode[] = [];
-  if (loopIn > 0) {
-    const n = 9;
-    for (let i = 0; i < n; i++) {
-      const a = i / n;
-      const b = (i + 0.8) / n;
-      if (a > u) break;
-      loops.push(
-        <g key={i}>
-          <rect x={laneX(a)} y={LY - 20} width={laneX(Math.min(b, u)) - laneX(a)} height={40} rx={6} fill={hexA(C.cyan, 0.25)} stroke={hexA(C.cyan, 0.6)} />
-          {laneX(Math.min(b, u)) - laneX(a) > 70 && (
-            <text x={laneX(a) + 10} y={LY + 7} style={mono(18, C.cyan)}>
-              loop()
-            </text>
-          )}
-        </g>,
-      );
-    }
-  }
-
+  const rows = ['count down', `${FADE_STEPS} steps`, `one every ${FADE_CYCLE} periods`, 'by 1 each time'];
+  const hw = after(t, E.hardware);
+  const s = Math.max(0, t - E.rows[0]) % 3.6;
+  const d = fadeDutyAt(Math.min(s, FADE_REAL_S));
   return (
-    <div style={{ position: 'absolute', inset: 0 }}>
-      {/* the fade engine's registers */}
-      <div
-        style={{
-          position: 'absolute',
-          left: 0,
-          top: 0,
-          width: 760,
-          opacity: card,
-          transform: `translateY(${(1 - card) * 20}px)`,
-          borderRadius: 16,
-          border: `1px solid ${hexA(C.magenta, 0.5)}`,
-          background: 'rgba(10,4,32,.6)',
-          padding: '16px 24px',
-        }}
-      >
-        <div style={mono(16, C.magenta, { letterSpacing: '.2em', textTransform: 'uppercase', marginBottom: 10 })}>
-          LEDC fade engine · channel conf1 register
-        </div>
+    <div style={{ position: 'absolute', inset: 0, display: 'grid', gridTemplateColumns: '1fr 360px', alignItems: 'center', gap: 40, padding: '0 30px' }}>
+      <div style={{ display: 'grid', gap: 18 }}>
+        <div style={{ ...mono(22, C.muted), opacity: after(t, E.hands) }}>ledc_set_fade_with_time hands the LEDC hardware:</div>
         {rows.map((r, i) => {
-          const p = ease((t - E.rows[i]) / 0.35);
+          const p = after(t, E.rows[i], 0.35);
           return (
-            <div key={r.f} style={{ display: 'grid', gridTemplateColumns: '200px 90px 1fr', alignItems: 'baseline', opacity: 0.25 + 0.75 * p, fontFamily: FONT.mono, fontSize: 26, lineHeight: 1.7 }}>
-              <span style={{ color: C.muted }}>{r.f}</span>
-              <span style={{ color: p > 0 ? DUTY : C.muted, fontWeight: 700 }}>= {p > 0 ? r.v : '·'}</span>
-              <span style={{ fontFamily: FONT.sans, fontSize: 22, color: C.ink, opacity: p }}>{r.m}</span>
+            <div key={r} style={{ ...mono(32, DUTY, { fontWeight: 700 }), opacity: 0.2 + 0.8 * p, transform: `translateX(${(1 - p) * -16}px)` }}>
+              {r}
             </div>
           );
         })}
-        <div style={{ display: 'grid', gridTemplateColumns: '200px 90px 1fr', alignItems: 'baseline', opacity: 0.25 + 0.75 * go, fontFamily: FONT.mono, fontSize: 26, lineHeight: 1.7 }}>
-          <span style={{ color: C.muted }}>duty_start</span>
-          <span style={{ color: go > 0 ? DUTY : C.muted, fontWeight: 700 }}>= {go > 0 ? '1' : '·'}</span>
-          <span style={{ fontFamily: FONT.sans, fontSize: 22, color: DUTY, fontWeight: 700, opacity: go }}>go — the same bit ledcWrite sets</span>
-        </div>
+        <div style={{ fontSize: 30, fontWeight: 700, color: C.magenta, opacity: hw, marginTop: 8 }}>the hardware does the stepping — not your code</div>
       </div>
-
-      {/* from your code → to the engine */}
-      <div style={{ position: 'absolute', left: 800, top: 6, width: W - 800, opacity: hands, display: 'grid', gap: 8 }}>
-        <div style={mono(18, C.muted)}>your sketch</div>
-        <div style={mono(22, '#cfd6ff', { padding: '8px 12px', borderRadius: 8, background: 'rgba(255,255,255,.05)', whiteSpace: 'nowrap' })}>
-          {cb > 0 ? (
-            <>
-              ledcFadeWithInterrupt(LED, 230, 0, 2800, <span style={{ color: GREEN }}>done</span>);
-            </>
-          ) : (
-            F.code
-          )}
-        </div>
-        <div style={{ fontSize: 20, color: C.muted }}>↳ hands over 4 numbers, sets duty_start, returns</div>
+      <div style={{ display: 'grid', justifyItems: 'center', gap: 12, opacity: after(t, E.rows[0]) }}>
+        <Led brightness={d / STEPS} size={170} />
+        <div style={mono(32, DUTY, { fontWeight: 700 })}>duty = {String(d).padStart(3, '\u2007')}</div>
       </div>
+    </div>
+  );
+};
 
-      {/* the engine running */}
-      <div style={{ position: 'absolute', left: 800, top: 150, width: W - 800, display: 'grid', gridTemplateColumns: '150px 1fr', alignItems: 'center', gap: 20, opacity: running ? 1 : 0.25 }}>
-        <Led brightness={duty / STEPS} size={140} />
-        <div style={{ display: 'grid', gap: 6 }}>
-          <div style={mono(34, DUTY, { fontWeight: 700 })}>duty = {String(running ? duty : FADE_FROM).padStart(3, '\u2007')}</div>
-          <div style={mono(20, C.muted)}>
-            steps left: {FADE_STEPS - (running ? stepsDone : 0)} · period {Math.floor(running ? periods : 0)}
-          </div>
-          <div style={{ width: 380, height: 14, borderRadius: 7, background: 'rgba(255,255,255,.08)', overflow: 'hidden' }}>
-            <div style={{ width: `${(running ? u : 0) * 100}%`, height: '100%', background: C.magenta, boxShadow: `0 0 12px ${C.magenta}` }} />
-          </div>
-        </div>
-      </div>
+// ── start: your task waits ────────────────────────────────────────────────
 
-      {/* what the CPU is doing meanwhile */}
-      <svg width={W} height={H} style={{ position: 'absolute', left: 0, top: 0, overflow: 'visible', pointerEvents: 'none' }}>
-        <g opacity={go}>
-          <text x={0} y={LY + 7} style={mono(20, C.ink)}>
-            CPU
-          </text>
-          <line x1={LX0} y1={LY + 30} x2={LX1} y2={LY + 30} stroke={hexA(C.muted, 0.4)} strokeWidth={1.5} />
-          <rect x={LX0} y={LY - 20} width={140} height={40} rx={6} fill={hexA(DUTY, 0.3)} stroke={DUTY} />
-          <text x={LX0 + 10} y={LY + 7} style={mono(18, DUTY)}>
-            ledcFade()
-          </text>
-          {loops}
-          {running && !done && <line x1={laneX(u)} y1={LY - 34} x2={laneX(u)} y2={LY + 34} stroke="#fff" strokeWidth={2} opacity={0.6} />}
-          {running && (
-            <text x={LX0 + 150} y={LY + 56} style={mono(16, C.muted)}>
-              meanwhile, the LEDC hardware steps the duty {FADE_STEPS} times — no CPU involved
+const Lane: React.FC<{ x0: number; x1: number; y: number; spans: { a: number; b: number; label: string; color: string; dashed?: boolean }[]; label: string }> = ({
+  x0,
+  x1,
+  y,
+  spans,
+  label,
+}) => (
+  <g>
+    <text x={0} y={y + 7} style={mono(20, C.ink)}>
+      {label}
+    </text>
+    <line x1={x0} y1={y + 26} x2={x1} y2={y + 26} stroke={hexA(C.muted, 0.35)} strokeWidth={1.5} />
+    {spans.map((s, i) =>
+      s.b > s.a ? (
+        <g key={i}>
+          <rect x={s.a} y={y - 20} width={s.b - s.a} height={40} rx={6} fill={hexA(s.color, s.dashed ? 0.08 : 0.25)} stroke={s.color} strokeDasharray={s.dashed ? '6 5' : undefined} />
+          {s.b - s.a > 90 && (
+            <text x={s.a + 10} y={y + 7} style={mono(18, s.color)}>
+              {s.label}
             </text>
           )}
         </g>
-        {done && cb > 0 && (
-          <g opacity={ease((t - r1) / 0.3)}>
-            <rect x={LX1 - 150} y={LY - 74} width={150} height={40} rx={6} fill={hexA(GREEN, 0.25)} stroke={GREEN} />
-            <text x={LX1 - 140} y={LY - 47} style={mono(20, GREEN, { fontWeight: 700 })}>
-              done()
-            </text>
-            <text x={LX1 - 160} y={LY - 47} textAnchor="end" style={mono(18, GREEN)}>
-              fade-end interrupt →
-            </text>
-          </g>
-        )}
+      ) : null,
+    )}
+  </g>
+);
+
+const StartView: React.FC<{ t: number }> = ({ t }) => {
+  const S = F.start;
+  const [r0, r1] = S.run;
+  const u = clamp01((t - r0) / (r1 - r0));
+  const X0 = 210;
+  const X1 = W - 20;
+  const span = X1 - X0;
+  const x = (uu: number) => X0 + uu * span * 0.7;
+  const started = t >= r0;
+  const done = t >= r1;
+  const d = started ? fadeDutyAt(u * FADE_REAL_S) : FADE_FROM;
+  const task = [
+    { a: X0 - 60, b: X0, label: '', color: C.cyan },
+    { a: X0, b: started ? x(u) : X0, label: 'waiting…', color: C.muted, dashed: true },
+    { a: x(1), b: done ? x(1) + Math.min(1, (t - r1) / 1.2) * (X1 - x(1)) : x(1), label: 'carries on', color: C.cyan },
+  ];
+  const hw = [{ a: X0, b: started ? x(u) : X0, label: `fading ${FADE_FROM} → 0`, color: C.magenta }];
+  return (
+    <div style={{ position: 'absolute', inset: 0 }}>
+      <svg width={W} height={H} style={{ overflow: 'visible' }}>
+        <g opacity={after(t, S.go)}>
+          <Lane x0={X0 - 60} x1={X1} y={90} spans={task} label="your task" />
+          <Lane x0={X0 - 60} x1={X1} y={200} spans={hw} label="LEDC hardware" />
+          {started && !done && <line x1={x(u)} y1={50} x2={x(u)} y2={240} stroke="#fff" strokeWidth={2} opacity={0.6} />}
+        </g>
+        <text x={0} y={320} style={mono(24, GREEN)} opacity={after(t, S.waits)}>
+          LEDC_FADE_WAIT_DONE → your task waits until the fade ends
+        </text>
+        <text x={0} y={364} style={mono(24, C.ink)} opacity={after(t, S.free)}>
+          while it waits, the CPU is free for other tasks
+        </text>
+      </svg>
+      <div style={{ position: 'absolute', right: 20, top: 300, display: 'grid', justifyItems: 'center', gap: 8, opacity: after(t, S.go) }}>
+        <Led brightness={d / STEPS} size={120} />
+        <div style={mono(24, DUTY, { fontWeight: 700 })}>duty {String(d).padStart(3, '\u2007')}</div>
+      </div>
+    </div>
+  );
+};
+
+const NoWaitView: React.FC<{ t: number }> = ({ t }) => {
+  const N = F.nowait;
+  const ret = after(t, N.returns);
+  const next = after(t, N.next);
+  const X0 = 210;
+  const X1 = W - 20;
+  const fadeEnd = X0 + 0.62 * (X1 - X0);
+  const xNext = X0 + 0.25 * (X1 - X0);
+  const task = [
+    { a: X0 - 60, b: X0, label: '', color: C.cyan },
+    { a: X0, b: X0 + ret * (xNext - X0), label: 'keeps running', color: C.cyan },
+    { a: xNext, b: xNext + next * (fadeEnd - xNext), label: 'ledc_set_duty(…) waits…', color: C.amber, dashed: true },
+    { a: fadeEnd, b: fadeEnd + after(t, N.waits) * (X1 - fadeEnd), label: 'then runs', color: C.cyan },
+  ];
+  const hw = [{ a: X0, b: fadeEnd, label: `fading ${FADE_FROM} → 0`, color: C.magenta }];
+  return (
+    <div style={{ position: 'absolute', inset: 0 }}>
+      <svg width={W} height={H} style={{ overflow: 'visible' }}>
+        <Lane x0={X0 - 60} x1={X1} y={90} spans={task} label="your task" />
+        <Lane x0={X0 - 60} x1={X1} y={200} spans={hw} label="LEDC hardware" />
+        <text x={0} y={320} style={mono(24, C.amber)} opacity={ret}>
+          LEDC_FADE_NO_WAIT → ledc_fade_start returns at once
+        </text>
+        <text x={0} y={364} style={mono(24, C.ink)} opacity={next}>
+          on the ESP32, your next duty change waits until the fade is done
+        </text>
       </svg>
     </div>
   );

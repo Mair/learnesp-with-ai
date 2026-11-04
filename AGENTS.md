@@ -20,10 +20,10 @@ plain ESP-IDF C:
   `esp_err_t` return values, `ESP_ERROR_CHECK`, `ESP_LOGx`, and `menuconfig`
   options. Research sources are ESP-IDF, the HAL/LL headers, the datasheet and
   the TRM — never arduino-esp32.
-- **The existing PWM video (`src/scenes/pwm/`) predates this rule** and uses
-  Arduino calls (`ledcAttach`, `ledcWrite`, …). Copy its *visual patterns*, not
-  its API; it needs an ESP-IDF rewrite (`ledc_timer_config`,
-  `ledc_channel_config`, `ledc_set_duty` + `ledc_update_duty`, …).
+- **The PWM video (`src/scenes/pwm/`)** was first made with Arduino calls
+  (`ledcAttach`, `ledcWrite`, …) and has been rewritten in ESP-IDF LEDC
+  (`ledc_timer_config`, `ledc_channel_config`, `ledc_set_duty` +
+  `ledc_update_duty`, the fade calls and `ledc_set_freq`).
 
 ## Teach driving, not the engine
 
@@ -64,8 +64,7 @@ a `FACTS.md` cites comes from **ESP-IDF v6.0 or later**, never v5.x or older.
   Drivers are still in `components/esp_driver_<periph>/`.
 - An API that is deprecated or removed in v6 is not used on screen, even if
   it still compiles.
-- `gpio`, `gpio-input`, `freertos-tasks`, `gpio-interrupts` and the PWM v2
-  draft were first researched on v5.5 and have been re-checked against v6.0.2
+- `gpio`, `gpio-input`, `freertos-tasks`, `gpio-interrupts` and `pwm` were first researched on v5.5 and have been re-checked against v6.0.2
   (each `FACTS.md` has a "Re-checked v5.5 → v6.0.2" note). Anything quoted on
   screen that carries a source line number (e.g. `gpio_isr_handler_add(564):`
   in a log line) must be re-checked whenever the reference tag changes.

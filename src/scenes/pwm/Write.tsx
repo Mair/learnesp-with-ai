@@ -1,26 +1,25 @@
 /**
- * 4 · WRITE — what the second argument of `ledcWrite(LED, 128)` means.
+ * 6 · WRITE — ledc_set_duty(…, 128) + ledc_update_duty(…): set it, then go.
  *
- *   intro   the call; cards for the pin and the duty
- *   what    the duty is NOT a voltage (the pin can't do 1.65 V) — it's a time
- *   duty    the duty is the line across the LEDC counter: pin ON while the
- *           counter is below it. 128 → 128 steps on, 128 off → half.
- *           Then 0 (never on) and 255 (the top value → fully on).
- *   range   the range comes from the resolution: 8 bits 0…255, 10 bits 0…1023 —
- *           the same half is 128 or 512
+ *   what    the duty is NOT a voltage — it's a time
+ *   duty    the line across the counter: 128 → 128 steps on, 128 off → half;
+ *           0 → never on; 255 → on 255 of 256; 256 → always on
+ *   range   8 bits → 0 … 256; 10 bits → 0 … 1024 — the same half is 128 or 512
+ *   load    ledc_set_duty alone changes nothing: the number waits
+ *   go      ledc_update_duty: takes effect at the start of the next period
+ *   free    both return at once; the hardware keeps switching
  *
- * Cues live in WRITE (timeline.ts). `writeOn()` is the on-fraction over time,
- * shared with the soundtrack so the clicks land on the drawn edges.
+ * FACTS: ledc.h l.150–169, l.265–283 (range [0, 2**duty_resolution]); TRM 28.2.3.
  */
 import React from 'react';
 import { useCurrentFrame, useVideoConfig } from 'remotion';
 import { ease, Explainer, GREEN, mono, RED, VIEW_H as H, VIEW_W as W } from '../../components/Explainer';
 import { Led } from '../../components/Gadgets';
 import { C, FONT, hexA } from '../../theme/palette';
+import { after, Verdict } from './parts';
 import { FPS, MAX, sceneDur, STEPS, WRITE as R, writeKey, writeOn } from './timeline';
 
 const clamp01 = (x: number) => Math.min(1, Math.max(0, x));
-const PIN = C.pink;
 const DUTY = C.amber;
 
 export const Write: React.FC = () => {
@@ -28,37 +27,33 @@ export const Write: React.FC = () => {
   const { fps } = useVideoConfig();
   const t = frame / fps;
   const v = writeKey(t);
-  const [pin, duty] = R.args;
-
+  const [mode, ch, duty] = R.args;
   return (
     <Explainer
       t={t}
       frames={Math.round(sceneDur('write') * FPS)}
-      kicker="Setting the duty · ledcWrite()"
+      kicker="Setting the brightness · ledc_set_duty() + ledc_update_duty()"
       code={R.code(v)}
       run={R.run}
       args={[
-        { ...pin, token: 'LED', color: PIN },
+        { ...mode, token: 'LEDC_LOW_SPEED_MODE', color: C.cyan },
+        { ...ch, token: 'LEDC_CHANNEL_0', color: C.pink },
         {
           ...duty,
           token: String(v),
           value: String(v),
-          sub: t < R.what.howLong ? duty.sub : `steps ON per period · 0 … ${MAX}`,
+          sub: t < R.what.howLong ? duty.sub : `steps ON per period · 0 … ${STEPS}`,
           color: DUTY,
         },
       ]}
       captions={R.captions}
       views={[
-        { at: R.views.what, component: WhatView, active: [1], label: 'duty · what the number is', accent: DUTY },
-        {
-          at: R.views.duty,
-          component: DutyView,
-          active: [1],
-          label: 'duty · the counter vs your number',
-          accent: DUTY,
-          right: () => 'slowed 2000×',
-        },
-        { at: R.views.range, component: RangeView, active: [1], label: 'duty · the range comes from the resolution', accent: C.cyan },
+        { at: R.views.what, component: WhatView, active: [2], label: 'duty · what the number is', accent: DUTY },
+        { at: R.views.duty, component: DutyView, active: [2], label: 'duty · the counter vs your number', accent: DUTY, right: () => 'slowed 2000×' },
+        { at: R.views.range, component: RangeView, active: [2], label: 'duty · the range comes from the resolution', accent: C.cyan },
+        { at: R.views.load, component: LoadView, active: [2], label: 'ledc_set_duty · gets the number ready', accent: DUTY },
+        { at: R.views.go, component: GoView, active: [2], label: 'ledc_update_duty · go', accent: GREEN },
+        { at: R.views.free, component: FreeView, active: [2], label: 'who keeps the pin switching', accent: C.magenta },
       ]}
     />
   );
@@ -173,7 +168,7 @@ const DutyView: React.FC<{ t: number }> = ({ t }) => {
 
   const f = writeOn(t);
   const v = writeKey(t);
-  const onSteps = v >= MAX ? STEPS : v;
+  const onSteps = Math.min(v, STEPS);
   const lineIn = ease((t - D.line) / 0.6);
   const yLine = yTop + (sy(f * STEPS) - yTop) * lineIn;
   const live = ease((t - D.on) / 0.5);
@@ -187,8 +182,8 @@ const DutyView: React.FC<{ t: number }> = ({ t }) => {
   const offB = ease((t - D.stepsOff) / 0.4) * brackets;
   const half = ease((t - D.half) / 0.4);
   const light = ease((t - D.light) / 0.4);
-  const top = ease((t - D.top) / 0.4) * (v >= MAX ? 1 : 0);
-  const word = t >= D.keys[3].at ? '' : t >= D.keys[2].at ? 'on the whole time' : t >= D.keys[1].at ? 'never on' : '';
+  const top = ease((t - D.top) / 0.4) * (v >= STEPS ? 1 : 0);
+  const word = t >= D.keys[4].at ? '' : t >= D.keys[3].at ? 'on the whole time' : t >= D.keys[2].at ? 'on 255 of 256 — one step off' : t >= D.keys[1].at ? 'never on' : '';
 
   let saw = '';
   let out = '';
@@ -310,9 +305,9 @@ const DutyView: React.FC<{ t: number }> = ({ t }) => {
           </div>
         </div>
         <div style={{ opacity: top, fontSize: 18, color: DUTY, textAlign: 'center', marginTop: 4 }}>
-          top value = fully on
+          256 = the top: always on
           <br />
-          <span style={{ color: C.muted }}>(the Arduino core bumps {MAX} → {STEPS})</span>
+          <span style={{ color: C.muted }}>(255 is on {MAX} of {STEPS} steps)</span>
         </div>
       </div>
     </div>
@@ -326,8 +321,8 @@ const RangeView: React.FC<{ t: number }> = ({ t }) => {
   const RX0 = 120;
   const RW = 1180;
   const rows = [
-    { bits: 8, y: 40, at: G.r8, attach: 'ledcAttach(LED, 1000, 8)' },
-    { bits: 10, y: 230, at: G.r10, attach: 'ledcAttach(LED, 1000, 10)' },
+    { bits: 8, y: 40, at: G.r8, attach: '.duty_resolution = LEDC_TIMER_8_BIT' },
+    { bits: 10, y: 230, at: G.r10, attach: '.duty_resolution = LEDC_TIMER_10_BIT' },
   ];
   const half = ease((t - G.half) / 0.5);
   const h512 = ease((t - G.h512) / 0.4);
@@ -345,7 +340,7 @@ const RangeView: React.FC<{ t: number }> = ({ t }) => {
         return (
           <g key={r.bits} opacity={p}>
             <text x={RX0} y={r.y + 26} style={{ fontFamily: FONT.sans, fontSize: 30, fontWeight: 700, fill: C.ink }}>
-              {r.bits} bits → 0 … {n - 1}
+              {r.bits} bits → 0 … {n}
               <tspan style={{ fontSize: 22, fontWeight: 400, fill: C.muted }}>{`   ·   ${n} steps per period`}</tspan>
             </text>
             <text x={RX0 + RW} y={r.y + 24} textAnchor="end" style={mono(18, C.muted)}>
@@ -371,7 +366,7 @@ const RangeView: React.FC<{ t: number }> = ({ t }) => {
             </text>
             {showMax && (
               <text x={RX0 + RW} y={yR + 74} textAnchor="middle" opacity={r.bits === 8 ? 1 : max10} style={mono(22, C.cyan)}>
-                {n - 1}
+                {n}
               </text>
             )}
             {half > 0 && (
@@ -404,5 +399,126 @@ const RangeView: React.FC<{ t: number }> = ({ t }) => {
         </g>
       )}
     </svg>
+  );
+};
+
+// ── load: nothing changes yet ─────────────────────────────────────────────
+
+const Lines: React.FC<{ t: number; update: number; go: number }> = ({ t, update, go }) => (
+  <div style={{ display: 'grid', gap: 8, ...mono(28, C.ink) }}>
+    <div>
+      ledc_set_duty(LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_0, <b style={{ color: DUTY }}>128</b>);
+    </div>
+    <div style={{ opacity: update, color: go > 0 ? '#fff' : C.ink, textShadow: go > 0 ? `0 0 18px ${hexA(GREEN, 0.7 * go)}` : undefined }}>
+      ledc_update_duty(LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_0);
+      <span style={{ color: GREEN, fontWeight: 700, opacity: go }}>{'  '}← go</span>
+    </div>
+  </div>
+);
+
+/** three periods of the pin: duty `a` until period `k`, then `b` */
+const PinTrace: React.FC<{ a: number; b: number; k: number; label?: string }> = ({ a, b, k, label }) => {
+  const X0 = 60;
+  const PER = 440;
+  const hi = 30;
+  const lo = 110;
+  let d = '';
+  for (let i = 0; i < 3; i++) {
+    const f = (i >= k ? b : a) / STEPS;
+    const x0 = X0 + i * PER;
+    d += `${d ? ' L' : 'M'} ${x0} ${lo} L ${x0} ${hi} L ${x0 + f * PER} ${hi} L ${x0 + f * PER} ${lo} L ${x0 + PER} ${lo}`;
+  }
+  return (
+    <svg width={W} height={170} style={{ overflow: 'visible' }}>
+      {[0, 1, 2, 3].map((i) => (
+        <line key={i} x1={X0 + i * PER} y1={hi - 16} x2={X0 + i * PER} y2={lo + 14} stroke={hexA(C.muted, 0.4)} strokeWidth={1.5} strokeDasharray="4 6" />
+      ))}
+      <path d={d} fill="none" stroke={C.magenta} strokeWidth={4} style={{ filter: `drop-shadow(0 0 8px ${C.magenta})` }} />
+      <text x={0} y={(hi + lo) / 2 + 7} style={mono(20, C.magenta)}>
+        pin
+      </text>
+      {label && (
+        <text x={X0} y={lo + 46} style={mono(20, C.muted)}>
+          {label}
+        </text>
+      )}
+    </svg>
+  );
+};
+
+const LoadView: React.FC<{ t: number }> = ({ t }) => {
+  const L = R.load;
+  return (
+    <div style={{ position: 'absolute', inset: 0, display: 'grid', alignContent: 'start', gap: 28, paddingTop: 20 }}>
+      <Lines t={t} update={0} go={0} />
+      <div style={{ opacity: after(t, L.nothing) }}>
+        <PinTrace a={64} b={64} k={9} label="the pin keeps its old duty (64)" />
+      </div>
+      <div style={{ fontSize: 30, fontWeight: 700, color: DUTY, opacity: after(t, L.ready) }}>128 is ready — but nothing has changed yet</div>
+    </div>
+  );
+};
+
+const GoView: React.FC<{ t: number }> = ({ t }) => {
+  const G = R.go;
+  const go = after(t, G.go);
+  const next = after(t, G.next);
+  return (
+    <div style={{ position: 'absolute', inset: 0, display: 'grid', alignContent: 'start', gap: 28, paddingTop: 20 }}>
+      <Lines t={t} update={after(t, G.update)} go={go} />
+      <div style={{ opacity: go }}>
+        <PinTrace a={64} b={128} k={next > 0 ? 1 : 9} label={next > 0 ? 'the new duty starts with the next period' : ''} />
+      </div>
+      <div style={{ fontSize: 30, fontWeight: 700, color: GREEN, opacity: next }}>takes effect at the start of the next period</div>
+    </div>
+  );
+};
+
+const FreeView: React.FC<{ t: number }> = ({ t }) => {
+  const F = R.free;
+  const ret = after(t, F.returns);
+  const hw = after(t, F.hardware);
+  const X0 = 150;
+  const X1 = W - 40;
+  const phase = Math.max(0, t - F.hardware) * 1.2;
+  let d = '';
+  const per = 120;
+  const k0 = Math.floor(phase);
+  for (let k = k0; k < k0 + 14; k++) {
+    const x = X0 + (k - phase) * per;
+    d += `${d ? ' L' : 'M'} ${x} 330 L ${x} 270 L ${x + per / 2} 270 L ${x + per / 2} 330 L ${x + per} 330`;
+  }
+  return (
+    <div style={{ position: 'absolute', inset: 0 }}>
+      <svg width={W} height={H} style={{ overflow: 'visible' }}>
+        <defs>
+          <clipPath id="freeclip">
+            <rect x={X0} y={0} width={X1 - X0} height={H} />
+          </clipPath>
+        </defs>
+        <text x={0} y={150} style={mono(22, C.ink)}>
+          your code
+        </text>
+        <rect x={X0} y={120} width={250} height={44} rx={8} fill={hexA(DUTY, 0.3)} stroke={DUTY} opacity={ret} />
+        <text x={X0 + 12} y={150} style={mono(20, DUTY)} opacity={ret}>
+          two calls · return
+        </text>
+        <text x={X0 + 270} y={150} style={mono(20, C.muted)} opacity={ret}>
+          … free to do anything else
+        </text>
+        <text x={0} y={306} style={mono(22, C.magenta)} opacity={hw}>
+          the LEDC
+        </text>
+        <text x={0} y={332} style={mono(22, C.magenta)} opacity={hw}>
+          hardware
+        </text>
+        <g clipPath="url(#freeclip)" opacity={hw}>
+          <path d={d} fill="none" stroke={C.magenta} strokeWidth={4} style={{ filter: `drop-shadow(0 0 8px ${C.magenta})` }} />
+        </g>
+        <text x={X0} y={400} style={mono(22, C.ink)} opacity={hw}>
+          keeps the pin switching, period after period, on its own
+        </text>
+      </svg>
+    </div>
   );
 };

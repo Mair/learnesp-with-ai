@@ -1,5 +1,5 @@
 /**
- * 6 · PAYOFF — silence, then "That's PWM." and the three things to remember.
+ * 10 · PAYOFF — "That's PWM." and the things to remember, then what's next.
  */
 import React from 'react';
 import { AbsoluteFill, useCurrentFrame, useVideoConfig } from 'remotion';
@@ -39,9 +39,9 @@ export const Payoff: React.FC = () => {
                 key={r.k}
                 style={{
                   display: 'grid',
-                  gridTemplateColumns: '480px 60px 520px',
+                  gridTemplateColumns: '660px 60px 620px',
                   alignItems: 'center',
-                  fontSize: 38,
+                  fontSize: 32,
                   opacity: p,
                   transform: `translateX(${(1 - p) * -24}px)`,
                 }}

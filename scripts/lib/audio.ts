@@ -163,8 +163,8 @@ export function ensureClip(voice: string, id: string, say: string) {
       } catch (e) {
         // never leave a half-written clip in the cache
         rmSync(mp3, { force: true });
-        if (attempt >= 4) throw e;
-        spawnSync('sleep', [String(2 * attempt)]);
+        if (attempt >= 8) throw e;
+        spawnSync('sleep', [String(3 * attempt)]);
       }
     }
   }

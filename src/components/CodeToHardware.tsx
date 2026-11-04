@@ -55,6 +55,12 @@ export const CodeToHardware: React.FC<{
   windowMs?: number;
   pin?: number;
   title?: string;
+  /** code panel label (default `${title}.ino`, v1) */
+  file?: string;
+  /** code font size (long ESP-IDF lines need ~19) */
+  codeSize?: number;
+  /** duty steps shown in the readout (ESP-IDF: 2^bits, so 0 … 256) */
+  steps?: number;
 }> = ({
   beats,
   hz,
@@ -66,11 +72,15 @@ export const CodeToHardware: React.FC<{
   windowMs = 10,
   pin = 2,
   title = 'ledc',
+  file,
+  codeSize,
+  steps,
 }) => {
+  const codeFont = codeSize ? { fontFamily: FONT.mono, fontSize: codeSize, lineHeight: 1.5 } : CODE_FONT;
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const t = frame / fps;
-  const max = 2 ** bits - 1;
+  const max = steps ?? 2 ** bits - 1;
 
   const idx = beatIndex(beats, t);
   const duty = dutyAt(beats, t);
@@ -114,14 +124,14 @@ export const CodeToHardware: React.FC<{
       }}
     >
       {/* ── LEFT: code ───────────────────────────────── */}
-      <Panel label={`${title}.ino`} accent={C.cyan}>
+      <Panel label={file ?? `${title}.ino`} accent={C.cyan}>
         <pre
           style={{
-            ...CODE_FONT,
+            ...codeFont,
             margin: 0,
             color: '#cfd6ff',
             // reserve room for one open label row so nothing below ever jumps
-            minHeight: (preamble.length + beats.length) * CODE_FONT.fontSize * CODE_FONT.lineHeight + NOTE_ROW,
+            minHeight: (preamble.length + beats.reduce((n, b) => n + b.code.split('\n').length, 0)) * codeFont.fontSize * codeFont.lineHeight + NOTE_ROW,
           }}
         >
           {preamble.map((line, i) => (
@@ -143,7 +153,7 @@ export const CodeToHardware: React.FC<{
                 litAt={i === idx ? b.at : null}
                 live={i === idx}
                 pending={i > idx}
-                marks={row > 0.02 ? b.marks : undefined}
+                marks={row > 0.02 || (i === idx && !labelled) ? b.marks : undefined}
                 row={row * row * (3 - 2 * row)}
               />
             );

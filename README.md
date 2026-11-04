@@ -8,7 +8,7 @@ driver works inside: no under-the-hood scenes (see `AGENTS.md`).
 
 | Video | Composition | Length | What it covers |
 |---|---|---|---|
-| PWM (Module 01, legacy Arduino — ESP-IDF rewrite in progress) | `PWM` | 4:25 | why a pin can't dim → PWM → `ledcAttach` (frequency, resolution, clock budget) → `ledcWrite` (the duty) → LED demo → `ledcFade` (staircase, fade engine) → `ledcWriteTone` → payoff |
+| PWM (Advanced GPIO, ESP-IDF LEDC) | `PWM` | 7:34 | why a pin can't dim → PWM → the whole program → `ledc_timer_config` (speed mode, frequency, resolution, clock, the 17-bit error) → `ledc_channel_config` (channel, timer, pin, duty, hpoint) → `ledc_set_duty` + `ledc_update_duty` (0…256) → LED demo → fades (`ledc_fade_func_install`, `ledc_set_fade_with_time`, `ledc_fade_start`) → tones with `ledc_set_freq` → payoff |
 
 ## Making a video
 
@@ -51,11 +51,12 @@ src/
     pwm/
       timeline.ts            single source of truth: scenes, cues, VO, shared maths
       FACTS.md               every claim and the source file it came from
-      Problem Answer Setup Write Fade Payoff .tsx
+      Problem Answer Context Timer Channel Write Fade Payoff parts .tsx
 scripts/
   lib/audio.ts             synthesis, voice-over, SFX, music, mastering (shared)
   pwm-audio.ts             the PWM soundtrack
   vo.ts  stills.mjs        timing sheet, still renders
+  vo-plan.ts               voice every line + Whisper → writes VO_AT/SCENE_DUR into a timeline.ts
 docs/course-design/        the course's story, animation language, stack rationale
 ```
 

@@ -177,6 +177,8 @@ const CallLine: React.FC<{ t: number; code: string; run: number; args: Explainer
   const parts: React.ReactNode[] = [];
   let cur = 0;
   for (const { a, i, c } of located) {
+    // several cards may point at one token (a struct's fields → `&timer`): draw it once
+    if (c < cur) continue;
     parts.push(code.slice(cur, c));
     const p = ease((t - a.at) / 0.35);
     const on = active ? active.includes(i) : p > 0;

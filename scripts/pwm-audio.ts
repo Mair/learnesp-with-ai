@@ -25,12 +25,14 @@
  *           literal tones; cut dead before the
  *           payoff, resolves to A major under "That's PWM."
  *
- *   SETUP   (ledcAttach scene) 5 Hz clicks under the blinking LED that fuse
- *           into a tone; the LEDC counter as a rising glide; the duty trace's
- *           edges as clicks; one literal second of 1 kHz on "a thousand times
- *           a second"; a buzz when the clock runs out.
- *   WRITE   (ledcWrite scene) the "nope" buzz on "not a voltage"; the duty
- *           trace's edges as clicks, following the written value.
+ *   TIMER   (ledc_timer_config) 5 Hz clicks under the blinking LED; one literal
+ *           second of 1 kHz on "1000 Hz"; the counter as a rising glide; a buzz
+ *           when 17 bits doesn't fit, and on ESP_FAIL.
+ *   CHANNEL (ledc_channel_config) the duty trace's edges as clicks.
+ *   WRITE   (ledc_set_duty) the "nope" buzz on "not a voltage"; the duty trace's
+ *           edges as clicks, following the written value; a clack on "go".
+ *   TONE    the speaker's square wave from the moment duty 512 is written —
+ *           ducked under the narration, full once the notes play.
  *
  * Output: public/pwm/mix.wav (−16 LUFS, −1.5 dBTP) + stems in out/3-advanced-gpio/pwm-stems/.
  */
@@ -56,16 +58,17 @@ import {
 import { apparentHz, dutyAt, fusion, hzAt, type Beat } from '../src/components/pwm.ts';
 import {
   ANSWER,
+  CHANNEL,
+  CONTEXT,
   DUTY,
-  MAX,
   PAYOFF,
   PROBLEM,
   PWM_HZ,
   SCENES,
   FADE,
   FADE_STEPS,
-  SETUP,
-  setupCounter,
+  TIMER,
+  timerCounter,
   WRITE,
   writeOn,
   type SceneId,
@@ -121,29 +124,30 @@ const pwm = new Float32Array(N);
   const aS = sceneStart('answer');
   const dS = sceneStart('duty');
   const dE = dS + sceneDur('duty');
-  const sS = sceneStart('setup');
-  const flickA = sS + SETUP.views.flicker;
-  const flickFast = sS + SETUP.flicker.fast;
-  const traceA = sS + SETUP.duty.trace;
-  const traceB = traceA + 3 * SETUP.duty.period;
-  const traceDuty = SETUP.duty.value / 256;
+  const sS = sceneStart('timer');
+  const flickA = sS + TIMER.views.flicker;
+  const flickFast = sS + TIMER.flicker.fast;
+  const cS = sceneStart('channel');
+  const traceA = cS + CHANNEL.duty.trace;
+  const traceB = traceA + 3 * CHANNEL.duty.period;
+  const traceDuty = CHANNEL.duty.value / 256;
   const wS = sceneStart('write');
   const wOn = wS + WRITE.duty.on;
   const wEnd = wS + WRITE.views.range - 0.35;
 
   pulse(pwm, (t) => {
-    // setup · flicker: 5 Hz clicks, phase-locked to the blinking LED, until "fast enough"
+    // timer · flicker: 5 Hz clicks, phase-locked to the blinking LED, until "fast enough"
     if (t >= flickA && t < flickFast) {
-      return { f: SETUP.flicker.slowHz, duty: 0.5, g: pwmGain(0.5) * 0.8 * smooth((flickFast - t) / 0.3) };
+      return { f: TIMER.flicker.slowHz, duty: 0.5, g: pwmGain(0.5) * 0.8 * smooth((flickFast - t) / 0.3) };
     }
     // write · duty: the looping trace, edge for edge, following the written value
     if (t >= wOn && t < wEnd) {
       const duty = writeOn(t - wS);
       return { f: 1 / WRITE.duty.period, duty, g: pwmGain(duty) * 0.8 * smooth((wEnd - t) / 0.3) };
     }
-    // setup · duty: the traced output, edge for edge
+    // channel · duty: the traced output, edge for edge
     if (t >= traceA && t < traceB) {
-      return { f: 1 / SETUP.duty.period, duty: traceDuty, g: pwmGain(traceDuty) * 0.8 };
+      return { f: 1 / CHANNEL.duty.period, duty: traceDuty, g: pwmGain(traceDuty) * 0.8 };
     }
     // answer: "on and off … really fast" — clicks accelerate into a tone
     if (t >= aS + ANSWER.wave && t < aS + ANSWER.letters[0] + 0.8) {
@@ -167,7 +171,7 @@ const pwm = new Float32Array(N);
   biquad(pwm, 'hp', 30);
   biquad(pwm, 'lp', 2200, 0.6);
   // reference: knob 1, steady glow at 50%
-  const ref = dS + DUTY.beats[1].at + 1.1; // steady 50% in slow-mo
+  const ref = dS + DUTY.beats[0].at + 1.1; // duty 128, steady 50% in slow-mo
   level(pwm, -26, ref, ref + 1.8);
   for (let i = 0; i < N; i++) pwm[i] *= 1 - 0.3 * talking[i];
 }
@@ -180,24 +184,18 @@ const tone = new Float32Array(N);
   const tS = sceneStart('tone');
   const tE = tS + sceneDur('tone');
   const beats: Beat[] = TONE.beats;
-  const kA = sceneStart('setup') + SETUP.freq.perSec;
   pulse(tone, (t) => {
-    // setup: "a thousand times a second" — the real 1 kHz, for exactly one second
-    if (t >= kA && t < kA + 1) {
-      const env = clamp01((t - kA) / 0.02) * clamp01((kA + 1 - t) / 0.02);
-      return { f: PWM_HZ, duty: 0.5, g: 0.7 * env };
-    }
     if (t < tS || t >= tE) return null;
     const u = t - tS;
     const duty = dutyAt(beats, u);
     if (duty <= 0) return null;
-    // gentle 15 ms edges on start/stop so it doesn't pop
-    return { f: hzAt(beats, u, 440), duty: 0.5, g: clamp01(duty / 0.5) };
+    // ducked under the narration until the notes play; gentle edges so it doesn't pop
+    const duck = u < TONE.notes ? 0.16 : 0.16 + 0.84 * smooth((u - TONE.notes) / 0.3);
+    return { f: hzAt(beats, u, 440), duty: 0.5, g: clamp01(duty / 0.5) * duck };
   });
   biquad(tone, 'hp', 60);
   biquad(tone, 'lp', 3800, 0.6);
-  const on = beats.filter((b) => b.duty > 0);
-  level(tone, -27, tS + on[0].at + 0.05, tS + beats[beats.length - 1].at - 0.05);
+  level(tone, -27, tS + TONE.notes + 0.35, tS + beats[beats.length - 1].at - 0.05);
 }
 
 // ── 5. SFX ─────────────────────────────────────────────────────────────────
@@ -215,14 +213,28 @@ buzz(abs('problem', PROBLEM.reject), 0.09);
 // answer
 ANSWER.letters.forEach((l, i) => tick(abs('answer', l), 1800 + 300 * i, 0.15));
 thump(abs('answer', ANSWER.letters[2]), 0.3);
-// setup: the call, its arguments, each new view, and the beats inside them
+// setup: the whole program
 {
-  const U = SETUP;
+  const X = CONTEXT;
   const at = (x: number) => abs('setup', x);
+  Object.values(X.views).forEach((v) => tick(at(v), 2000, 0.09));
+  thump(at(X.ledc), 0.2);
+  for (const x of [X.two, X.fast, X.fine, X.connects, X.pin, X.lines]) tick(at(x), 3100, 0.05);
+  clack(at(X.amp), 0.14);
+  tick(at(X.bright), 2350, 0.1);
+}
+
+// timer: the call, its fields, each view and the beats inside it
+{
+  const U = TIMER;
+  const at = (x: number) => abs('timer', x);
   tick(at(U.run));
   thump(at(U.run), 0.25);
-  U.args.forEach((a, i) => tick(at(a.at), 2600 + 250 * i, 0.08));
+  U.args.forEach((a, i) => tick(at(a.at), 2600 + 200 * i, 0.08));
   Object.values(U.views).forEach((v) => tick(at(v), 2000, 0.09));
+  tick(at(U.speed.low), 3100, 0.05);
+  blip(at(U.speed.same), 660, 990, 0.05);
+  clack(at(U.timers.zero), 0.12);
   for (const x of [U.freq.cycle, U.freq.ms]) tick(at(x), 3100, 0.05);
   thump(at(U.freq.period), 0.18);
   tick(at(U.flicker.same), 3100, 0.05);
@@ -230,20 +242,22 @@ thump(abs('answer', ANSWER.letters[2]), 0.3);
   for (const x of [U.counter.eight, U.counter.appear, U.counter.tiny]) tick(at(x), 3100, 0.05);
   tick(at(U.counter.pow), 1800, 0.1);
   thump(at(U.counter.steps), 0.22);
-  clack(at(U.duty.line), 0.14);
-  for (const x of [U.duty.on, U.duty.off]) tick(at(x), 3100, 0.05);
-  for (const x of [U.clock.steps, U.clock.perSec]) tick(at(x), 2400, 0.07);
+  for (const x of [U.clock.steps, U.clock.perSec, U.clock.auto]) tick(at(x), 2400, 0.07);
   thump(at(U.clock.ticks), 0.2);
   tick(at(U.clock.clock), 1400, 0.1);
   U.clock.rows.forEach((r) => tick(at(r.at), 2800, 0.06));
   buzz(at(U.clock.out), 0.08);
+  tick(at(U.log.logs), 1700, 0.08);
+  buzz(at(U.log.fail), 0.08);
+  thump(at(U.check.stops), 0.22);
+  blip(at(U.check.fix), 660, 990, 0.07);
 
-  // the LEDC counter, heard: a soft glide up each period, A3 → A5
+  // the timer's counter, heard: a soft glide up each period, A3 → A5
   const c0 = at(U.counter.sweep[0]);
-  const c1 = at(U.views.duty) - 0.35;
+  const c1 = at(U.views.bits) - 0.35;
   let ph = 0;
   for (let i = S(c0); i < S(c1); i++) {
-    const c = setupCounter(i / SR - sceneStart('setup'));
+    const c = timerCounter(i / SR - sceneStart('timer'));
     if (!c.live) continue;
     const env = Math.min(1, (c1 - i / SR) / 0.3);
     ph += (2 * Math.PI * 220 * 4 ** c.u) / SR;
@@ -251,7 +265,26 @@ thump(abs('answer', ANSWER.letters[2]), 0.3);
   }
 }
 
-// write: the call, its two arguments, and the beats of the duty explanation
+// channel
+{
+  const H = CHANNEL;
+  const at = (x: number) => abs('channel', x);
+  tick(at(H.run));
+  thump(at(H.run), 0.25);
+  H.args.forEach((a, i) => tick(at(a.at), 2600 + 150 * i, 0.08));
+  Object.values(H.views).forEach((v) => tick(at(v), 2000, 0.09));
+  clack(at(H.channels.zero), 0.12);
+  tick(at(H.timersel.picks), 3100, 0.05);
+  tick(at(H.timersel.several), 3100, 0.05);
+  clack(at(H.pin.driver), 0.14);
+  buzz(at(H.pin.call), 0.05);
+  clack(at(H.duty.line), 0.14);
+  for (const x of [H.duty.on, H.duty.passes]) tick(at(x), 3100, 0.05);
+  tick(at(H.hpoint.zero), 3100, 0.05);
+  blip(at(H.start.returns), 660, 990, 0.06);
+}
+
+// write
 {
   const W = WRITE;
   const at = (x: number) => abs('write', x);
@@ -267,29 +300,36 @@ thump(abs('answer', ANSWER.letters[2]), 0.3);
   W.duty.keys.slice(1).forEach((k) => tick(at(k.at), 2350, 0.12));
   for (const x of [W.range.r8, W.range.r10]) tick(at(x), 2800, 0.06);
   thump(at(W.range.half), 0.2);
+  tick(at(W.load.nothing), 1700, 0.08);
+  clack(at(W.go.go), 0.2);
+  blip(at(W.free.hardware), 660, 990, 0.06);
 }
 
-// fade: the call, its four arguments, and the beats of each view
+// fade: three calls, their arguments, and the beats of each view
 {
   const at = (x: number) => abs('fade', x);
-  tick(at(FADE.run));
-  thump(at(FADE.run), 0.25);
-  FADE.args.forEach((a, i) => tick(at(a.at), 2600 + 200 * i, 0.08));
+  FADE.calls.forEach((c) => {
+    tick(at(c.run));
+    thump(at(c.run), 0.22);
+    c.args.forEach((a, i) => tick(at(a.at), 2600 + 200 * i, 0.08));
+  });
+  tick(at(FADE.noWait), 2350, 0.1);
   Object.values(FADE.views).forEach((v) => tick(at(v), 2000, 0.09));
+  buzz(at(FADE.forget.fail), 0.08);
+  tick(at(FADE.from.none), 1700, 0.08);
   tick(at(FADE.ramp.sweep), 2350, 0.1);
   for (const x of [FADE.ramp.onOff, FADE.ramp.start, FADE.ramp.end]) tick(at(x), 3100, 0.05);
   tick(at(FADE.stairs.whole), 3100, 0.05);
   thump(at(FADE.stairs.stairs), 0.2);
   for (const x of [FADE.stairs.time, FADE.stairs.periods, FADE.stairs.steps, FADE.stairs.drop]) tick(at(x), 2400, 0.07);
   thump(at(FADE.stairs.every), 0.18);
-  tick(at(FADE.engine.card), 1400, 0.1);
   FADE.engine.rows.forEach((x) => tick(at(x), 2800, 0.06));
-  clack(at(FADE.engine.returns), 0.18); // duty_start
-  tick(at(FADE.engine.callback), 3100, 0.05);
-  // the engine stepping: a faint tick every 10 duty steps
-  const [r0, r1] = FADE.engine.run;
+  clack(at(FADE.start.go), 0.18);
+  // the hardware stepping: a faint tick every 10 duty steps while your task waits
+  const [r0, r1] = FADE.start.run;
   for (let k = 10; k <= FADE_STEPS; k += 10) tick(at(r0 + ((r1 - r0) * k) / FADE_STEPS), 4200, 0.025);
-  blip(at(r1), 660, 990, 0.08); // done()
+  blip(at(r1), 660, 990, 0.08);
+  tick(at(FADE.nowait.returns), 3100, 0.05);
 }
 
 // knob 1 / knob 2: a tick each time a line executes
@@ -317,7 +357,7 @@ const MUSIC_CUT = abs('payoff', 0) - 0.15;
 
   // duck: under VO (≈ −8 dB) and almost out under the literal tones
   const tS = sceneStart('tone');
-  const tonesOn = [tS + TONE.beats[1].at - 0.3, tS + TONE.beats[TONE.beats.length - 1].at + 0.3];
+  const tonesOn = [tS + TONE.notes - 0.3, tS + TONE.beats[TONE.beats.length - 1].at + 0.3];
   for (let i = 0; i < N; i++) {
     const t = i / SR;
     const toneDuck = smooth((t - tonesOn[0]) / 0.3) * (1 - smooth((t - tonesOn[1]) / 0.6));

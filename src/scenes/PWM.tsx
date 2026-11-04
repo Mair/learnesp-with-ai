@@ -1,50 +1,39 @@
 /**
- * PWM — Module 01's explainer.
+ * PWM (v2, pure ESP-IDF) — dimming and tones with the LEDC peripheral.
  *
  *   1 problem   dim a light / change a pitch — but a digital output is only 3.3 V or 0 V
  *   2 answer    switch it really fast: PWM
- *   2½ setup    ledcAttach(pin, frequency, resolution): period, counter, steps, clock budget
- *   2¾ write    ledcWrite(pin, duty): the duty is a time, the line across the counter
- *   3 knob 1    pulse width → brightness   (CodeToHardware, slow-mo LED)
- *   3½ fade     ledcFade: the duty ramp, the staircase, the hardware fade engine
- *   4 knob 2    frequency → pitch          (CodeToHardware, speaker)
- *   5 payoff    "That's PWM."
+ *   3 setup     the whole app_main: a timer, a channel, two lines for the brightness
+ *   4 timer     ledc_timer_config: speed mode, timer, frequency, resolution, clock · the 17-bit trap
+ *   5 channel   ledc_channel_config: channel, timer_sel, gpio_num, duty, hpoint
+ *   6 write     ledc_set_duty + ledc_update_duty: set it, then go · 0 … 256
+ *   7 knob 1    pulse width → brightness   (CodeToHardware, slow-mo LED)
+ *   8 fade      ledc_fade_func_install / ledc_set_fade_with_time / ledc_fade_start
+ *   9 knob 2    frequency → pitch, ledc_set_freq   (CodeToHardware, speaker)
+ *  10 payoff    "That's PWM."
  *
  * Everything — picture AND soundtrack — is driven by ./pwm/timeline.ts.
- * Edit that, then `npm run pwm`.
+ * `node scripts/vo-plan.ts pwm` re-times it from the voice; `npm run pwm` renders.
  */
 import React from 'react';
 import { AbsoluteFill, Audio, Sequence, staticFile } from 'remotion';
 import { CodeToHardware } from '../components/CodeToHardware';
 import { Kicker, Scene } from '../components/Type';
 import { Answer } from './pwm/Answer';
+import { Channel } from './pwm/Channel';
+import { Context } from './pwm/Context';
 import { Fade } from './pwm/Fade';
 import { Payoff } from './pwm/Payoff';
 import { Problem } from './pwm/Problem';
-import { Setup } from './pwm/Setup';
+import { Timer } from './pwm/Timer';
 import { Write } from './pwm/Write';
-import {
-  BITS,
-  DUTY,
-  PWM_FRAMES,
-  FPS,
-  PWM_HZ,
-  sceneDur,
-  SCENES,
-  SceneId,
-  sceneStart,
-  TONE,
-} from './pwm/timeline';
+import { BITS, DUTY, FPS, PWM_FRAMES, PWM_HZ, sceneDur, SCENES, SceneId, sceneStart, STEPS, TONE } from './pwm/timeline';
 
 export { PWM_FRAMES };
 
 const frames = (id: SceneId) => Math.round(sceneDur(id) * FPS);
 
-const Knob: React.FC<{ id: SceneId; kicker: string; children: React.ReactNode }> = ({
-  id,
-  kicker,
-  children,
-}) => (
+const Knob: React.FC<{ id: SceneId; kicker: string; children: React.ReactNode }> = ({ id, kicker, children }) => (
   <Scene durationInFrames={frames(id)}>
     <AbsoluteFill style={{ display: 'grid', placeItems: 'center', gap: 30, alignContent: 'center' }}>
       <Kicker delay={0.1} accent="amber">
@@ -58,7 +47,9 @@ const Knob: React.FC<{ id: SceneId; kicker: string; children: React.ReactNode }>
 const SCENE_COMPONENTS: Record<SceneId, React.FC> = {
   problem: Problem,
   answer: Answer,
-  setup: Setup,
+  setup: Context,
+  timer: Timer,
+  channel: Channel,
   write: Write,
   duty: () => (
     <Knob id="duty" kicker="Knob 1 · pulse width → brightness">
@@ -66,10 +57,12 @@ const SCENE_COMPONENTS: Record<SceneId, React.FC> = {
         beats={DUTY.beats}
         hz={PWM_HZ}
         bits={BITS}
+        steps={STEPS}
         preamble={DUTY.preamble}
         captions={DUTY.captions}
         timescale={DUTY.timescale}
-        title="dim"
+        file="main/main.c"
+        codeSize={19}
       />
     </Knob>
   ),
@@ -80,12 +73,14 @@ const SCENE_COMPONENTS: Record<SceneId, React.FC> = {
         beats={TONE.beats}
         hz={440}
         bits={10}
+        steps={1024}
         output="speaker"
         preamble={TONE.preamble}
         captions={TONE.captions}
         windowMs={TONE.windowMs}
         pin={4}
-        title="tone"
+        file="main/main.c"
+        codeSize={19}
       />
     </Knob>
   ),

@@ -1,16 +1,18 @@
 /**
- * 3 · SETUP — what `ledcAttach(LED, 1000, 8)` actually asks the hardware for.
+ * 4 · TIMER — what each field of `ledc_timer_config(&timer)` asks for.
  *
- *   intro     the call, each argument pulled out into a card: pin · frequency · resolution
- *   freq      a slowed square wave; one cycle highlighted → 1 period = 1 ms
- *   flicker   same 50% duty at 5 Hz (you see blinks) vs 1000 Hz (you see the average)
- *   counter   one period, zoomed: a counter climbs 2⁸ = 256 steps, 0 … 255, then wraps
- *   duty      your duty is a line across that counter → pin ON below it, OFF above
- *   bits      4 bits (16 steps) vs 8 bits (256 steps): banding vs a smooth fade
- *   clock     256 steps × 1000 Hz = 256,000 ticks/s, which must fit in 80 MHz
+ *   speed    low speed: every chip has it; the timer and the channel must match
+ *   timers   four timers · this is timer 0
+ *   freq     a slowed square wave; one cycle highlighted → 1 period = 1 ms
+ *   flicker  same 50% duty at 5 Hz (you see blinks) vs 1000 Hz (you see the average)
+ *   counter  one period, zoomed: a counter climbs 2⁸ = 256 steps, 0 … 255, then wraps
+ *   bits     4 bits (16 steps) vs 8 bits (256 steps): banding vs a smooth fade
+ *   clock    256 × 1000 = 256,000 counts/s must fit the 80 MHz clock · 17 bits ✗
+ *   log      ledc_timer_config logs it and returns ESP_FAIL
+ *   check    ESP_ERROR_CHECK stops the program on that line · the fix
  *
- * Every cue lives in SETUP (timeline.ts). The counter position comes from
- * `setupCounter()`, which the soundtrack also uses.
+ * The struct's fields all hang off `&timer` — the bundle the call receives.
+ * FACTS: ledc.h l.57–74, l.141–147; ledc.c l.468–497, l.571–604, l.746; TRM 28.2.2.
  */
 import React from 'react';
 import { useCurrentFrame, useVideoConfig } from 'remotion';
@@ -18,74 +20,121 @@ import { ease, Explainer, GREEN, inOut, mono, RED, VIEW_H as H, VIEW_W as W } fr
 import { Led } from '../../components/Gadgets';
 import { pinHigh } from '../../components/pwm';
 import { C, FONT, GRAD_TEXT, hexA } from '../../theme/palette';
-import { CLOCK_HZ, FPS, PWM_HZ, SETUP as S, sceneDur, setupCounter, STEPS } from './timeline';
+import { after, Block, LogBox, MiniCounter, Verdict } from './parts';
+import { CLOCK_HZ, FPS, PWM_HZ, sceneDur, STEPS, TIMER as S, timerCounter } from './timeline';
 
 const clamp01 = (x: number) => Math.min(1, Math.max(0, x));
-const ARG_COLOR = [C.amber, C.magenta, C.cyan];
+const ARG_COLOR = [C.cyan, C.cyan, C.magenta, C.cyan, C.cyan];
 
-export const Setup: React.FC = () => {
+export const Timer: React.FC = () => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const t = frame / fps;
   const V = S.views;
-
   // the cards learn more as the VO explains them
-  const subs = [
-    S.args[0].sub,
-    t < S.freq.perSec ? S.args[1].sub : t < S.freq.period ? '1000 cycles every second' : '1 period = 1 ms',
-    t < S.counter.steps ? S.args[2].sub : '2⁸ = 256 steps · 0 … 255',
-  ];
-
+  const sub = (i: number) => {
+    if (i === 2) return t < S.freq.ms ? S.args[2].sub : '1 period = 1 ms';
+    if (i === 3) return t < S.counter.steps ? S.args[3].sub : '2⁸ = 256 steps';
+    return S.args[i].sub;
+  };
   return (
     <Explainer
       t={t}
-      frames={Math.round(sceneDur('setup') * FPS)}
-      kicker="Setting up the pin · ledcAttach()"
+      frames={Math.round(sceneDur('timer') * FPS)}
+      kicker="Call 1 · the timer · ledc_timer_config()"
       code={S.code}
       run={S.run}
-      args={S.args.map((a, i) => ({ ...a, sub: subs[i], color: ARG_COLOR[i] }))}
+      cardW={300}
+      cardGap={330}
+      args={S.args.map((a, i) => ({ ...a, sub: sub(i), color: ARG_COLOR[i] }))}
       captions={S.captions}
       views={[
+        { at: V.speed, component: SpeedView, active: [0], label: 'speed_mode · a group of timers and channels', accent: C.cyan },
+        { at: V.timers, component: TimersView, active: [1], label: 'timer_num · which timer', accent: C.cyan },
         {
           at: V.freq,
           component: FreqView,
-          active: [1],
-          label: 'frequency · cycles per second',
+          active: [2],
+          label: 'freq_hz · cycles per second',
           accent: C.magenta,
           right: (t) => (t < S.freq.freeze[1] ? 'slowed 2000×' : 'paused'),
         },
-        { at: V.flicker, component: FlickerView, active: [1], label: 'frequency vs your eye', accent: C.magenta, right: () => 'real time' },
+        { at: V.flicker, component: FlickerView, active: [2], label: 'frequency vs your eye', accent: C.magenta, right: () => 'real time' },
         {
           at: V.counter,
           component: CounterView,
-          active: [2],
-          label: 'resolution · one period, zoomed in',
+          active: [3],
+          label: 'duty_resolution · one period, zoomed in',
           accent: C.cyan,
           right: () => `${STEPS} steps per period`,
         },
-        {
-          at: V.duty,
-          component: DutyView,
-          active: [2],
-          label: 'duty · the counter vs your number',
-          accent: C.cyan,
-          right: () => `duty = ${S.duty.value}`,
-        },
-        { at: V.bits, component: BitsView, active: [2], label: 'resolution · bits vs smoothness', accent: C.cyan },
-        {
-          at: V.clock,
-          component: ClockView,
-          active: [1, 2],
-          label: 'the budget · counter ticks per second',
-          accent: C.cyan,
-          right: () => 'ESP32 · LEDC timer',
-        },
+        { at: V.bits, component: BitsView, active: [3], label: 'resolution · bits vs smoothness', accent: C.cyan },
+        { at: V.clock, component: ClockView, active: [2, 3, 4], label: 'clk_cfg · counts per second must fit the clock', accent: C.cyan },
+        { at: V.log, component: LogView, active: [3], label: 'what you see · 17 bits', accent: RED, right: () => 'idf.py monitor' },
+        { at: V.check, component: CheckView, active: [3], label: 'ESP_ERROR_CHECK · stop right there', accent: RED, right: () => 'idf.py monitor' },
       ]}
     />
   );
 };
 
-// ── views ─────────────────────────────────────────────────────────────────
+// ── speed mode ────────────────────────────────────────────────────────────
+
+const SpeedView: React.FC<{ t: number }> = ({ t }) => {
+  const P = S.speed;
+  const low = after(t, P.low);
+  const every = after(t, P.every);
+  const same = after(t, P.same);
+  return (
+    <div style={{ position: 'absolute', inset: 0 }}>
+      <Block x={60} y={30} w={620} h={190} title="LOW SPEED" sub="every ESP32 chip has it" color={C.cyan} p={low} lit>
+        <div style={mono(20, C.ink)}>LEDC_LOW_SPEED_MODE ✓ use this</div>
+      </Block>
+      <Block x={760} y={30} w={620} h={190} title="HIGH SPEED" sub="original ESP32 only" color={C.muted} p={every} dim />
+      <div style={{ position: 'absolute', left: 60, top: 270, width: 1320, opacity: same, display: 'grid', gap: 14, ...mono(28, C.ink) }}>
+        <div>
+          timer.speed_mode&nbsp;&nbsp;&nbsp;= <b style={{ color: C.cyan }}>LEDC_LOW_SPEED_MODE</b>,
+        </div>
+        <div>
+          channel.speed_mode = <b style={{ color: C.cyan }}>LEDC_LOW_SPEED_MODE</b>,
+        </div>
+        <div style={{ fontFamily: FONT.sans, fontSize: 28, fontWeight: 700, color: GREEN, marginTop: 6 }}>✓ the timer and the channel must say the same thing</div>
+      </div>
+    </div>
+  );
+};
+
+// ── four timers ───────────────────────────────────────────────────────────
+
+const TimersView: React.FC<{ t: number }> = ({ t }) => {
+  const P = S.timers;
+  const zero = t >= P.zero;
+  return (
+    <div style={{ position: 'absolute', inset: 0 }}>
+      {[0, 1, 2, 3].map((i) => (
+        <Block
+          key={i}
+          x={40 + i * 370}
+          y={90}
+          w={330}
+          h={230}
+          title={`TIMER ${i}`}
+          sub={i === 0 && zero ? 'LEDC_TIMER_0 · ours' : `LEDC_TIMER_${i}`}
+          color={C.cyan}
+          p={after(t, P.four + i * 0.15, 0.35)}
+          lit={zero && i === 0}
+          dim={zero && i > 0}
+        >
+          <MiniCounter t={t + i * 0.3} w={240} h={56} />
+        </Block>
+      ))}
+      <div style={{ position: 'absolute', left: 40, top: 370, fontSize: 28, color: C.ink, opacity: after(t, P.zero) }}>
+        each timer is a counter with its own frequency and resolution
+      </div>
+    </div>
+  );
+};
+
+// ── reused v1 views ───────────────────────────────────────────────────────
 
 /** cycles scrolled: constant speed, then decelerating to a stop across `freeze` */
 function freqPhase(t: number) {
@@ -133,8 +182,6 @@ const FreqView: React.FC<{ t: number }> = ({ t }) => {
   const ms = ease((t - F.ms) / 0.4);
   const per = ease((t - F.period) / 0.4);
   const hz = ease((t - F.hz) / 0.5);
-  const count = Math.floor(PWM_HZ * clamp01(t - F.perSec));
-  const countIn = ease((t - F.perSec) / 0.3);
 
   return (
     <svg width={W} height={H} style={{ display: 'block', overflow: 'visible' }}>
@@ -197,11 +244,6 @@ const FreqView: React.FC<{ t: number }> = ({ t }) => {
       {hz > 0 && (
         <text x={W - 10} y={46} textAnchor="end" opacity={hz} style={{ fontFamily: FONT.sans, fontSize: 30, fontWeight: 700, fill: C.magenta }}>
           1000 Hz = 1000 cycles every second
-        </text>
-      )}
-      {countIn > 0 && (
-        <text x={W - 10} y={86} textAnchor="end" opacity={countIn} style={mono(24, C.ink)}>
-          counting one real second: {String(count).padStart(4, '\u2007')}
         </text>
       )}
       {per > 0 && (
@@ -314,7 +356,7 @@ const CounterView: React.FC<{ t: number }> = ({ t }) => {
   const steps = ease((t - K.steps) / 0.4);
   const tiny = ease((t - K.tiny) / 0.5);
   const fast = ease((t - K.fast[0]) / 0.5);
-  const c = setupCounter(t);
+  const c = timerCounter(t);
   const n = Math.min(STEPS, Math.floor(c.u * STEPS) + 1);
   const shown = t >= K.sweep[0];
   const px = sx(c.u * STEPS);
@@ -430,107 +472,6 @@ const CounterView: React.FC<{ t: number }> = ({ t }) => {
   );
 };
 
-const DutyView: React.FC<{ t: number }> = ({ t }) => {
-  const D = S.duty;
-  const X0 = 110;
-  const X1 = 1290;
-  const PER = (X1 - X0) / 3;
-  const yTop = 80;
-  const yBase = 285;
-  const oHi = 370;
-  const oLo = 440;
-  const frac = D.value / STEPS;
-  const yDuty = yBase - (D.value / (STEPS - 1)) * (yBase - yTop);
-
-  const line = ease((t - D.line) / 0.6);
-  const yLine = yTop + (yDuty - yTop) * line;
-  const on = ease((t - D.on) / 0.5);
-  const off = ease((t - D.off) / 0.5);
-  const p = Math.min(3, Math.max(0, (t - D.trace) / D.period)); // periods traced
-  const xp = X0 + p * PER;
-  const high = t >= D.trace && p < 3 && p - Math.floor(p) < frac;
-
-  let saw = '';
-  let out = '';
-  const shades: React.ReactNode[] = [];
-  for (let k = 0; k < 3; k++) {
-    const x0 = X0 + k * PER;
-    const xd = x0 + frac * PER;
-    saw += `${saw ? ' L' : 'M'} ${x0} ${yBase} L ${x0 + PER} ${yTop}`;
-    out += `${out ? ' L' : 'M'} ${x0} ${oLo} L ${x0} ${oHi} L ${xd} ${oHi} L ${xd} ${oLo} L ${x0 + PER} ${oLo}`;
-    shades.push(
-      <g key={k}>
-        <path d={`M ${x0} ${yBase} L ${xd} ${yDuty} L ${xd} ${yBase} Z`} fill={hexA(C.amber, 0.35 * on)} />
-        <line x1={xd} y1={yDuty} x2={xd} y2={oHi} stroke={hexA(C.amber, 0.7 * off)} strokeWidth={1.5} strokeDasharray="4 5" />
-        <circle cx={xd} cy={yDuty} r={6 * off} fill={C.amber} />
-      </g>,
-    );
-  }
-
-  return (
-    <div style={{ position: 'absolute', inset: 0 }}>
-      <svg width={W} height={H} style={{ display: 'block', overflow: 'visible' }}>
-        <defs>
-          <clipPath id="traceclip">
-            <rect x={0} y={0} width={xp} height={H} />
-          </clipPath>
-        </defs>
-        <text x={X0 - 14} y={yBase + 7} textAnchor="end" style={mono(20, C.cyan)}>
-          0
-        </text>
-        <text x={X0 - 14} y={yTop + 7} textAnchor="end" style={mono(20, C.cyan)}>
-          255
-        </text>
-        <text x={X0} y={yTop - 22} style={mono(20, C.cyan)}>
-          counter · 0 → 255, every period
-        </text>
-        <text x={X0 - 14} y={(oHi + oLo) / 2 + 7} textAnchor="end" style={mono(20, C.magenta)}>
-          pin
-        </text>
-        {shades}
-        <path d={saw} fill="none" stroke={hexA(C.cyan, 0.3)} strokeWidth={2.5} />
-        <path d={saw} fill="none" stroke={C.cyan} strokeWidth={3.5} clipPath="url(#traceclip)" style={{ filter: `drop-shadow(0 0 8px ${C.cyan})` }} />
-        <path d={out} fill="none" stroke={C.magenta} strokeWidth={3.5} clipPath="url(#traceclip)" style={{ filter: `drop-shadow(0 0 8px ${C.magenta})` }} />
-
-        {/* your number */}
-        {line > 0 && (
-          <g opacity={line}>
-            <line x1={X0} y1={yLine} x2={X1} y2={yLine} stroke={C.amber} strokeWidth={3} strokeDasharray="12 8" />
-            <rect x={X1 - 250} y={yLine - 44} width={250} height={34} rx={8} fill="rgba(10,4,32,.88)" />
-            <text x={X1 - 12} y={yLine - 19} textAnchor="end" style={mono(22, C.amber)}>
-              your duty = {D.value}
-            </text>
-          </g>
-        )}
-        {t >= D.trace && p < 3 && <line x1={xp} y1={yTop - 10} x2={xp} y2={oLo + 14} stroke="#fff" strokeWidth={2} opacity={0.7} />}
-      </svg>
-
-      {/* the pin, live */}
-      <div style={{ position: 'absolute', left: X1 + 40, top: 30, width: W - X1 - 40, display: 'grid', justifyItems: 'center', gap: 14 }}>
-        <Led brightness={high ? 1 : 0} size={130} />
-        <div
-          style={{
-            padding: '6px 18px',
-            borderRadius: 999,
-            fontFamily: FONT.mono,
-            fontSize: 26,
-            fontWeight: 700,
-            color: high ? '#1a0b00' : C.muted,
-            background: high ? C.amber : 'rgba(255,255,255,.06)',
-            boxShadow: high ? `0 0 24px ${hexA(C.amber, 0.6)}` : 'none',
-          }}
-        >
-          pin {high ? 'ON' : 'OFF'}
-        </div>
-        <div style={{ display: 'grid', gap: 8, marginTop: 10, fontFamily: FONT.mono, fontSize: 18 }}>
-          <div style={{ opacity: on, color: C.amber }}>counter &lt; {D.value} → ON</div>
-          <div style={{ opacity: off, color: C.muted }}>counter ≥ {D.value} → OFF</div>
-        </div>
-      </div>
-    </div>
-  );
-};
-
 const BitsView: React.FC<{ t: number }> = ({ t }) => {
   const [f0, f1] = S.bits.fade;
   const level = 1 - inOut((t - f0) / (f1 - f0));
@@ -587,77 +528,122 @@ const BitsView: React.FC<{ t: number }> = ({ t }) => {
   );
 };
 
-const fmtHz = (hz: number) => (hz >= 1000 ? `${hz / 1000} kHz` : `${hz} Hz`);
-const fmtMHz = (x: number) => (x < 1 ? x.toFixed(3) : x < 100 ? x.toFixed(1) : x.toFixed(0)) + ' MHz';
+const fmtMHz = (x: number) => (x < 1 ? x.toFixed(2) : x < 100 ? x.toFixed(1) : x.toFixed(0)) + ' M';
 
 const ClockView: React.FC<{ t: number }> = ({ t }) => {
   const K = S.clock;
   const LX = 0;
-  const BX = 350;
-  const FULL = 580; // px for 80 MHz
-  const ROW0 = 214;
-  const ROW_H = 62;
-  const eq = [ease((t - K.steps) / 0.4), ease((t - K.perSec) / 0.4), ease((t - K.ticks) / 0.4)];
-  const clock = ease((t - K.clock) / 0.5);
-  const out = ease((t - K.out) / 0.4);
-
+  const BX = 330;
+  const FULL = 640; // px for 80 MHz
+  const ROW0 = 236;
+  const ROW_H = 70;
+  const eq = [after(t, K.steps, 0.4), after(t, K.perSec, 0.4), after(t, K.ticks, 0.4)];
+  const auto = after(t, K.auto);
+  const clock = after(t, K.clock);
+  const out = after(t, K.out, 0.4);
   return (
     <div style={{ position: 'absolute', inset: 0 }}>
-      <div style={{ display: 'flex', justifyContent: 'center', gap: 26, fontFamily: FONT.mono, fontSize: 46, marginTop: 20, height: 70 }}>
+      <div style={{ display: 'flex', justifyContent: 'center', gap: 26, fontFamily: FONT.mono, fontSize: 44, marginTop: 14, height: 66 }}>
         <span style={{ opacity: eq[0], color: C.cyan }}>256 steps</span>
         <span style={{ opacity: eq[1], color: C.magenta }}>× 1000 / s</span>
-        <span style={{ opacity: eq[2], color: C.amber, fontWeight: 700 }}>= 256,000 ticks / s</span>
+        <span style={{ opacity: eq[2], color: C.amber, fontWeight: 700 }}>= 256,000 counts / s</span>
       </div>
-
       <svg width={W} height={H} style={{ position: 'absolute', left: 0, top: 0, overflow: 'visible' }}>
-        <g opacity={clock}>
-          <text x={LX} y={150} style={mono(24, C.ink)}>
-            LEDC clock: 80 MHz = 80,000,000 ticks / s — the most it can count
+        <g opacity={auto}>
+          <text x={LX} y={130} style={mono(24, C.ink)}>
+            LEDC_AUTO_CLK → the driver picks a clock for you
           </text>
-          <line x1={BX + FULL} y1={198} x2={BX + FULL} y2={ROW0 + ROW_H * 4 - 10} stroke={RED} strokeWidth={2} strokeDasharray="8 6" />
-          <text x={BX + FULL} y={190} textAnchor="middle" style={mono(18, RED)}>
+        </g>
+        <g opacity={clock}>
+          <text x={LX} y={172} style={mono(24, C.ink)}>
+            the fastest: 80 MHz = 80 million counts / s
+          </text>
+          <line x1={BX + FULL} y1={200} x2={BX + FULL} y2={ROW0 + ROW_H * 3 - 8} stroke={RED} strokeWidth={2} strokeDasharray="8 6" />
+          <text x={BX + FULL} y={196} textAnchor="middle" style={mono(18, RED)}>
             80 MHz
           </text>
         </g>
         {K.rows.map((r, i) => {
           const need = (r.hz * 2 ** r.bits) / 1e6;
           const frac = need / (CLOCK_HZ / 1e6);
-          const grow = ease((t - r.at) / (frac > 1 ? 1.0 : 0.6));
+          const grow = after(t, r.at, frac > 1 ? 1.0 : 0.6);
           if (grow <= 0) return null;
           const y = ROW0 + i * ROW_H;
           const w = Math.max(3, FULL * frac * grow);
-          const over = frac > 1 && grow * frac > 1;
           const ok = frac <= 1;
           const done = grow >= 0.99;
+          const over = frac > 1 && grow * frac > 1;
           const col = over ? RED : C.cyan;
           return (
-            <g key={i} opacity={ease((t - r.at) / 0.3)}>
-              <text x={LX} y={y + 30} style={mono(26, C.ink)}>
-                {fmtHz(r.hz)} · {r.bits} bits
+            <g key={i} opacity={after(t, r.at, 0.3)}>
+              <text x={LX} y={y + 32} style={mono(26, C.ink)}>
+                1000 Hz × {r.bits} bits
               </text>
-              <rect x={BX} y={y + 6} width={FULL} height={34} rx={6} fill="rgba(255,255,255,.05)" />
-              <rect x={BX} y={y + 6} width={Math.min(w, FULL)} height={34} rx={6} fill={hexA(col, 0.7)} />
-              {w > FULL && <rect x={BX + FULL} y={y + 6} width={w - FULL} height={34} rx={6} fill={hexA(RED, 0.85)} />}
-              <text
-                x={w > 260 ? BX + w - 12 : BX + w + 12}
-                y={y + 31}
-                textAnchor={w > 260 ? 'end' : 'start'}
-                style={mono(22, w > 260 ? '#0a0420' : C.ink, { fontWeight: 700 })}
-              >
+              <rect x={BX} y={y + 8} width={FULL} height={36} rx={6} fill="rgba(255,255,255,.05)" />
+              <rect x={BX} y={y + 8} width={Math.min(w, FULL)} height={36} rx={6} fill={hexA(col, 0.7)} />
+              {w > FULL && <rect x={BX + FULL} y={y + 8} width={w - FULL} height={36} rx={6} fill={hexA(RED, 0.85)} />}
+              <text x={w > 200 ? BX + Math.min(w, FULL + 240) - 12 : BX + w + 12} y={y + 34} textAnchor={w > 200 ? 'end' : 'start'} style={mono(22, w > 200 ? '#0a0420' : C.ink, { fontWeight: 700 })}>
                 {fmtMHz(need * grow)}
               </text>
               {done && (ok || out > 0) && (
-                <text x={W - 10} y={y + 32} textAnchor="end" opacity={ok ? 1 : out} style={{ fontFamily: FONT.sans, fontSize: 28, fontWeight: 800, fill: ok ? GREEN : RED }}>
-                  {ok ? '✓' : '✗ out of clock'}
+                <text x={W - 10} y={y + 34} textAnchor="end" opacity={ok ? 1 : out} style={{ fontFamily: FONT.sans, fontSize: 28, fontWeight: 800, fill: ok ? GREEN : RED }}>
+                  {ok ? '✓ fits' : '✗ doesn’t fit'}
                 </text>
               )}
             </g>
           );
         })}
-        <text x={0} y={H - 8} opacity={out} style={mono(19, C.muted)}>
-          ESP32 · 80 MHz APB clock · up to 20 bits (S2 / S3 / C3: 14) · ledcAttach() returns false if it can't fit
-        </text>
       </svg>
+    </div>
+  );
+};
+
+// ── the trap: 17 bits ─────────────────────────────────────────────────────
+
+const LogView: React.FC<{ t: number }> = ({ t }) => {
+  const L = S.log;
+  return (
+    <div style={{ position: 'absolute', inset: 0, display: 'grid', alignContent: 'start', gap: 22, paddingTop: 10 }}>
+      <div style={mono(28, C.ink)}>
+        .duty_resolution = <b style={{ color: RED }}>LEDC_TIMER_17_BIT</b>,
+      </div>
+      <LogBox
+        t={t}
+        at={L.logs}
+        width={1480}
+        lines={[
+          { text: 'E (312) ledc: requested frequency 1000 and duty resolution 17 can not be achieved,' },
+          { text: 'try reducing freq_hz or duty_resolution. div_param=0' },
+        ]}
+      />
+      <div style={{ ...mono(34, RED, { fontWeight: 700 }), opacity: after(t, L.fail) }}>ledc_timer_config(&timer) → ESP_FAIL</div>
+    </div>
+  );
+};
+
+const CheckView: React.FC<{ t: number }> = ({ t }) => {
+  const K = S.check;
+  return (
+    <div style={{ position: 'absolute', inset: 0, display: 'grid', alignContent: 'start', gap: 16, paddingTop: 4 }}>
+      <div style={mono(26, C.ink)}>
+        <b style={{ color: C.amber }}>ESP_ERROR_CHECK</b>(ledc_timer_config(&timer));
+      </div>
+      <LogBox
+        t={t}
+        at={K.stops}
+        width={1480}
+        size={20}
+        lines={[
+          { text: 'ESP_ERROR_CHECK failed: esp_err_t 0xffffffff (ESP_FAIL) at 0x400d2b1e' },
+          { text: 'file: "…/main/main.c" line 17', color: C.amber },
+          { text: 'func: app_main' },
+          { text: 'expression: ledc_timer_config(&timer)', color: C.amber },
+        ]}
+      />
+      <div style={{ fontSize: 26, color: C.ink, opacity: after(t, K.line) }}>the program stops (abort) and tells you which line</div>
+      <Verdict ok p={after(t, K.fix)} size={26}>
+        the fix: fewer bits (<b>LEDC_TIMER_8_BIT</b>) or a lower frequency
+      </Verdict>
     </div>
   );
 };
