@@ -147,7 +147,8 @@ alone.)
 
 ## The trap: resetting `last` inside the loop
 
-- If `TickType_t last = xTaskGetTickCount();` is inside the loop, every call computes the
+- If `TickType_t last = xTaskGetTickCount();` is moved inside the loop, after the work
+  (just before the call — the way it's shown on screen), every call computes the
   wake time from the tick count after the work → wake = now + 20 ticks, the same as
   `vTaskDelay(20)`: 230 ms again. *Derived from the code above.*
 - Fix: set it once, before the loop (`task.h` L859–862, example L883).

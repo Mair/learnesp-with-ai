@@ -5,6 +5,7 @@ import { GPIO, GPIO_FRAMES } from './scenes/GPIO';
 import { GPIOInput, INPUT_FRAMES } from './scenes/GPIOInput';
 import { FreeRTOSTasks, TASKS_FRAMES } from './scenes/FreeRTOSTasks';
 import { FreeRTOSScheduler, SCHED_FRAMES } from './scenes/FreeRTOSScheduler';
+import { FreeRTOSDelayUntil, UNTIL_FRAMES } from './scenes/FreeRTOSDelayUntil';
 import { GPIOInterrupts, IRQ_FRAMES } from './scenes/GPIOInterrupts';
 import { PWM, PWM_FRAMES } from './scenes/PWM';
 import { BasicGPIOIntro, BASIC_INTRO_FRAMES } from './scenes/BasicGPIOIntro';
@@ -149,6 +150,19 @@ export const RemotionRoot: React.FC = () => (
         </Stage>
       )}
       durationInFrames={SCHED_FRAMES}
+      fps={FPS}
+      width={W}
+      height={H}
+    />
+    {/* FreeRTOS delay-until (pure ESP-IDF): xTaskGetTickCount + xTaskDelayUntil, a steady beat */}
+    <Composition
+      id="FreeRTOSDelayUntil"
+      component={() => (
+        <Stage floor={false}>
+          <FreeRTOSDelayUntil />
+        </Stage>
+      )}
+      durationInFrames={UNTIL_FRAMES}
       fps={FPS}
       width={W}
       height={H}
