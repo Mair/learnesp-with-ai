@@ -260,3 +260,18 @@ void app_main(void)
   takes a core within a tick, sets its pin and blocks again. The workers lose a few
   microseconds. *Derived; "microseconds" = a GPIO write plus a vTaskDelay call, not
   measured.*
+
+## On-screen examples (not measured)
+
+- Log timestamps are examples: `I (310) main_task: Calling app_main()` (app_main starts
+  a few hundred ms after boot), `I (6920) prio: …` = the press time in the demo, and the
+  watchdog's `E (5310) task_wdt: …` = about 5 s (the timeout) after app_main starts,
+  `E (10310)` 5 s later. Which worker shows as running on which CPU varies.
+- The LED and CPU lanes come from `sim.ts`, a model of the rules above (two cores,
+  10 ms ticks, delays counted from the tick they're called in, the highest ready task
+  takes the lowest-priority core). work_b starts 300 ms after work_a because work_a
+  (higher than app_main's 1) takes CPU 0 from app_main as soon as it's created
+  (`prvIsYieldRequiredSMP`, above) and app_main is pinned to CPU 0. *Derived.*
+- At 6 the model gives the fast LED a switch every 400 ms instead of 200 (late by
+  200 ms each time): both workers are busy for 200 of every 400 ms, in step.
+- The esp_timer_get_time value on screen (8,120,450 µs …) is an example and is slowed down.

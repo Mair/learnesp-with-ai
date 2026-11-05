@@ -25,7 +25,9 @@
     "gpio-interrupts:audio": "node --disable-warning=ExperimentalWarning scripts/gpio-interrupts-audio.ts",
     "gpio-interrupts": "npm run gpio-interrupts:audio && remotion render GPIOInterrupts out/3-advanced-gpio/gpio-interrupts.mp4",
     "freertos-tasks:audio": "node --disable-warning=ExperimentalWarning scripts/freertos-tasks-audio.ts",
-    "freertos-tasks": "npm run freertos-tasks:audio && remotion render FreeRTOSTasks out/2-freertos/freertos-tasks.mp4"
+    "freertos-tasks": "npm run freertos-tasks:audio && remotion render FreeRTOSTasks out/2-freertos/freertos-tasks.mp4",
+    "freertos-scheduler:audio": "node --disable-warning=ExperimentalWarning scripts/freertos-scheduler-audio.ts",
+    "freertos-scheduler": "npm run freertos-scheduler:audio && remotion render FreeRTOSScheduler out/2-freertos/freertos-scheduler.mp4"
   },
   "dependencies": {
     "@remotion/cli": "^4.0.535",

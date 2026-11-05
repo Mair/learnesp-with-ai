@@ -1,8 +1,9 @@
-# FreeRTOS scheduler & priorities: storyboard v2 (simple English, draft for approval)
+# FreeRTOS scheduler & priorities: storyboard v2 (simple English, as built)
 
 - Slug `freertos-scheduler`, composition `FreeRTOSScheduler`, output `out/2-freertos/freertos-scheduler.mp4`, about 6 min.
 - Comes after `freertos-tasks`. Next video: `delay-until`. Every claim is in `FACTS.md`.
 - Same board as before: LED 1 on GPIO 2, LED 2 on GPIO 19, button on GPIO 18.
+- **As built:** VO lines are in `timeline.ts` (`VO`), timed by `scripts/vo-plan.ts`. Wording changed from this table where the voice or Whisper needed it: p2 "Each one has a long job", s3 "A task that is blocked doesn't want the CPU", k2 "Priority four, instead of six" ("Four instead of six" was heard as "for instead of six"), a5 "So everything in this video comes down to one number: the priority." The LED and CPU lanes and the LED ticks in the soundtrack come from one scheduler model (`sim.ts`).
 - **v2:** the whole script is rewritten in very simple English. Short sentences. One idea per line. Every new word is explained the first time it is used. The words "preempt", "starve", "schedule" (as a verb) and "round robin" are not used.
 
 ## The video in one paragraph

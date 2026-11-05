@@ -4,6 +4,7 @@ import { Backdrop, Grade } from './components/Backdrop';
 import { GPIO, GPIO_FRAMES } from './scenes/GPIO';
 import { GPIOInput, INPUT_FRAMES } from './scenes/GPIOInput';
 import { FreeRTOSTasks, TASKS_FRAMES } from './scenes/FreeRTOSTasks';
+import { FreeRTOSScheduler, SCHED_FRAMES } from './scenes/FreeRTOSScheduler';
 import { GPIOInterrupts, IRQ_FRAMES } from './scenes/GPIOInterrupts';
 import { PWM, PWM_FRAMES } from './scenes/PWM';
 import { BasicGPIOIntro, BASIC_INTRO_FRAMES } from './scenes/BasicGPIOIntro';
@@ -135,6 +136,19 @@ export const RemotionRoot: React.FC = () => (
         </Stage>
       )}
       durationInFrames={TASKS_FRAMES}
+      fps={FPS}
+      width={W}
+      height={H}
+    />
+    {/* FreeRTOS scheduler & priorities (pure ESP-IDF): the rule, vTaskPrioritySet, the watchdog trap */}
+    <Composition
+      id="FreeRTOSScheduler"
+      component={() => (
+        <Stage floor={false}>
+          <FreeRTOSScheduler />
+        </Stage>
+      )}
+      durationInFrames={SCHED_FRAMES}
       fps={FPS}
       width={W}
       height={H}
