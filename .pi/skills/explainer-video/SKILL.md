@@ -40,9 +40,9 @@ Standards live in three files — load each at the step that points to it:
 Write `src/scenes/<slug>/FACTS.md`, headed by the exact ESP-IDF tag you read: each fact, the file/line or doc it came from, and any surprise ("rounds 12.17 down → 2.76 s", "255 is bumped to 256 = fully on").
 **Done when** every number and claim you intend to put on screen or in the VO has a source line in `FACTS.md`.
 
-### 2. Script + storyboard → approval
-Load `SCRIPT.md`. Write the arc and, per scene, a table of beats: VO line (`text`, plus `say` where TTS needs it) and the visual for that line. Apply the depth standard to every argument of every call. Show the user the storyboard and wait for a go-ahead before building.
-**Done when** the user has approved the storyboard.
+### 2. Script + storyboard
+Load `SCRIPT.md`. Write the arc and, per scene, a table of beats: VO line (`text`, plus `say` where TTS needs it) and the visual for that line. Apply the depth standard to every argument of every call. Commit `FACTS.md` + `STORYBOARD.md` and **go straight on to building** — don't stop to ask whether to start (the user's standing instruction). The user reviews the render instead.
+**Done when** the storyboard is committed.
 
 ### 3. Scaffold
 - `src/scenes/<slug>/timeline.ts` — copy pwm's skeleton: `FPS`, `SCENES` (id + dur), `sceneStart`, `sceneDur`, `SECONDS`, `<NAME>_FRAMES`, one cue object per scene, `VoLine`/`VO`/`VOICE` (`en-US-AndrewMultilingualNeural`). Import-free (type-only imports allowed): Node runs it directly.
