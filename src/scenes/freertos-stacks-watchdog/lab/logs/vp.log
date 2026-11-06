@@ -1,0 +1,220 @@
+Adding SPI flash device
+ets Jul 29 2019 12:21:46
+rst:0x1 (POWERON_RESET),boot:0x12 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0040,len:6272
+load:0x40078000,len:15820
+load:0x40080400,len:3920
+entry 0x40080644
+I (668) boot: ESP-IDF v6.0.2 2nd stage bootloader
+I (669) boot: compile time Nov  6 2026 14:03:56
+I (669) boot: Multicore bootloader
+I (701) boot: chip revision: v0.0
+I (703) boot.esp32: SPI Speed      : 40MHz
+I (703) boot.esp32: SPI Mode       : DIO
+I (703) boot.esp32: SPI Flash Size : 2MB
+I (709) boot: Enabling RNG early entropy source...
+I (716) boot: Partition Table:
+I (717) boot: ## Label            Usage          Type ST Offset   Length
+I (717) boot:  0 nvs              WiFi data        01 02 00009000 00006000
+I (717) boot:  1 phy_init         RF data          01 01 0000f000 00001000
+I (717) boot:  2 factory          factory app      00 00 00010000 00100000
+I (720) boot: End of partition table
+I (752) esp_image: segment 0: paddr=00010020 vaddr=3f400020 size=08c68h ( 35944) map
+I (769) esp_image: segment 1: paddr=00018c90 vaddr=3ffb0000 size=02a3ch ( 10812) load
+I (783) esp_image: segment 2: paddr=0001b6d4 vaddr=40080000 size=04944h ( 18756) load
+I (801) esp_image: segment 3: paddr=00020020 vaddr=400d0020 size=0d2a0h ( 53920) map
+I (820) esp_image: segment 4: paddr=0002d2c8 vaddr=40084944 size=062ach ( 25260) load
+I (835) esp_image: segment 5: paddr=0003357c vaddr=50000000 size=00028h (    40) load
+I (886) boot: Loaded app from partition at offset 0x10000
+I (886) boot: Disabling RNG early entropy source...
+I (903) cpu_start: Multicore app
+I (1506) cpu_start: GPIO 3 and 1 are used as console UART I/O pins
+I (1509) cpu_start: Pro cpu start user code
+I (1509) cpu_start: cpu freq: 160000000 Hz
+I (1509) app_init: Application information:
+I (1509) app_init: Project name:     stacks_watchdog
+I (1509) app_init: App version:      d33bce3
+I (1509) app_init: Compile time:     Nov  6 2026 14:03:53
+I (1510) app_init: ELF file SHA256:  4a1b4d574...
+I (1510) app_init: ESP-IDF:          v6.0.2
+I (1510) efuse_init: Min chip rev:     v0.0
+I (1510) efuse_init: Max chip rev:     v3.99 
+I (1510) efuse_init: Chip rev:         v0.0
+I (1511) heap_init: Initializing. RAM available for dynamic allocation:
+I (1512) heap_init: At 3FFAE6E0 len 00001920 (6 KiB): DRAM
+I (1512) heap_init: At 3FFB33E0 len 0002CC20 (179 KiB): DRAM
+I (1512) heap_init: At 3FFE0440 len 00003AE0 (14 KiB): D/IRAM
+I (1512) heap_init: At 3FFE4350 len 0001BCB0 (111 KiB): D/IRAM
+I (1513) heap_init: At 4008ABF0 len 00015410 (85 KiB): IRAM
+I (1533) spi_flash: detected chip: gd
+I (1541) spi_flash: flash io: dio
+W (1544) spi_flash: Detected size(4096k) larger than the size in the binary image header(2048k). Using the size in the binary image header.
+I (1553) main_task: Started on CPU0
+I (1553) main_task: Calling app_main()
+I (1553) main_task: Returned from app_main()
+I (1953) stacks: blink_fast: 1556 bytes never used
+I (2353) stacks: blink_fast: 1124 bytes never used
+I (2553) stacks: blink_slow: 1552 bytes never used
+I (2753) stacks: blink_fast: 1124 bytes never used
+I (3153) stacks: blink_fast: 1124 bytes never used
+I (3553) stacks: blink_slow: 1120 bytes never used
+I (3553) stacks: blink_fast: 1124 bytes never used
+I (3553) stacks: press 1
+I (3953) stacks: blink_fast: 1124 bytes never used
+I (4353) stacks: blink_fast: 1124 bytes never used
+I (4553) stacks: blink_slow: 1120 bytes never used
+I (4753) stacks: blink_fast: 1124 bytes never used
+I (5153) stacks: blink_fast: 1124 bytes never used
+I (5553) stacks: blink_slow: 1120 bytes never used
+I (5553) stacks: blink_fast: 1124 bytes never used
+I (5953) stacks: blink_fast: 1124 bytes never used
+I (6353) stacks: blink_fast: 1124 bytes never used
+I (6553) stacks: blink_slow: 1120 bytes never used
+I (6753) stacks: blink_fast: 1124 bytes never used
+I (7153) stacks: blink_fast: 1124 bytes never used
+I (7553) stacks: blink_slow: 1120 bytes never used
+I (7553) stacks: blink_fast: 1124 bytes never used
+I (7953) stacks: blink_fast: 1124 bytes never used
+I (8353) stacks: blink_fast: 1124 bytes never used
+I (8553) stacks: blink_slow: 1120 bytes never used
+E (8553) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:
+E (8553) task_wdt:  - button (CPU 0/1)
+E (8553) task_wdt: Tasks currently running:
+E (8553) task_wdt: CPU 0: IDLE0
+E (8553) task_wdt: CPU 1: IDLE1
+E (8553) task_wdt: Print CPU 0 (current core) backtrace
+Backtrace: 0x400D7BFF:0x3FFB1210 0x400D8018:0x3FFB1230 0x40082CFD:0x3FFB1260 0x400849E7:0x3FFB4CA0 0x400DAD47:0x3FFB4CC0 0x400DBADA:0x3FFB4CE0 0x400DB1DD:0x3FFB4D00
+E (8553) task_wdt: Aborting.
+E (8553) task_wdt: Print CPU 1 backtrace
+Backtrace: 0x400849e7:0x3ffb52a0 0x400dad47:0x3ffb52c0 0x400dbada:0x3ffb52e0 0x400db1dd:0x3ffb5300
+ELF file SHA256: 4a1b4d574
+Rebooting...
+ets Jul 29 2019 12:21:46
+rst:0xc (SW_CPU_RESET),boot:0x12 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0040,len:6272
+load:0x40078000,len:15820
+load:0x40080400,len:3920
+entry 0x40080644
+I (19637) boot: ESP-IDF v6.0.2 2nd stage bootloader
+I (19637) boot: compile time Nov  6 2026 14:03:56
+I (19637) boot: Multicore bootloader
+I (19670) boot: chip revision: v0.0
+I (19672) boot.esp32: SPI Speed      : 40MHz
+I (19673) boot.esp32: SPI Mode       : DIO
+I (19673) boot.esp32: SPI Flash Size : 2MB
+I (19680) boot: Enabling RNG early entropy source...
+I (19688) boot: Partition Table:
+I (19689) boot: ## Label            Usage          Type ST Offset   Length
+I (19689) boot:  0 nvs              WiFi data        01 02 00009000 00006000
+I (19690) boot:  1 phy_init         RF data          01 01 0000f000 00001000
+I (19690) boot:  2 factory          factory app      00 00 00010000 00100000
+I (19693) boot: End of partition table
+I (19727) esp_image: segment 0: paddr=00010020 vaddr=3f400020 size=08c68h ( 35944) map
+I (19750) esp_image: segment 1: paddr=00018c90 vaddr=3ffb0000 size=02a3ch ( 10812) load
+I (19767) esp_image: segment 2: paddr=0001b6d4 vaddr=40080000 size=04944h ( 18756) load
+I (19797) esp_image: segment 3: paddr=00020020 vaddr=400d0020 size=0d2a0h ( 53920) map
+I (19823) esp_image: segment 4: paddr=0002d2c8 vaddr=40084944 size=062ach ( 25260) load
+I (19849) esp_image: segment 5: paddr=0003357c vaddr=50000000 size=00028h (    40) load
+I (19901) boot: Loaded app from partition at offset 0x10000
+I (19901) boot: Disabling RNG early entropy source...
+I (19920) cpu_start: Multicore app
+I (1369) cpu_start: GPIO 3 and 1 are used as console UART I/O pins
+I (1371) cpu_start: Pro cpu start user code
+I (1371) cpu_start: cpu freq: 160000000 Hz
+I (1371) app_init: Application information:
+I (1372) app_init: Project name:     stacks_watchdog
+I (1372) app_init: App version:      d33bce3
+I (1372) app_init: Compile time:     Nov  6 2026 14:03:53
+I (1372) app_init: ELF file SHA256:  4a1b4d574...
+I (1372) app_init: ESP-IDF:          v6.0.2
+I (1372) efuse_init: Min chip rev:     v0.0
+I (1372) efuse_init: Max chip rev:     v3.99 
+I (1372) efuse_init: Chip rev:         v0.0
+I (1373) heap_init: Initializing. RAM available for dynamic allocation:
+I (1374) heap_init: At 3FFAE6E0 len 00001920 (6 KiB): DRAM
+I (1374) heap_init: At 3FFB33E0 len 0002CC20 (179 KiB): DRAM
+I (1374) heap_init: At 3FFE0440 len 00003AE0 (14 KiB): D/IRAM
+I (1375) heap_init: At 3FFE4350 len 0001BCB0 (111 KiB): D/IRAM
+I (1375) heap_init: At 4008ABF0 len 00015410 (85 KiB): IRAM
+I (1396) spi_flash: detected chip: gd
+I (1400) spi_flash: flash io: dio
+W (1407) spi_flash: Detected size(4096k) larger than the size in the binary image header(2048k). Using the size in the binary image header.
+I (1415) main_task: Started on CPU0
+I (1415) main_task: Calling app_main()
+I (1415) main_task: Returned from app_main()
+I (1815) stacks: blink_fast: 1556 bytes never used
+I (2215) stacks: blink_fast: 1124 bytes never used
+I (2415) stacks: blink_slow: 1552 bytes never used
+I (2615) stacks: blink_fast: 1124 bytes never used
+I (3015) stacks: blink_fast: 1124 bytes never used
+I (3415) stacks: blink_slow: 1120 bytes never used
+I (3415) stacks: blink_fast: 1124 bytes never used
+I (3415) stacks: press 1
+I (3815) stacks: blink_fast: 1124 bytes never used
+I (4215) stacks: blink_fast: 1124 bytes never used
+I (4415) stacks: blink_slow: 1120 bytes never used
+I (4615) stacks: blink_fast: 1124 bytes never used
+I (5015) stacks: blink_fast: 1124 bytes never used
+I (5415) stacks: blink_slow: 1120 bytes never used
+I (5415) stacks: blink_fast: 1124 bytes never used
+I (5815) stacks: blink_fast: 1124 bytes never used
+I (6215) stacks: blink_fast: 1124 bytes never used
+I (6415) stacks: blink_slow: 1120 bytes never used
+I (6615) stacks: blink_fast: 1124 bytes never used
+I (7015) stacks: blink_fast: 1124 bytes never used
+I (7415) stacks: blink_slow: 1120 bytes never used
+I (7415) stacks: blink_fast: 1124 bytes never used
+I (7815) stacks: blink_fast: 1124 bytes never used
+I (8215) stacks: blink_fast: 1124 bytes never used
+I (8415) stacks: blink_slow: 1120 bytes never used
+E (8415) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:
+E (8415) task_wdt:  - button (CPU 0/1)
+E (8415) task_wdt: Tasks currently running:
+E (8415) task_wdt: CPU 0: IDLE0
+E (8415) task_wdt: CPU 1: IDLE1
+E (8415) task_wdt: Print CPU 0 (current core) backtrace
+Backtrace: 0x400D7BFF:0x3FFB1210 0x400D8018:0x3FFB1230 0x40082CFD:0x3FFB1260 0x400849E7:0x3FFB4CA0 0x400DAD47:0x3FFB4CC0 0x400DBADA:0x3FFB4CE0 0x400DB1DD:0x3FFB4D00
+E (8415) task_wdt: Aborting.
+E (8415) task_wdt: Print CPU 1 backtrace
+Backtrace: 0x400849e7:0x3ffb52a0 0x400dad47:0x3ffb52c0 0x400dbada:0x3ffb52e0 0x400db1dd:0x3ffb5300
+ELF file SHA256: 4a1b4d574
+Rebooting...
+ets Jul 29 2019 12:21:46
+rst:0xc (SW_CPU_RESET),boot:0x12 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0040,len:6272
+load:0x40078000,len:15820
+load:0x40080400,len:3920
+entry 0x40080644
+I (3703) boot: ESP-IDF v6.0.2 2nd stage bootloader
+I (3703) boot: compile time Nov  6 2026 14:03:56
+I (3703) boot: Multicore bootloader
+I (3733) boot: chip revision: v0.0
+I (3735) boot.esp32: SPI Speed      : 40MHz
+I (3735) boot.esp32: SPI Mode       : DIO
+I (3735) boot.esp32: SPI Flash Size : 2MB
+I (3742) boot: Enabling RNG early entropy source...
+I (3750) boot: Partition Table:
+I (3750) boot: ## Label            Usage          Type ST Offset   Length
+I (3750) boot:  0 nvs              WiFi data        01 02 00009000 00006000
+I (3751) boot:  1 phy_init         RF data          01 01 0000f000 00001000
+I (3751) boot:  2 factory          factory app      00 00 00010000 00100000
+I (3754) boot: End of partition table
+I (3786) esp_image: segment 0: paddr=00010020 vaddr=3f400020 size=08c68h ( 35944) map
+I (3811) esp_image: segment 1: paddr=00018c90 vaddr=3ffb0000 size=02a3ch ( 10812) load
+I (3831) esp_image: segment 2: paddr=0001b6d4 vaddr=40080000 size=04944h ( 18756) load
+I (3859) esp_image: segment 3: paddr=00020020 vaddr=400d0020 size=0d2a0h ( 53920) map
+I (3882) esp_image: segment 4: paddr=0002d2c8 vaddr=40084944 size=062ach ( 25260) load
+I (3906) esp_image: segment 5: paddr=0003357c vaddr=50000000 size=00028h (    40) load
+I (3960) boot: Loaded app from partition at offset 0x10000
+I (3960) boot: Disabling RNG early entropy source...
+I (3980) cpu_start: Multicore app
+qemu-system-xtensa: terminating on signal 15 from pid 2041872 (timeout)

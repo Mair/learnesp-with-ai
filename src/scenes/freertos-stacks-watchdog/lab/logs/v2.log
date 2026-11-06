@@ -1,0 +1,187 @@
+Adding SPI flash device
+ets Jul 29 2019 12:21:46
+rst:0x1 (POWERON_RESET),boot:0x12 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0040,len:6272
+load:0x40078000,len:15820
+load:0x40080400,len:3920
+entry 0x40080644
+I (669) boot: ESP-IDF v6.0.2 2nd stage bootloader
+I (670) boot: compile time Nov  6 2026 14:02:20
+I (670) boot: Multicore bootloader
+I (705) boot: chip revision: v0.0
+I (707) boot.esp32: SPI Speed      : 40MHz
+I (707) boot.esp32: SPI Mode       : DIO
+I (707) boot.esp32: SPI Flash Size : 2MB
+I (713) boot: Enabling RNG early entropy source...
+I (722) boot: Partition Table:
+I (722) boot: ## Label            Usage          Type ST Offset   Length
+I (722) boot:  0 nvs              WiFi data        01 02 00009000 00006000
+I (723) boot:  1 phy_init         RF data          01 01 0000f000 00001000
+I (723) boot:  2 factory          factory app      00 00 00010000 00100000
+I (726) boot: End of partition table
+I (757) esp_image: segment 0: paddr=00010020 vaddr=3f400020 size=08c58h ( 35928) map
+I (778) esp_image: segment 1: paddr=00018c80 vaddr=3ffb0000 size=02a3ch ( 10812) load
+I (794) esp_image: segment 2: paddr=0001b6c4 vaddr=40080000 size=04954h ( 18772) load
+I (814) esp_image: segment 3: paddr=00020020 vaddr=400d0020 size=0d258h ( 53848) map
+I (832) esp_image: segment 4: paddr=0002d280 vaddr=40084954 size=0629ch ( 25244) load
+I (849) esp_image: segment 5: paddr=00033524 vaddr=50000000 size=00028h (    40) load
+I (893) boot: Loaded app from partition at offset 0x10000
+I (893) boot: Disabling RNG early entropy source...
+I (910) cpu_start: Multicore app
+I (1519) cpu_start: GPIO 3 and 1 are used as console UART I/O pins
+I (1522) cpu_start: Pro cpu start user code
+I (1522) cpu_start: cpu freq: 160000000 Hz
+I (1523) app_init: Application information:
+I (1523) app_init: Project name:     stacks_watchdog
+I (1523) app_init: App version:      d33bce3
+I (1523) app_init: Compile time:     Nov  6 2026 14:02:16
+I (1523) app_init: ELF file SHA256:  0cbc07453...
+I (1523) app_init: ESP-IDF:          v6.0.2
+I (1523) efuse_init: Min chip rev:     v0.0
+I (1523) efuse_init: Max chip rev:     v3.99 
+I (1524) efuse_init: Chip rev:         v0.0
+I (1524) heap_init: Initializing. RAM available for dynamic allocation:
+I (1525) heap_init: At 3FFAE6E0 len 00001920 (6 KiB): DRAM
+I (1526) heap_init: At 3FFB33E0 len 0002CC20 (179 KiB): DRAM
+I (1526) heap_init: At 3FFE0440 len 00003AE0 (14 KiB): D/IRAM
+I (1526) heap_init: At 3FFE4350 len 0001BCB0 (111 KiB): D/IRAM
+I (1526) heap_init: At 4008ABF0 len 00015410 (85 KiB): IRAM
+I (1547) spi_flash: detected chip: gd
+I (1554) spi_flash: flash io: dio
+W (1557) spi_flash: Detected size(4096k) larger than the size in the binary image header(2048k). Using the size in the binary image header.
+I (1566) main_task: Started on CPU0
+I (1566) main_task: Calling app_main()
+I (1566) main_task: Returned from app_main()
+I (1966) stacks: blink_fast: 1556 bytes never used
+I (2366) stacks: blink_fast: 1124 bytes never used
+I (2566) stacks: blink_slow: 1552 bytes never used
+I (2766) stacks: blink_fast: 1124 bytes never used
+I (3166) stacks: blink_fast: 1124 bytes never used
+I (3566) stacks: blink_slow: 1120 bytes never used
+I (3566) stacks: blink_fast: 1124 bytes never used
+I (3966) stacks: blink_fast: 1124 bytes never used
+I (4366) stacks: blink_fast: 1124 bytes never used
+I (4566) stacks: blink_slow: 1120 bytes never used
+I (4766) stacks: blink_fast: 1124 bytes never used
+I (5166) stacks: blink_fast: 1124 bytes never used
+I (5566) stacks: blink_slow: 1120 bytes never used
+I (5566) stacks: blink_fast: 1124 bytes never used
+I (5966) stacks: blink_fast: 1124 bytes never used
+I (6366) stacks: blink_fast: 1124 bytes never used
+I (6566) stacks: blink_slow: 1120 bytes never used
+E (6576) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:
+E (6576) task_wdt:  - button (CPU 0/1)
+E (6576) task_wdt: Tasks currently running:
+E (6576) task_wdt: CPU 0: IDLE0
+E (6576) task_wdt: CPU 1: IDLE1
+E (6576) task_wdt: Print CPU 0 (current core) backtrace
+Backtrace: 0x400D7BFE:0x3FFB1210 0x400D7FD0:0x3FFB1230 0x40082CFD:0x3FFB1260 0x400849E7:0x3FFB4CA0 0x400DACFF:0x3FFB4CC0 0x400DBA92:0x3FFB4CE0 0x400DB195:0x3FFB4D00
+E (6576) task_wdt: Print CPU 1 backtrace
+Backtrace: 0x40083922:0x3FFB1840 0x40082CFD:0x3FFB1860 0x400849E7:0x3FFB52A0 0x400DACFF:0x3FFB52C0 0x400DBA92:0x3FFB52E0 0x400DB195:0x3FFB5300
+I (6766) stacks: blink_fast: 1124 bytes never used
+I (7166) stacks: blink_fast: 1124 bytes never used
+I (7566) stacks: blink_slow: 1120 bytes never used
+I (7566) stacks: blink_fast: 1124 bytes never used
+I (7966) stacks: blink_fast: 1124 bytes never used
+I (8366) stacks: blink_fast: 1124 bytes never used
+I (8566) stacks: blink_slow: 1120 bytes never used
+I (8766) stacks: blink_fast: 1124 bytes never used
+I (9166) stacks: blink_fast: 1124 bytes never used
+I (9566) stacks: blink_slow: 1120 bytes never used
+I (9566) stacks: blink_fast: 1124 bytes never used
+I (9966) stacks: blink_fast: 1124 bytes never used
+I (10366) stacks: blink_fast: 1124 bytes never used
+I (10566) stacks: blink_slow: 1120 bytes never used
+I (10766) stacks: blink_fast: 1124 bytes never used
+I (11166) stacks: blink_fast: 1124 bytes never used
+I (11566) stacks: blink_slow: 1120 bytes never used
+I (11566) stacks: blink_fast: 1124 bytes never used
+I (11966) stacks: blink_fast: 1124 bytes never used
+I (12366) stacks: blink_fast: 1124 bytes never used
+I (12566) stacks: blink_slow: 1120 bytes never used
+I (12766) stacks: blink_fast: 1124 bytes never used
+I (13166) stacks: blink_fast: 1124 bytes never used
+I (13566) stacks: blink_slow: 1120 bytes never used
+I (13566) stacks: blink_fast: 1124 bytes never used
+I (13966) stacks: blink_fast: 1124 bytes never used
+I (14366) stacks: blink_fast: 1124 bytes never used
+I (14566) stacks: blink_slow: 1120 bytes never used
+I (14766) stacks: blink_fast: 1124 bytes never used
+I (15166) stacks: blink_fast: 1124 bytes never used
+I (15566) stacks: blink_slow: 1120 bytes never used
+I (15566) stacks: blink_fast: 1124 bytes never used
+I (15966) stacks: blink_fast: 1124 bytes never used
+I (16366) stacks: blink_fast: 1124 bytes never used
+E (16566) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:
+E (16566) task_wdt:  - button (CPU 0/1)
+E (16566) task_wdt: Tasks currently running:
+E (16566) task_wdt: CPU 0: blink_slow
+E (16566) task_wdt: CPU 1: IDLE1
+E (16566) task_wdt: Print CPU 0 (current core) backtrace
+Backtrace: 0x400D7BFE:0x3FFB1210 0x400D7FD0:0x3FFB1230 0x40082CFD:0x3FFB1260 0x4000BFED:0x3FFB5FC0 0x40086006:0x3FFB5FD0 0x400DB7AC:0x3FFB5FF0 0x400DB84C:0x3FFB6030 0x40082781:0x3FFB6050 0x40082889:0x3FFB6080 0x400D4C1B:0x3FFB60A0 0x400D52D5:0x3FFB60D0 0x400D3E36:0x3FFB60F0 0x400D0FD1:0x3FFB6110 0x400D52D5:0x3FFB6130 0x400D3E36:0x3FFB6150 0x400DA5C9:0x3FFB6170 0x400D89AE:0x3FFB61A0 0x400D8DC9:0x3FFB61C0 0x400D9867:0x3FFB6240 0x40088F97:0x3FFB6270 0x400D59FD:0x3FFB62D0 0x400DB195:0x3FFB6300
+E (16566) task_wdt: Print CPU 1 backtrace
+I (16566) stacks: blink_slow: 1120 bytes never used
+Backtrace: 0x40083922:0x3FFB1840 0x40082CFD:0x3FFB1860 0x400849E7:0x3FFB52A0 0x400DACFF:0x3FFB52C0 0x400DBA92:0x3FFB52E0 0x400DB195:0x3FFB5300
+I (16766) stacks: blink_fast: 1124 bytes never used
+I (17166) stacks: blink_fast: 1124 bytes never used
+I (17566) stacks: blink_slow: 864 bytes never used
+I (17566) stacks: blink_fast: 1124 bytes never used
+I (17966) stacks: blink_fast: 1124 bytes never used
+I (18366) stacks: blink_fast: 1124 bytes never used
+I (18566) stacks: blink_slow: 864 bytes never used
+I (18766) stacks: blink_fast: 1124 bytes never used
+I (19166) stacks: blink_fast: 1124 bytes never used
+I (19566) stacks: blink_slow: 864 bytes never used
+I (19566) stacks: blink_fast: 1124 bytes never used
+I (19966) stacks: blink_fast: 1124 bytes never used
+I (20366) stacks: blink_fast: 1124 bytes never used
+I (20566) stacks: blink_slow: 864 bytes never used
+I (20766) stacks: blink_fast: 1124 bytes never used
+I (21166) stacks: blink_fast: 1124 bytes never used
+I (21566) stacks: blink_slow: 864 bytes never used
+I (21566) stacks: blink_fast: 1124 bytes never used
+I (21966) stacks: blink_fast: 1124 bytes never used
+I (22366) stacks: blink_fast: 1124 bytes never used
+I (22566) stacks: blink_slow: 864 bytes never used
+I (22766) stacks: blink_fast: 1124 bytes never used
+I (23166) stacks: blink_fast: 1124 bytes never used
+I (23566) stacks: blink_slow: 864 bytes never used
+I (23566) stacks: blink_fast: 1124 bytes never used
+I (23966) stacks: blink_fast: 1124 bytes never used
+I (24366) stacks: blink_fast: 1124 bytes never used
+I (24566) stacks: blink_slow: 864 bytes never used
+I (24766) stacks: blink_fast: 1124 bytes never used
+I (25166) stacks: blink_fast: 1124 bytes never used
+I (25566) stacks: blink_slow: 864 bytes never used
+I (25566) stacks: blink_fast: 1124 bytes never used
+I (25966) stacks: blink_fast: 1124 bytes never used
+I (26366) stacks: blink_fast: 1124 bytes never used
+E (26566) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:
+E (26566) task_wdt:  - button (CPU 0/1)
+E (26566) task_wdt: Tasks currently running:
+E (26566) task_wdt: CPU 0: IDLE0
+E (26566) task_wdt: CPU 1: IDLE1
+E (26566) task_wdt: Print CPU 0 (current core) backtrace
+Backtrace: 0x400D7BFE:0x3FFB1210 0x400D7FD0:0x3FFB1230 0x40082CFD:0x3FFB1260 0x400849E7:0x3FFB4CA0 0x400DACFF:0x3FFB4CC0 0x400DBA92:0x3FFB4CE0 0x400DB195:0x3FFB4D00
+E (26566) task_wdt: Print CPU 1 backtrace
+Backtrace: 0x400I (283922:0x3FFB18406566)  0xstacks:4 bl0082CinFD:0xk3FFB1860 0x_400849Eslow: 87:0x64 bytes3FFB5 ne2A0ver 0x 400DusedACFF:0x
+3FFB52C0 0x400DBA92:0x3FFB52E0 0x400DB195:0x3FFB5300
+I (26766) stacks: blink_fast: 1124 bytes never used
+I (27166) stacks: blink_fast: 1124 bytes never used
+I (27566) stacks: blink_slow: 864 bytes never used
+I (27566) stacks: blink_fast: 1124 bytes never used
+I (27966) stacks: blink_fast: 1124 bytes never used
+I (28366) stacks: blink_fast: 1124 bytes never used
+I (28566) stacks: blink_slow: 864 bytes never used
+I (28766) stacks: blink_fast: 1124 bytes never used
+I (29166) stacks: blink_fast: 1124 bytes never used
+I (29566) stacks: blink_slow: 864 bytes never used
+I (29566) stacks: blink_fast: 1124 bytes never used
+I (29966) stacks: blink_fast: 1124 bytes never used
+I (30366) stacks: blink_fast: 1124 bytes never used
+I (30566) stacks: blink_slow: 864 bytes never used
+I (30766) stacks: blink_fast: 1124 bytes never used
+qemu-system-xtensa: terminating on signal 15 from pid 2046612 (timeout)

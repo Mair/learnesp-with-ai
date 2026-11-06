@@ -2,3 +2,6 @@ node_modules/
 out/
 .cache/
 public/*/mix.wav
+src/scenes/*/lab/sdkconfig
+src/scenes/*/lab/sdkconfig.old
+src/scenes/*/lab/build/
