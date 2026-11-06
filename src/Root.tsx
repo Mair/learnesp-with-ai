@@ -8,6 +8,7 @@ import { FreeRTOSScheduler, SCHED_FRAMES } from './scenes/FreeRTOSScheduler';
 import { FreeRTOSDelayUntil, UNTIL_FRAMES } from './scenes/FreeRTOSDelayUntil';
 import { CORES_FRAMES, FreeRTOSTwoCores } from './scenes/FreeRTOSTwoCores';
 import { FreeRTOSStacksWatchdog, STACKS_FRAMES } from './scenes/FreeRTOSStacksWatchdog';
+import { FreeRTOSQueues, QUEUES_FRAMES } from './scenes/FreeRTOSQueues';
 import { GPIOInterrupts, IRQ_FRAMES } from './scenes/GPIOInterrupts';
 import { PWM, PWM_FRAMES } from './scenes/PWM';
 import { BasicGPIOIntro, BASIC_INTRO_FRAMES } from './scenes/BasicGPIOIntro';
@@ -191,6 +192,19 @@ export const RemotionRoot: React.FC = () => (
         </Stage>
       )}
       durationInFrames={STACKS_FRAMES}
+      fps={FPS}
+      width={W}
+      height={H}
+    />
+    {/* FreeRTOS queues (pure ESP-IDF): xQueueCreate, xQueueSend, xQueueReceive */}
+    <Composition
+      id="FreeRTOSQueues"
+      component={() => (
+        <Stage floor={false}>
+          <FreeRTOSQueues />
+        </Stage>
+      )}
+      durationInFrames={QUEUES_FRAMES}
       fps={FPS}
       width={W}
       height={H}

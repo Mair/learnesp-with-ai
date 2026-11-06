@@ -70,15 +70,15 @@ static void led_task(void *arg)
 {
     gpio_reset_pin(LED);
     gpio_set_direction(LED, GPIO_MODE_OUTPUT);
-    int n;
+    int press;
     while (1) {
-        xQueueReceive(press_queue, &n, portMAX_DELAY);   // sleeps until a press arrives
-        ESP_LOGI(TAG, "press %d: blink", n);
+        xQueueReceive(press_queue, &press, portMAX_DELAY);   // sleeps until a press arrives
+        ESP_LOGI(TAG, "press %d: blink", press);
         for (int i = 0; i < 3; i++) {
             gpio_set_level(LED, 1);
-            vTaskDelay(pdMS_TO_TICKS(100));
+            vTaskDelay(pdMS_TO_TICKS(250));
             gpio_set_level(LED, 0);
-            vTaskDelay(pdMS_TO_TICKS(100));
+            vTaskDelay(pdMS_TO_TICKS(250));
         }
     }
 }
@@ -93,7 +93,8 @@ void app_main(void)
 
 - Builds with no warnings (`lab`, v0). Header `freertos/queue.h`, as in Espressif's GPIO
   example (`gpio example` L13).
-- Three blinks of 100 ms on + 100 ms off = **600 ms** per press (3 × 200 ms).
+- Three blinks of 250 ms on + 250 ms off = **1.5 s** per press (3 × 500 ms). Slow enough
+  to see presses wait in the queue in real time.
 - `sizeof(int)` = **4** on the ESP32 (32-bit Xtensa, `int` is 32 bits; `portmacro.h` L79
   `portBASE_TYPE int` is the 32-bit base type). VO: "four bytes".
 - The NULL check on `xQueueCreate` is not in the program (Espressif's own GPIO example
@@ -155,7 +156,7 @@ void app_main(void)
 ## `xQueueReceive(xQueue, pvBuffer, xTicksToWait)`
 
 - Declaration `queue.h` L825–827. "@param pvBuffer Pointer to the buffer into which the
-  received item will be copied." (L758–759) → `&n`.
+  received item will be copied." (L758–759) → `&press`.
 - "@param xTicksToWait The maximum amount of time the task should block waiting for an
   item to receive should the queue be empty at the time of the call. xQueueReceive() will
   return immediately if xTicksToWait is zero and the queue is empty." (L761–764)
@@ -167,47 +168,50 @@ void app_main(void)
   "to ensure it is not woken by a timing event" (`tasks.c` L6381–6386). Espressif's GPIO
   example waits the same way (`gpio example` L69).
 - Timeout example (v4, `pdMS_TO_TICKS(2000)` instead of `portMAX_DELAY`, the press at
-  5000 ms): `I (3654) queue: no press for 2 s` / `I (5654) … no press for 2 s` /
-  `I (6654) queue: press 1: blink` / `I (9254) queue: no press for 2 s`. Shown as a variant
+  5000 ms): `I (3613) queue: no press for 2 s` / `I (5613) … no press for 2 s` /
+  `I (6613) queue: press 1: blink` / `I (10113) queue: no press for 2 s` (1.5 s of blinks,
+  then 2 s of waiting). Shown as a variant
   in the Explainer, labelled.
 
 ## Demo (QEMU, `lab/logs/v1.log`): one press, then three quick ones
 
+Presses at 1000 ms, then 8940, 9090, 9240 ms (scheduler time; timed to the narration's
+"press once" / "now press three times, quickly"):
+
 ```
-I (1651) main_task: Returned from app_main()
-I (2651) queue: press 1: blink
-I (4651) queue: press 2: blink
-I (5251) queue: press 3: blink
-I (5851) queue: press 4: blink
+I (1633) main_task: Returned from app_main()
+I (2633) queue: press 1: blink
+I (10573) queue: press 2: blink
+I (12073) queue: press 3: blink
+I (13573) queue: press 4: blink
 ```
 
-- Press 1 at 1000 ms (scheduler time) = log 2651 → received at once, the LED task was
-  waiting. Presses 2–4 at 3000, 3150, 3300 ms (150 ms apart, faster than one 600 ms
-  blink): press 2 is taken at once (4651); 3 and 4 wait in the queue and come out **600 ms
-  apart, in order** (5251, 5851) — each as soon as the previous blink ends.
-- *Derived for the picture:* the send times = the press times (±10 ms poll), so the queue
-  holds press 3 from ~4801 and press 4 from ~4951 (log clock), and empties at 5251 / 5851.
-  The receive times are the logged ones.
+- Press 1 = log 2633 → received at once, the LED task was waiting. Press 2 (log 10573) is
+  taken at once; presses 3 and 4 (log ~10723, ~10873) wait in the queue and come out
+  **1.5 s apart, in order** (12073, 13573) — each as soon as the blinks before it end.
+- *Derived for the picture:* send times = press times (±10 ms poll); the box holding press 3
+  is filled ~10723–12073, press 4 ~10873–13573. Receive times are the logged ones.
+- The button task never waited: `xQueueSend` with 0 ticks returns at once (`queue.h`
+  L412–415) and there was room.
 
 ## A burst (QEMU, `lab/logs/v2.log`): eight presses, room for five
 
-Presses every 120 ms from 1000 ms (log 2614 …):
+Presses every 120 ms from 1000 ms (log 2643 …):
 
 ```
-I (2614) queue: press 1: blink
-I (3214) queue: press 2: blink
-W (3454) queue: queue full: press 8 dropped
-I (3814) queue: press 3: blink
-I (4414) queue: press 4: blink
-I (5014) queue: press 5: blink
-I (5614) queue: press 6: blink
-I (6214) queue: press 7: blink
+I (2643) queue: press 1: blink
+W (3363) queue: queue full: press 7 dropped
+W (3483) queue: queue full: press 8 dropped
+I (4143) queue: press 2: blink
+I (5643) queue: press 3: blink
+I (7143) queue: press 4: blink
+I (8643) queue: press 5: blink
+I (10143) queue: press 6: blink
 ```
 
-- Press 1 is taken straight away; presses 2–6 fill the 5 slots; press 7 (log ~3334) fits
-  because press 2 left at 3214; press 8 (log 3454 = 2614 + 840) finds 5 waiting → with
-  0 ticks to wait, `xQueueSend` returns `errQUEUE_FULL` at once and the warning prints.
-  *Derived* from the send times and confirmed by the log (only press 8 dropped).
+- Press 1 is taken straight away; presses 2–6 (log 2763 … 3123) fill the 5 boxes; presses
+  7 (3363 = 2643 + 720) and 8 (3483) find 5 waiting → with 0 ticks to wait, `xQueueSend`
+  returns `errQUEUE_FULL` at once and the warning prints. Press 2 only leaves at 4143.
 - Fixes (VO): a longer queue, or let the sender wait (`xTicksToWait` > 0). *Not shown
   running.*
 

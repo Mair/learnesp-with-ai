@@ -1,5 +1,20 @@
 # FreeRTOS queues: storyboard v1 (simple English)
 
+- **v1.1 (while building):** blinks slowed from 100 to 250 ms (1.5 s per press) so the
+  queued presses can be seen waiting in real time; the lab re-run gives presses 7 *and* 8
+  dropped in the burst. The per-line tables below are the first draft; `timeline.ts` (`VO`)
+  is the script as built.
+- **As built:** 4:11 (250.9 s), 9 scenes. Wording changed where the voice or Whisper
+  needed it: "queue" is heard as "cue", so word cues target "cue"; app_main is spoken
+  "app main"; f3/f4 merged ("Presses seven and eight find it full…"); f5 → f4 "let the
+  button task wait a few ticks"; d5 "one and a half seconds apart".
+- The demo and full scenes run in **real time on the lab clock** (scene time =
+  t0 + (ms − 1000)/1000, t0 just after "once" / "fast"); the scripted demo presses were
+  timed in `main.c` to land on "press once" and "press three times, quickly".
+- Problem: the flag is checked once every 1.2 s so the lost press is visible; tallies
+  "presses: 2" vs "seen: 1" make it explicit.
+- Trap: the crash log types from the start of t5 (cps 600), not in real time.
+
 - Slug `freertos-queues`, composition `FreeRTOSQueues`, output
   `out/2-freertos/freertos-queues.mp4`, about 5 min.
 - Comes after `freertos-stacks-watchdog`. Next video: mutexes. Every claim is in `FACTS.md`.
@@ -18,8 +33,8 @@ each item in at the back, the receiver takes the oldest from the front, and slee
 it's empty. `xQueueCreate(5, sizeof(int))` makes room for five ints (20 bytes, from the
 heap); `xQueueSend(q, &presses, 0)` copies one in, or returns `errQUEUE_FULL`;
 `xQueueReceive(q, &n, portMAX_DELAY)` copies the oldest out, sleeping until one arrives.
-Demo: three quick presses wait in the queue and come out 600 ms apart, in order. A burst of
-eight overflows five boxes: press 8 is dropped. The trap: create the queue after the tasks
+Demo: three quick presses wait in the queue and come out 1.5 s apart, in order. A burst of
+eight overflows five boxes: presses 7 and 8 are dropped. The trap: create the queue after the tasks
 and the LED task asserts on a NULL handle, in a boot loop.
 
 ## The scenes
@@ -31,8 +46,8 @@ and the LED task asserts on a NULL handle, in a boot loop.
 | 3 | create | `xQueueCreate(5, sizeof(int))`: length, item size (4 bytes) → handle, NULL if no memory |
 | 4 | send | `xQueueSend(press_queue, &presses, 0)`: handle, pointer (copied), ticks to wait → pdTRUE / errQUEUE_FULL |
 | 5 | receive | `xQueueReceive(press_queue, &n, portMAX_DELAY)`: oldest into n; portMAX_DELAY = sleep until one arrives |
-| 6 | demo | Press 1 at once; three quick presses queue up and come out 600 ms apart, in order |
-| 7 | full | Eight presses, five boxes: press 8 dropped (the warning); longer queue or wait |
+| 6 | demo | Press 1 at once; three quick presses queue up and come out 1.5 s apart, in order |
+| 7 | full | Eight presses, five boxes: presses 7 and 8 dropped (the warnings); longer queue or wait |
 | 8 | trap | Queue created after the tasks → `assert failed: xQueueReceive …` → boot loop; create it first |
 | 9 | payoff | One line, five points, next video |
 
