@@ -17,6 +17,7 @@ An **explainer** teaches someone **how to use** one peripheral: every number the
 - `.cache/vo` is gitignored and machine-local: the first run regenerates every clip (edge-tts is deterministic, so word offsets come back identical) and downloads the whisper model — run it in the background (`nohup npm run vo -- <slug> > /tmp/vo.log 2>&1 &`) and poll; a killed run leaves a **0-byte .mp3** that must be deleted before retrying. The first render also downloads Chrome Headless Shell.
 - Renders (~4 min for 5 min of video) likewise go in the background with a log.
 - Stills are written to `/tmp/stills/…`, which the read tool only resolves as `/private/tmp/stills/…` on macOS.
+- **QEMU for the lab (step 1b):** ESP-IDF's environment comes from `source ~/.espressif/tools/activate_idf_v6.0.2.sh` (EIM install; `idf.py` is `python $IDF_PATH/tools/idf.py`). Espressif's QEMU: `python $IDF_PATH/tools/idf_tools.py install qemu-xtensa` (lands in `~/.espressif/tools/tools/qemu-xtensa/<ver>/qemu/bin/qemu-system-xtensa`).
 **Reference implementation — read before building (pure ESP-IDF LEDC):**
 
 | File | What it shows |
@@ -39,6 +40,18 @@ Standards live in three files — load each at the step that points to it:
 **Pure ESP-IDF only — no Arduino** (see the project's `AGENTS.md`): code lives in `void app_main(void)`, waits are `vTaskDelay(pdMS_TO_TICKS(ms))`, errors are `esp_err_t` / `ESP_ERROR_CHECK`. List every ESP-IDF call the learner will type for this topic, then read each one's real implementation down to the register writes: **ESP-IDF v6.0 or later only** (currently tag `v6.0.2`, local checkout `~/.espressif/v6.0.2/esp-idf`; see `AGENTS.md` — never v5.x): `components/esp_driver_*/src/*.c`, `components/esp_hal_<periph>/esp32/include/hal/*_ll.h` (v6 moved the HAL here), FreeRTOS in `components/freertos/`, Kconfig defaults, the official examples (`examples/`), and the ESP32 datasheet / TRM for limits. Never cite arduino-esp32. Fetch raw files; work every number through the real code path (integer division, clamps, max values, defaults).
 Write `src/scenes/<slug>/FACTS.md`, headed by the exact ESP-IDF tag you read: each fact, the file/line or doc it came from, and any surprise ("rounds 12.17 down → 2.76 s", "255 is bumped to 256 = fully on").
 **Done when** every number and claim you intend to put on screen or in the VO has a source line in `FACTS.md`.
+
+### 1b. Lab: run the real program (QEMU)
+Every log line, number the chip prints, error message and timing the video shows comes from **running the video's program**, not from a model or a made-up example. With no board attached, run it in Espressif's QEMU (machine `esp32`, same machine code as the chip). Reference: `src/scenes/freertos-stacks-watchdog/lab/`.
+- `src/scenes/<slug>/lab/`: `CMakeLists.txt`, `main/CMakeLists.txt`, `main/main.c` = **the program exactly as shown on screen**. Variants for the traps and for things QEMU can't do (a button press, a jam) go behind `#if LAB_VARIANT == n`, listed at the top of `main.c`, selected with `idf.py -DLAB_VARIANT=n` (`main/CMakeLists.txt` passes it as a compile definition). Config variants: an `sdkconfig.<name>` fragment passed as `-DSDKCONFIG_DEFAULTS=… -DSDKCONFIG=/tmp/…` (don't overwrite the lab's own `sdkconfig`, which is gitignored).
+- Build out of tree and run headless:
+  `idf.py -B /tmp/<slug>lab/vN -DLAB_VARIANT=N build` →
+  `(cd /tmp/<slug>lab/vN && python -m esptool --chip esp32 merge-bin --fill-flash-size 4MB -o flash.bin @flash_args)` →
+  `timeout 15 qemu-system-xtensa -nographic -machine esp32 -drive file=flash.bin,if=mtd,format=raw -serial mon:stdio > vN.log`.
+- Keep the logs: `lab/logs/vN.log` (strip `\r` and blank lines), committed with `FACTS.md`. `FACTS.md` names the QEMU version, the build config (defaults: `-Og`, Picolibc) and quotes each log excerpt it uses.
+- QEMU limits, say them on screen: no buttons (GPIO inputs read 0, the pull-up isn't modelled), boot is slower than a board (timestamps differ; gaps between lines are real), numbers like stack use depend on compiler/config ("a board prints numbers close to these"). Label log panels `recorded in QEMU (ESP32 emulator)`, plus `· <thing> is simulated` when a variant fakes an input.
+- Logs shown in real time (`right="real time"`) keep QEMU's clock between lines; logs paced to the VO say nothing about time. Real serial output is near-instant: don't type it out slowly in a real-time panel.
+**Done when** every log line, printed number and error message in the storyboard is in a `lab/logs/*.log` and quoted in `FACTS.md`.
 
 ### 2. Script + storyboard
 Load `SCRIPT.md`. Write the arc and, per scene, a table of beats: VO line (`text`, plus `say` where TTS needs it) and the visual for that line. Apply the depth standard to every argument of every call. Commit `FACTS.md` + `STORYBOARD.md` and **go straight on to building** — don't stop to ask whether to start (the user's standing instruction). The user reviews the render instead.
