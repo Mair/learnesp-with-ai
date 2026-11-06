@@ -29,7 +29,8 @@ export const BUSY_MS = 300;
 export const REST_MS = 100;
 
 export type Worker = 'work_a' | 'work_b';
-export type Span = { a: number; b: number; task: Worker };
+export type Span = { a: number; b: number; task: Worker; prio: number };
+export type BlinkEvent = { t: number; core: number; task: 'blink_fast' | 'blink_slow' };
 export type Sim = {
   until: number;
   /** LED switch times (ms); the LED is on after even-indexed edges */
@@ -38,6 +39,8 @@ export type Sim = {
   late: number[];
   /** what each core runs (workers only; gaps = idle or an LED blip) */
   cores: [Span[], Span[]];
+  /** each LED switch: when, and which core ran it */
+  blinks: BlinkEvent[];
   /** each worker loop start: which core it was on (for the example log) */
   starts: { t: number; task: Worker; core: number }[];
   /** CPU ms each worker got */
@@ -84,7 +87,7 @@ export function simulate(key: string, o: SimOpts): Sim {
     mk('work_b', o.workPrio, o.workCore, false, REST_MS / TICK),
   ];
   const core: (Task | null)[] = [null, null];
-  const sim: Sim = { until: o.until, edges: { fast: [], slow: [] }, late: [], cores: [[], []], starts: [], cpu: { work_a: 0, work_b: 0 } };
+  const sim: Sim = { until: o.until, edges: { fast: [], slow: [] }, late: [], cores: [[], []], blinks: [], starts: [], cpu: { work_a: 0, work_b: 0 } };
   const block = (k: Task, t: number) => {
     k.state = 'blocked';
     k.wake = (Math.floor(t / TICK) + k.delayTicks) * TICK;
@@ -109,7 +112,10 @@ export function simulate(key: string, o: SimOpts): Sim {
     if (tick) for (const k of tasks) if (k.state === 'blocked' && k.wake <= t) ((k.state = 'ready'), (k.readySince = t));
     // 2. a worker whose 300 ms are up rests
     for (const k of tasks) if (!k.instant && k.state === 'running' && t >= k.busyEnd) block(k, t);
-    // 3. turns: at a tick, a worker hands its core to a ready equal that may use it
+    // 3. a task that became ready takes a free (or lower) core first
+    schedule(t);
+    // 4. turns: at a tick, a worker hands its core to a ready equal that may use it
+    //    (only one still waiting — nothing else could take it)
     if (tick)
       for (let c = 0; c < 2; c++) {
         const cur = core[c];
@@ -125,7 +131,7 @@ export function simulate(key: string, o: SimOpts): Sim {
         place(next, c, t);
       }
     schedule(t);
-    // 4. record
+    // 5. record
     for (let c = 0; c < 2; c++) {
       const k = core[c];
       const id = k && !k.instant ? (k.id as Worker) : null;
@@ -136,7 +142,7 @@ export function simulate(key: string, o: SimOpts): Sim {
         sim.cores[c].push(cur);
         open[c] = null;
       }
-      if (id && !open[c]) open[c] = { a: t, b: t, task: id };
+      if (id && !open[c]) open[c] = { a: t, b: t, task: id, prio: o.workPrio };
     }
   }
   for (let c = 0; c < 2; c++) if (open[c]) ((open[c]!.b = o.until), sim.cores[c].push(open[c]!));
@@ -151,6 +157,7 @@ export function simulate(key: string, o: SimOpts): Sim {
     r.core = c;
     if (r.instant) {
       sim.edges[r.id === 'blink_fast' ? 'fast' : 'slow'].push(t);
+      sim.blinks.push({ t, core: c, task: r.id as BlinkEvent['task'] });
       block(r, t);
     } else if (r.fresh) {
       r.busyEnd = t + BUSY_MS;

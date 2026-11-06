@@ -1,4 +1,7 @@
-# FreeRTOS two cores: storyboard v1 (simple English, draft for approval)
+# FreeRTOS two cores: storyboard v1 (simple English, as built)
+
+- **As built:** VO lines are in `timeline.ts` (`VO`), timed by `scripts/vo-plan.ts`; 3:17. Wording changed where the voice or Whisper needed it: h1 "Which core should the workers use?" ("pick" → heard "course"), a3/t5 "A task you pin…" ("a pinned task" was heard "a pin task"), e5 "One pins the task to core 1", c7 "With pinning, they always say core 1", t6 "Only pin a task when you have a reason", z1 "…That's how you use both cores." ("That's two cores" was heard "too coarse"). The scenes' slugs: problem, answer, home, pin, which, demo, price, payoff.
+- The lanes, the logs and the LED ticks come from `sim.ts` (three runs: unpinned at 6, pinned to core 1 at 6, unpinned at 4). The unpinned log is the model's too (work_a: core 0, then core 1), not a made-up example.
 
 - Slug `freertos-two-cores`, composition `FreeRTOSTwoCores`, output `out/2-freertos/freertos-two-cores.mp4`, about 4 min.
 - Comes after `freertos-delay-until`. Next video: stacks & watchdog. Every claim is in `FACTS.md`.

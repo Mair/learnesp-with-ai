@@ -179,20 +179,24 @@ freertos-scheduler FACTS).
   on core 0 in this program are the idle task (0) and ESP-IDF's own tasks, which are
   blocked unless used (esp_timer task: no timers here). *Simplification:* drawn as idle.
 - **The cost:** both workers now share core 1 (same priority → turns, a tick each).
-  Model, 10 s: each worker gets ~3.8–4.0 s of CPU, against ~7.3–7.5 s when unpinned →
+  Model, per 10 s: each worker gets ~3.75 s of CPU, against ~7.3–7.5 s when unpinned →
   **about half**. Core 0 has no worker time at all. The VO says "each worker gets core
   1 only about half the time" and "core 0 sits almost empty".
 - *Note:* the busy loop counts clock time (`esp_timer_get_time`), so a worker's job
   still ends 300 ms after it started; it just gets the CPU for only part of that time.
   The VO does **not** say "the job takes twice as long".
 - Watchdog: idle task on core 1 still runs. In the model both workers rest at roughly
-  the same time (they start together, since app_main isn't held up: e.g. rests
-  ~300–400 and ~310–410 ms), so IDLE1 gets core 1 for ~90 ms every 400 ms, far inside
+  the same time (they start together, since app_main isn't held up: both rest
+  ~300–400 ms of every 400), so IDLE1 gets core 1 for ~100 ms every 400 ms, far inside
   the 5 s watchdog (freertos-scheduler FACTS; `ESP_TASK_WDT_CHECK_IDLE_TASK_CPU1`
   default y, `components/esp_system/Kconfig` L350–353).
-- **Example log** (illustrative, timestamps made up but spaced as the model):
-  pinned: `work_a on core 1` / `work_b on core 1` every ~400 ms. Unpinned: workers print
-  core 0 or core 1. Labelled "example output".
+- **The logs on screen** come from the model (each worker prints at the top of its loop;
+  timestamps = model time + 331 ms of boot, made up): pinned → `work_a on core 1` /
+  `work_b on core 1` every 400 ms. Unpinned at 6 → work_a's first job starts on core 0,
+  its later ones on core 1 (the free core when it wakes); work_b starts on core 0. So the
+  same line prints core 0 and later core 1. Labelled "worked out from the rules".
+- *Model detail:* a task that wakes takes a free core before any turn-taking; a worker
+  only hands over its core at a tick to an equal that could not run anywhere else.
 - **The better fix is still the priority** (scheduler video): workers unpinned at 4 →
   LEDs on time (model: 51 switches, none late) *and* each worker gets ~7.5 s of CPU in
   10 s. Espressif: pinning isn't required to run ahead of built-in tasks; "Using

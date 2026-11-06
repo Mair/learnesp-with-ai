@@ -6,6 +6,7 @@ import { GPIOInput, INPUT_FRAMES } from './scenes/GPIOInput';
 import { FreeRTOSTasks, TASKS_FRAMES } from './scenes/FreeRTOSTasks';
 import { FreeRTOSScheduler, SCHED_FRAMES } from './scenes/FreeRTOSScheduler';
 import { FreeRTOSDelayUntil, UNTIL_FRAMES } from './scenes/FreeRTOSDelayUntil';
+import { CORES_FRAMES, FreeRTOSTwoCores } from './scenes/FreeRTOSTwoCores';
 import { GPIOInterrupts, IRQ_FRAMES } from './scenes/GPIOInterrupts';
 import { PWM, PWM_FRAMES } from './scenes/PWM';
 import { BasicGPIOIntro, BASIC_INTRO_FRAMES } from './scenes/BasicGPIOIntro';
@@ -163,6 +164,19 @@ export const RemotionRoot: React.FC = () => (
         </Stage>
       )}
       durationInFrames={UNTIL_FRAMES}
+      fps={FPS}
+      width={W}
+      height={H}
+    />
+    {/* FreeRTOS two cores (pure ESP-IDF): xTaskCreatePinnedToCore, esp_cpu_get_core_id */}
+    <Composition
+      id="FreeRTOSTwoCores"
+      component={() => (
+        <Stage floor={false}>
+          <FreeRTOSTwoCores />
+        </Stage>
+      )}
+      durationInFrames={CORES_FRAMES}
       fps={FPS}
       width={W}
       height={H}
