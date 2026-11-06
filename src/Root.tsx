@@ -7,6 +7,7 @@ import { FreeRTOSTasks, TASKS_FRAMES } from './scenes/FreeRTOSTasks';
 import { FreeRTOSScheduler, SCHED_FRAMES } from './scenes/FreeRTOSScheduler';
 import { FreeRTOSDelayUntil, UNTIL_FRAMES } from './scenes/FreeRTOSDelayUntil';
 import { CORES_FRAMES, FreeRTOSTwoCores } from './scenes/FreeRTOSTwoCores';
+import { FreeRTOSStacksWatchdog, STACKS_FRAMES } from './scenes/FreeRTOSStacksWatchdog';
 import { GPIOInterrupts, IRQ_FRAMES } from './scenes/GPIOInterrupts';
 import { PWM, PWM_FRAMES } from './scenes/PWM';
 import { BasicGPIOIntro, BASIC_INTRO_FRAMES } from './scenes/BasicGPIOIntro';
@@ -177,6 +178,19 @@ export const RemotionRoot: React.FC = () => (
         </Stage>
       )}
       durationInFrames={CORES_FRAMES}
+      fps={FPS}
+      width={W}
+      height={H}
+    />
+    {/* FreeRTOS stacks & watchdog (pure ESP-IDF): uxTaskGetStackHighWaterMark, esp_task_wdt_add / _reset */}
+    <Composition
+      id="FreeRTOSStacksWatchdog"
+      component={() => (
+        <Stage floor={false}>
+          <FreeRTOSStacksWatchdog />
+        </Stage>
+      )}
+      durationInFrames={STACKS_FRAMES}
       fps={FPS}
       width={W}
       height={H}

@@ -1,4 +1,16 @@
-# FreeRTOS stacks & watchdog: storyboard v1 (simple English)
+# FreeRTOS stacks & watchdog: storyboard v1 (simple English, as built)
+
+- **As built:** 5:33. VO lines are in `timeline.ts` (`VO`), timed by `scripts/vo-plan.ts`.
+  Wording changed where the voice or Whisper needed it: e3 "Passing NULL means this task"
+  ("Null means" was heard "no means"), s3 "…612 bytes never used" ("spare" blurred),
+  k2 "Plus a margin: 768" ("Add a margin" was heard "at a margin"), k5 "…code that has run
+  so far", c2 "stuck, waiting for the release" ("its wait" → "its weight"), m1 "In
+  menuconfig, two settings…" ("Two settings" → "To settings"), x4 "In a task on the watch
+  list, every delay must be shorter than the timeout", x5 "…not inside the release loop".
+- The stack is drawn filling **up** (end of the stack at the top) for the flood-line
+  picture; the freertos-tasks video drew it top-down. Direction is not mentioned.
+- The caught scene's log runs in real time on QEMU's clock (press at 3573 ms → errors at
+  8573 / 13573 ms); the demo and trap logs appear on the VO, not in real time.
 
 - Slug `freertos-stacks-watchdog`, composition `FreeRTOSStacksWatchdog`, output
   `out/2-freertos/freertos-stacks-watchdog.mp4`, about 5 min.

@@ -31,7 +31,9 @@
     "freertos-delay-until:audio": "node --disable-warning=ExperimentalWarning scripts/freertos-delay-until-audio.ts",
     "freertos-delay-until": "npm run freertos-delay-until:audio && remotion render FreeRTOSDelayUntil out/2-freertos/freertos-delay-until.mp4",
     "freertos-two-cores:audio": "node --disable-warning=ExperimentalWarning scripts/freertos-two-cores-audio.ts",
-    "freertos-two-cores": "npm run freertos-two-cores:audio && remotion render FreeRTOSTwoCores out/2-freertos/freertos-two-cores.mp4"
+    "freertos-two-cores": "npm run freertos-two-cores:audio && remotion render FreeRTOSTwoCores out/2-freertos/freertos-two-cores.mp4",
+    "freertos-stacks-watchdog:audio": "node --disable-warning=ExperimentalWarning scripts/freertos-stacks-watchdog-audio.ts",
+    "freertos-stacks-watchdog": "npm run freertos-stacks-watchdog:audio && remotion render FreeRTOSStacksWatchdog out/2-freertos/freertos-stacks-watchdog.mp4"
   },
   "dependencies": {
     "@remotion/cli": "^4.0.535",
