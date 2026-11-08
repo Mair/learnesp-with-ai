@@ -1,0 +1,5 @@
+# Shell for recorded takes: short prompt, no history, nothing personal on screen.
+export PS1='\[\e[1;32m\]\W\[\e[0m\] \$ '
+export HISTFILE=/dev/null
+export PROMPT_COMMAND=
+export VIRTUAL_ENV_DISABLE_PROMPT=1

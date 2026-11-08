@@ -14,6 +14,7 @@ import { PWM, PWM_FRAMES } from './scenes/PWM';
 import { BasicGPIOIntro, BASIC_INTRO_FRAMES } from './scenes/BasicGPIOIntro';
 import { FreeRTOSIntro, FREERTOS_INTRO_FRAMES } from './scenes/FreeRTOSIntro';
 import { AdvancedGPIOIntro, ADVANCED_INTRO_FRAMES } from './scenes/AdvancedGPIOIntro';
+import { VSCodeSpike, SPIKE_FRAMES } from './scenes/vscode-spike/VSCodeSpike';
 
 const W = 1920;
 const H = 1080;
@@ -205,6 +206,19 @@ export const RemotionRoot: React.FC = () => (
         </Stage>
       )}
       durationInFrames={QUEUES_FRAMES}
+      fps={FPS}
+      width={W}
+      height={H}
+    />
+    {/* Spike: recorded VS Code take (capture/) + event-driven camera */}
+    <Composition
+      id="VSCodeSpike"
+      component={() => (
+        <Stage floor={false}>
+          <VSCodeSpike />
+        </Stage>
+      )}
+      durationInFrames={SPIKE_FRAMES}
       fps={FPS}
       width={W}
       height={H}

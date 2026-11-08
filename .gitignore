@@ -5,3 +5,8 @@ public/*/mix.wav
 src/scenes/*/lab/sdkconfig
 src/scenes/*/lab/sdkconfig.old
 src/scenes/*/lab/build/
+capture/.run/
+capture/demo-project/.vscode/
+capture/demo-project/build/
+capture/demo-project/sdkconfig*
+public/vscode-spike/*.mp4

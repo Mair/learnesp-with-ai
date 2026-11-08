@@ -35,7 +35,10 @@
     "freertos-stacks-watchdog:audio": "node --disable-warning=ExperimentalWarning scripts/freertos-stacks-watchdog-audio.ts",
     "freertos-stacks-watchdog": "npm run freertos-stacks-watchdog:audio && remotion render FreeRTOSStacksWatchdog out/2-freertos/freertos-stacks-watchdog.mp4",
     "freertos-queues:audio": "node --disable-warning=ExperimentalWarning scripts/freertos-queues-audio.ts",
-    "freertos-queues": "npm run freertos-queues:audio && remotion render FreeRTOSQueues out/2-freertos/freertos-queues.mp4"
+    "freertos-queues": "npm run freertos-queues:audio && remotion render FreeRTOSQueues out/2-freertos/freertos-queues.mp4",
+    "vscode-spike:take": "node --disable-warning=ExperimentalWarning capture/takes/spike.ts",
+    "vscode-spike:audio": "node --disable-warning=ExperimentalWarning scripts/vscode-spike-audio.ts",
+    "vscode-spike": "npm run vscode-spike:audio && remotion render VSCodeSpike out/spikes/vscode-spike.mp4"
   },
   "dependencies": {
     "@remotion/cli": "^4.0.535",
@@ -46,6 +49,7 @@
   "devDependencies": {
     "@types/react": "^19.2.0",
     "@types/react-dom": "^19.2.0",
+    "playwright-core": "^1.65.0",
     "typescript": "^5.9.2"
   }
 }
