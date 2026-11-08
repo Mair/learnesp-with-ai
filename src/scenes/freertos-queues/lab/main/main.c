@@ -10,6 +10,7 @@
  *   2  a burst: eight presses 120 ms apart from 1000 ms — more than the queue holds
  *   3  the trap: the queue is created after the tasks (no presses)
  *   4  the receive timeout example: led_task waits at most 2 s (no presses until 5000 ms)
+ *   5  the first try: a shared flag instead of the queue (the presses of variant 1)
  */
 #include "driver/gpio.h"
 #include "esp_log.h"
@@ -26,10 +27,13 @@
 static const char *TAG = "queue";
 
 static QueueHandle_t press_queue;
+#if LAB_VARIANT == 5
+static bool pressed = false;   // the first try: a shared flag
+#endif
 
 #if LAB_VARIANT != 0
 static const int script[][2] = {   // {down at, up at} in ms
-#if LAB_VARIANT == 1
+#if LAB_VARIANT == 1 || LAB_VARIANT == 5
     {1000, 1060}, {8940, 9000}, {9090, 9150}, {9240, 9300},
 #elif LAB_VARIANT == 2
     {1000, 1060}, {1120, 1180}, {1240, 1300}, {1360, 1420},
@@ -65,9 +69,14 @@ static void button_task(void *arg)
         int level = button_level();
         if (last == 1 && level == 0) {             // just pressed
             presses++;
+#if LAB_VARIANT == 5
+            ESP_LOGI(TAG, "press %d", presses);
+            pressed = true;
+#else
             if (xQueueSend(press_queue, &presses, 0) != pdTRUE) {
                 ESP_LOGW(TAG, "queue full: press %d dropped", presses);
             }
+#endif
         }
         last = level;
         vTaskDelay(pdMS_TO_TICKS(10));
@@ -78,6 +87,21 @@ static void led_task(void *arg)
 {
     gpio_reset_pin(LED);
     gpio_set_direction(LED, GPIO_MODE_OUTPUT);
+#if LAB_VARIANT == 5
+    while (1) {
+        if (pressed) {
+            pressed = false;
+            ESP_LOGI(TAG, "flag set: blink");
+            for (int i = 0; i < 3; i++) {
+                gpio_set_level(LED, 1);
+                vTaskDelay(pdMS_TO_TICKS(250));
+                gpio_set_level(LED, 0);
+                vTaskDelay(pdMS_TO_TICKS(250));
+            }
+        }
+        vTaskDelay(pdMS_TO_TICKS(10));
+    }
+#endif
     int press;
     while (1) {
 #if LAB_VARIANT == 4

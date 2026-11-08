@@ -8,7 +8,7 @@ Every explainer follows this arc (the PWM video, 310 s, minus its cut under-the-
 
 | # | Scene | Job | PWM video |
 |---|---|---|---|
-| 1 | **Problem** | the thing you want, and why the obvious approach can't do it | dim a light — but a pin is only 3.3 V or 0 V |
+| 1 | **Problem** | opens on **"Let's say you want to …"**: the thing you want, then the obvious approach tried on screen, with what works and what breaks (see "The problem" below) | dim a light — but a pin is only 3.3 V or 0 V |
 | 2 | **Answer** | the idea in one image, then its name | switch it fast → P·W·M lands letter by letter |
 | 3 | **One Explainer per call** | each call the learner types, in the order they type it; every argument pulled apart | `ledc_timer_config`, `ledc_set_duty`, … |
 | 4 | **Demo** | real code runs, the hardware responds on the same frame (`CodeToHardware`), slowed if needed | knob 1: duty → brightness, slowed 500× |
@@ -17,6 +17,17 @@ Every explainer follows this arc (the PWM video, 310 s, minus its cut under-the-
 | 7 | **Payoff** | one spoken line, then a 3–4 item recap | "That's PWM." |
 
 **There is no under-the-hood scene.** The course teaches how to *use* the ESP32 — you don't need to know how an engine works to drive a car. Never descend into driver source, HAL/LL functions, registers or bit fields. Research them (they keep `FACTS.md` honest), then say only what the learner will notice and what to do about it.
+
+## The problem: want → first try → answer → code → calls
+
+The freertos-queues review set this order; it applies to every explainer:
+
+1. **Open with the want, in the learner's words.** The first VO line is "Let's say you want to …" + the concrete result on hardware ("Let's say you want an LED to blink three times every time you press a button"). No mechanism, no API name yet. (Say "Let's say", not "Say you want": the TTS blurs that into "So you want".)
+2. **Lay the problem out as parts on screen**, each in a fixed place it keeps for the rest of the video. When something passes between two parties (a sender and a receiver, a task and an ISR, a producer and a consumer), show **two sides**: the sender on the left, the receiver on the right, the thing between them in the middle.
+3. **Try the obvious approach first, on that picture**, and run it for real when you can (a lab variant, its real log). Say plainly what works and what breaks, one VO line each, and keep a ✓ / ✗ score on screen. No hedges: never "sort of works" or "kind of"; say exactly what works ("for one press, it works") and exactly what doesn't ("three presses, the LED task saw two").
+4. **Then the answer, on the same picture with the same inputs**, so the difference is the only thing that changes. Give it its own ✓ and ✗: every tool has a catch ("only so many boxes"), and the catch gets its own scene later. Name it after the picture has done the work ("That's a queue.").
+5. **Then the code, both sides at once** (each side's code in its own panel), lighting each call as the picture underneath moves.
+6. **Then one Explainer per call.** When a call moves something between two parties, **every view shows both ends at the same time**: the item going in at one end while the other end takes one out. A call shown on one side only is too abstract.
 
 Mapping a new topic means finding its problem, its one-image answer, its calls, and its two knobs. For **A-to-D conversion** a plausible arc (verify every call in step 1) is: problem — a sensor gives a smooth voltage but the CPU only knows numbers → answer — sample it, chop it into steps → Explainers for the resolution / attenuation / read calls → demo: a potentiometer turning while the number tracks → second knob: attenuation (input range) vs resolution (step size) → payoff.
 
@@ -68,6 +79,19 @@ A call is never shown out of nowhere. Open on the code the learner has in front 
 - **A number that matters gets its own line** and a big glyph: "… and a word is four bytes." / "Four times as much memory." with a 130 px `×4` popping in — not a clause at the end of a longer sentence.
 - **A trap everyone hits gets three lines, not one**: what goes wrong (the picture fills up and runs past the end) → what the system does (the check, the log line, the reboot) → "you will meet this one" + the fix, shown in green. ~25 s. Overflow, dangling pointers, pdPASS ≠ ESP_OK are this kind.
 - **Say the rule, not just the numbers.** A priority ladder with 0, 1, 5, 24 on it doesn't say "higher runs first"; a line does ("when two tasks are ready, the scheduler runs the one with the higher priority first"), with the two contenders on screen.
+
+### Pauses and emphasis
+
+The voice reads every line at one even pace unless you shape it. Shape every line; uneven pauses are what make it sound like someone explaining rather than reading.
+
+- **Between lines: the `pause`** (the silence before a line; default 0.6 s). About **1.0 s for a new beat** or a new view, **0.3–0.4 s** for a line that finishes the previous line's thought, **0.8 s after a question**, and longer when the picture carries the moment alone (a run playing out, presses landing). Never leave every gap at the default.
+- **Inside a line, in `say`** (all measured on the house voice):
+  - `...` = a beat of about 0.5 s, and the words after it are lifted and stressed. Put it right before the words that matter: "The queue copies that... many bytes", "It returns null... instead", "and does it again... forever".
+  - `.` = a new phrase (~0.45 s and a fresh pitch). Split a long line into short sentences rather than chaining clauses with commas.
+  - `,` = a short breath (~0.2 s).
+  - Capitals do nothing; emphasis comes from the pause before a word and from putting the key word **last** in a short sentence.
+- **Look at it, don't guess:** `scripts/vo-plan.ts` prints every line with the silence before it (`+1.00`) and every pause the voice makes inside it (`‖0.52`, measured from the audio). Read the sheet after every wording change: a key word with no pause before it, or a list said in one breath, shows up there.
+- A `...` changes how Whisper hears the line (it can merge or mishear words around it: "Here... five" → "Heater 5"). Re-check the cue words after adding one.
 
 ### `text` vs `say`
 `text` is the script as written (code names in code form: `gpio_set_level`, `ledc_update_duty`). `say` is what the TTS reads — set it whenever they differ:

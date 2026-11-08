@@ -18,6 +18,12 @@
  * VO_AT (line → start), VO_WORDS (line → [word, offset][]), SCENE_DUR.
  * Cues in the timeline read them through `w(id, word)`, so a wording change
  * is one re-run of this script — no hand re-timing.
+ *
+ * The sheet is also the elocution check: each line shows the silence before it
+ * (`+0.60`) and every pause the voice makes inside it (`‖0.52`, measured from
+ * the audio with ffmpeg silencedetect, ≥ 0.15 s at −40 dB) where it falls
+ * between the words. Shape them with `pause` and with "..." / "." / "," in
+ * `say` (SCRIPT.md "Pauses and emphasis").
  */
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
@@ -97,13 +103,35 @@ const re = /\/\/ ── generated: VO plan[\s\S]*?\/\/ ── end generated ─�
 if (!re.test(src)) throw new Error(`no generated block markers in ${file}`);
 writeFileSync(file, src.replace(re, block));
 
-// 4. the sheet
+// 4. the sheet (with the pauses inside each clip)
+/** silences inside a clip (not its lead-in / tail): [start, end] seconds */
+const innerPauses = (mp3: string): [number, number][] => {
+  const err = run('ffmpeg', ['-hide_banner', '-i', mp3, '-af', 'silencedetect=noise=-40dB:d=0.15', '-f', 'null', '-']).stderr.toString();
+  const st = [...err.matchAll(/silence_start: ([\d.]+)/g)].map((m) => +m[1]);
+  const en = [...err.matchAll(/silence_end: ([\d.]+)/g)].map((m) => +m[1]);
+  return st.map((s, i) => [s, en[i] ?? Infinity] as [number, number]).filter(([s, e]) => s > 0.05 && e !== Infinity);
+};
 for (const scene of ORDER) {
   const lines = VO.filter((l) => l.scene === scene);
   if (!lines.length) continue;
   console.log(`── ${scene}  ${DUR[scene] !== undefined ? DUR[scene].toFixed(2) + ' s' : '(fixed)'}`);
-  for (const l of lines) {
+  let prevEnd = 0;
+  for (const [i, l] of lines.entries()) {
     const ws = words.get(l.id)!;
-    console.log(`${l.id.padEnd(5)} ${AT[l.id].toFixed(2).padStart(6)} → ${(AT[l.id] + len(l.id)).toFixed(2).padStart(6)}  ${ws.map(([w, s]) => `${w}@${s.toFixed(2)}`).join(' ')}`);
+    const pauses = innerPauses(clips[VO.indexOf(l)]);
+    const parts: string[] = [];
+    let ps = -1;
+    for (const [w, s] of ws) {
+      const p = pauses.find(([, b]) => b > ps && b <= s + 0.08);
+      ps = s;
+      if (p && parts.length) {
+        parts.push(`‖${(p[1] - p[0]).toFixed(2)}`);
+        pauses.splice(pauses.indexOf(p), 1);
+      }
+      parts.push(`${w}@${s.toFixed(2)}`);
+    }
+    const gap = i === 0 ? AT[l.id] : AT[l.id] - prevEnd;
+    prevEnd = AT[l.id] + len(l.id);
+    console.log(`${l.id.padEnd(5)} ${AT[l.id].toFixed(2).padStart(6)} → ${prevEnd.toFixed(2).padStart(6)}  +${gap.toFixed(2)}  ${parts.join(' ')}`);
   }
 }

@@ -1,4 +1,53 @@
-# FreeRTOS queues: storyboard v1 (simple English)
+# FreeRTOS queues: storyboard v2 (review pass)
+
+## v2 (review pass)
+
+The user's notes on the v1 render (4:11), and what changed:
+
+- **Open with the want.** "Let's say you want an LED to blink three times every time you
+  press a button." New scene `want`: the press and its blinks, why one loop can't do both,
+  two tasks (button left, LED right), "how does it tell the LED task?" Rule added to
+  `SCRIPT.md` ("The problem").
+- **"A shared flag sort of works" (0:17) was unclear.** The flag is now its own scene,
+  `flag`, run for real (lab variant 5, `v5.log`): "It works. And it's simple." /
+  "…keep checking, a hundred times a second…" / "Three presses. But the LED task saw only
+  two. One press is lost." A ✓/✗ score on screen. No hedges (rule added).
+- **Two sides, the queue between, before any call (2:10, 2:38).** The old demo picture
+  (button · queue · LED) is now the problem domain: the `queue` scene swaps the flag for the
+  row of boxes on the same picture with the same presses (`v1.log`): every press, in order,
+  the LED task sleeps (✓✓) → "That's a queue." → the catch: only so many boxes (✗). The old
+  `demo` scene is cut (its run is here).
+- **Then the tasks, then the calls.** New scene `tasks`: both tasks' code side by side over
+  the same queue, the send and receive lines lit as a press goes in and comes out. Then
+  `send`, `receive` (both ends visible in every view: something goes in while the other end
+  takes one out), then `create` ("where press_queue comes from").
+- **"That many bytes" (1:07) wasn't stressed.** `say`: "The queue copies that... many
+  bytes, every time." plus a big "4 bytes copied, every time" on the word.
+- **Pauses.** Every line has a chosen `pause` (≈1.0 s new beat, 0.3–0.4 s continuation,
+  longer while a run plays out); `...` before stressed words in `say`. `vo-plan` now prints
+  the pauses inside each clip (`‖0.52`) so they can be reviewed. Rule: `SCRIPT.md` "Pauses
+  and emphasis".
+- As built: 5:44 (344 s), 10 scenes.
+
+| # | Scene | Take-away |
+|---|---|---|
+| 1 | want | Let's say you want: a press → three blinks (1.5 s). One loop misses presses mid-blink → two tasks, left and right. How do they talk? |
+| 2 | flag | Try 1, real run: a shared `bool pressed`. ✓ one press works ✓ simple ✗ checks 100×/s ✗ three presses, two seen |
+| 3 | queue | Try 2, same picture, same presses, real run: in at the back, oldest out at the front; ✓ sleeps until a press ✓ every press, in order → **QUEUE**; ✗ only so many boxes |
+| 4 | tasks | The code of both tasks side by side: `xQueueSend` in button_task, `xQueueReceive` in led_task, both name `press_queue` |
+| 5 | send | `xQueueSend(press_queue, &presses, 0)`, both ends in every view |
+| 6 | receive | `xQueueReceive(press_queue, &press, portMAX_DELAY)`, both ends in every view |
+| 7 | create | `xQueueCreate(5, sizeof(int))`: app_main makes it before the tasks; "that... many bytes" |
+| 8 | full | Eight presses, five boxes: 7 and 8 dropped (real) |
+| 9 | trap | Queue created after the tasks → assert → boot loop (real) |
+| 10 | payoff | One line, recap, next: mutexes |
+
+`timeline.ts` (`VO`) is the script as built, with every line's `say` and `pause`.
+
+---
+
+# v1 (first build, kept for reference)
+
 
 - **v1.1 (while building):** blinks slowed from 100 to 250 ms (1.5 s per press) so the
   queued presses can be seen waiting in real time; the lab re-run gives presses 7 *and* 8

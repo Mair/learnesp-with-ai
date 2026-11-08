@@ -103,4 +103,11 @@ The user watches the render and reports critiques by timestamp. Map each timesta
 - a trap everyone hits (stack overflow) → three lines, not one;
 - every identifier the VO names ("its own b") must be defined on screen;
 - no under-the-hood descents at all: they were cut from every video ("teach driving, not the engine").
+
+Lessons from the freertos-queues review (now in `SCRIPT.md`, "The problem" and "Pauses and emphasis"):
+- open on "Let's say you want to …", then lay the problem out as two sides (sender left, receiver right);
+- try the obvious approach on that picture first (run for real), with its ✓ and ✗; then the answer on the same picture and inputs, with its own ✓ and ✗;
+- no hedges ("a shared flag sort of works" was unclear): say exactly what works and what breaks;
+- show the code of both sides together before pulling out each call; every view of a call that moves something shows both ends at once;
+- shape every pause (`pause` per line; `...` before the stressed words in `say`) and read the `‖` pauses on the vo-plan sheet.
 After the pass, update `STORYBOARD.md` (an "v2 (review pass)" note + the per-line tables) and `FACTS.md` (facts for cut scenes stay, marked as cut).

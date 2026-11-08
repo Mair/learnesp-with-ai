@@ -7,8 +7,8 @@ with `components/`, `docs/` or `examples/`; line numbers are v6.0.2.
 
 **Every log line on screen is real output**: the program in `lab/main/main.c` was built
 with ESP-IDF v6.0.2 (target `esp32`, all defaults) and run in Espressif's QEMU
-(`qemu-xtensa esp_develop_9.2.2_20250817`, machine `esp32`). Raw logs: `lab/logs/v0…v4.log`;
-the variants are listed at the top of `main.c`. QEMU has no button, so variants 1–4 replace
+(`qemu-xtensa esp_develop_9.2.2_20250817`, machine `esp32`). Raw logs: `lab/logs/v0…v5.log`;
+the variants are listed at the top of `main.c`. QEMU has no button, so variants 1, 2, 4 and 5 replace
 `gpio_get_level(BUTTON)` with a script of presses (60 ms each, times in ms since the
 scheduler started); everything else is the program as shown. Panels say "recorded in QEMU
 · the presses are simulated". Timestamps are QEMU's (boot ≈ 1.6 s); the gaps are real.
@@ -100,13 +100,45 @@ void app_main(void)
 - The NULL check on `xQueueCreate` is not in the program (Espressif's own GPIO example
   doesn't check either, `gpio example` L106); the VO says what NULL means.
 
-## The problem: a shared variable (illustration)
+## The want (scene 1): why two tasks
 
-- A `bool pressed` flag set by one task and polled by another: the reader has to wake up
-  and look every time round its loop, and two presses before it looks set the same flag
-  once → it sees one press. *Derived (plain C logic).* Drawn as an illustration, no log.
-- Sharing a variable between tasks safely is the mutex video (course order); the VO only
-  points there.
+- Three blinks = 1.5 s (above). *Derived (plain C):* one loop that reads the button and
+  then blinks with `vTaskDelay` is not reading the button for those 1.5 s; a press that
+  starts and ends inside the blink never shows up as `last == 1 && level == 0` → missed.
+  Hence one task per job (each task drives its own pin, freertos-tasks). Drawn as an
+  illustration, no log.
+
+## Try 1: a shared flag (QEMU, `lab/logs/v5.log`)
+
+v2 (review pass): the first try is now run for real. Variant 5 = the program with
+`static bool pressed = false;` instead of the queue: the button task does
+`presses++; ESP_LOGI(TAG, "press %d", presses); pressed = true;`, the LED task loops
+`if (pressed) { pressed = false; ESP_LOGI(TAG, "flag set: blink"); /* 3 blinks */ }
+vTaskDelay(pdMS_TO_TICKS(10));`. Same presses as v1 (1000 ms; 8940, 9090, 9240 ms):
+
+```
+I (1553) main_task: Returned from app_main()
+I (2553) queue: press 1
+I (2553) queue: flag set: blink
+I (10493) queue: press 2
+I (10503) queue: flag set: blink
+I (10643) queue: press 3
+I (10793) queue: press 4
+I (12013) queue: flag set: blink
+```
+
+- One press works: press 1 → seen in the same tick (2553). ✓ "simple".
+- Press 2 is seen 10 ms later (10503): the LED task only looks every 10 ms.
+- Presses 3 and 4 (10643, 10793) come while it blinks for press 2 (10503–12003) and set a
+  flag that is already set; it is seen **once**, at 12013 → **three presses, two seen**.
+  VO: "Three presses. But the LED task saw only two. One press is lost."
+- "Checks 100 times a second": the loop's `vTaskDelay(pdMS_TO_TICKS(10))` = 1 tick
+  (10 ms, `CONFIG_FREERTOS_HZ` 100) → about 100 looks a second when it isn't blinking. The
+  on-screen counter is that rate (100/s outside the blinks), not a measurement.
+- Sharing a variable between tasks safely is the mutex video (course order); not covered.
+- *Picture clock:* the flag and queue scenes show each run in two real-time pieces (press 1;
+  the three quick presses), the quiet gap between them skipped. The log panels carry no
+  "real time" label.
 
 ## What a queue is
 
@@ -173,7 +205,10 @@ void app_main(void)
   then 2 s of waiting). Shown as a variant
   in the Explainer, labelled.
 
-## Demo (QEMU, `lab/logs/v1.log`): one press, then three quick ones
+## Try 2: the queue (QEMU, `lab/logs/v1.log`): one press, then three quick ones
+
+v2: this run moved from the old demo scene (cut) into the queue scene, beside try 1's run
+with the same presses.
 
 Presses at 1000 ms, then 8940, 9090, 9240 ms (scheduler time; timed to the narration's
 "press once" / "now press three times, quickly"):
