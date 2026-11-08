@@ -115,4 +115,7 @@ pin(s), and no two tasks touch the same pin.
   changing anything.
 - Videos are named by topic (`pwm`, not `first-light`).
 - For video work, load the `explainer-video` skill (`.pi/skills/explainer-video`).
+- For screen-recorded VS Code videos (ESP-IDF terminal, editor, an AI agent
+  writing code, flashing), load the `vs-code-recording` skill
+  (`.pi/skills/vs-code-recording`); it builds on `explainer-video`.
 - Git repo: start from a clean tree; commit at each milestone the user approves.
