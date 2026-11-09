@@ -19,6 +19,20 @@ Reused from earlier videos' FACTS (same tag): tick = 10 ms (`CONFIG_FREERTOS_HZ`
 priorities, `esp_timer_get_time()` (microseconds since boot), the busy loop from the
 scheduler video, `ESP_LOGI` (gpio-input).
 
+
+## Lab: the numbers and log lines on screen are real (v2, narration pass)
+
+`lab/main/main.c`, ESP-IDF v6.0.2 (target `esp32`, defaults), Espressif QEMU
+`esp_develop_9.2.2_20250817`. Raw logs: `lab/logs/`.
+
+- v1, both tasks counting their switches for 10 s: `I (12135) beat: LED A switched 44 times in
+  10 s` / `I (12145) beat: LED B switched 50 times in 10 s` — the 50 vs 44 worked out below,
+  confirmed.
+- v2, until_task's 5th job takes 500 ms, with the pdFALSE check: `W (3876) beat: missed a beat` /
+  `W (3906) beat: missed a beat` (two beats missed, caught up 30 ms apart).
+- v3, `xTaskDelayUntil(&last, pdMS_TO_TICKS(5))`: `assert failed: xTaskDelayUntil tasks.c:1499 ((
+  xTimeIncrement > 0U ))` → reboot.
+
 ## The program
 
 Pure ESP-IDF; GPIO calls from Basic GPIO only; each task drives its own pin.

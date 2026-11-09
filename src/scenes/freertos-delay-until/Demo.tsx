@@ -50,7 +50,7 @@ export const Demo: React.FC = () => {
           </Panel>
         </div>
         <div style={{ position: 'absolute', left: 784, top: 116, width: 976, height: 400 }}>
-          <Panel label={frozen ? 'the first 10 seconds' : `switches so far · ${(upto / 1000).toFixed(1)} s`} accent={frozen ? GREEN : C.cyan} right="counting the switch at 0">
+          <Panel label={frozen ? 'the first 10 seconds' : `switches so far · ${(upto / 1000).toFixed(1)} s`} accent={frozen ? GREEN : C.cyan} right={frozen ? 'QEMU run: B 50 · A 44 ✓' : 'counting the switch at 0'}>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20, marginTop: 10 }}>
               <Counter label="LED B" n={switchesBefore(B, upto + (frozen ? 0 : 0.5))} color={COL_B} ok frozen={frozen} code="xTaskDelayUntil(&last, …200…)" codeP={after(t, D.call)} />
               <Counter label="LED A" n={switchesBefore(A, upto + (frozen ? 0 : 0.5))} color={COL_A} ok={false} frozen={frozen} code="vTaskDelay(…200…)" codeP={after(t, D.call)} />

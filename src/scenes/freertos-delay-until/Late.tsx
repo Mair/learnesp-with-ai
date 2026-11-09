@@ -83,10 +83,10 @@ const CheckView: React.FC<{ t: number }> = ({ t }) => (
       <SerialLog
         t={t}
         size={22}
-        label="idf.py monitor"
+        label="recorded in QEMU"
         lines={[
-          { at: S.logw + 0.2, text: 'W (5620) beat: missed a beat', color: C.amber },
-          { at: S.logw + 0.6, text: 'W (5650) beat: missed a beat', color: C.amber },
+          { at: S.logw + 0.2, text: 'W (3876) beat: missed a beat', color: C.amber },
+          { at: S.logw + 0.6, text: 'W (3906) beat: missed a beat', color: C.amber },
         ]}
       />
     </div>

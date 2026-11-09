@@ -1,3 +1,8 @@
+> **v2 (narration pass):** VO rewritten to `SCRIPT.md` "Sound like a teacher, not a list"; opens
+> "Let's say you want an LED to switch every 200 milliseconds, on a steady beat."; the 50/44
+> count, the "missed a beat" warnings and the assert are real QEMU output (`lab/`). As built:
+> 3:44 (223.7 s).
+
 # FreeRTOS delay-until: storyboard v1 (simple English, draft for approval)
 
 - Slug `freertos-delay-until`, composition `FreeRTOSDelayUntil`, output `out/2-freertos/freertos-delay-until.mp4`, about 4½ min.

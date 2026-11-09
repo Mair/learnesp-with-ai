@@ -41,7 +41,7 @@ export const Problem: React.FC = () => {
       <AbsoluteFill>
         <div style={{ position: 'absolute', top: 40, width: '100%', display: 'grid', placeItems: 'center' }}>
           <Kicker delay={0.1} accent="amber">
-            The problem
+            Let's say you want…
           </Kicker>
         </div>
         {/* the LEDs */}

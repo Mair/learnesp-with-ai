@@ -167,7 +167,7 @@ const ZeroView: React.FC<{ t: number }> = ({ t }) => (
       pdMS_TO_TICKS(<span style={{ color: RED }}>5</span>) = 5 × 100 / 1000 = <b style={{ color: RED, opacity: after(t, S.zero) }}>0 ticks</b>
     </div>
     <div style={{ opacity: after(t, S.stops - 0.2) }}>
-      <SerialLog t={t} size={22} label="idf.py monitor" lines={[{ at: S.stops, text: 'assert failed: xTaskDelayUntil … (( xTimeIncrement > 0U ))', color: RED }]} />
+      <SerialLog t={t} size={22} label="recorded in QEMU" lines={[{ at: S.stops, text: 'assert failed: xTaskDelayUntil tasks.c:1499 (( xTimeIncrement > 0U ))', color: RED }]} />
     </div>
   </div>
 );
