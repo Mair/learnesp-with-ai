@@ -1,0 +1,287 @@
+Adding SPI flash device
+ets Jul 29 2019 12:21:46
+rst:0x1 (POWERON_RESET),boot:0x12 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0040,len:6272
+load:0x40078000,len:15820
+load:0x40080400,len:3920
+entry 0x40080644
+I (847) boot: ESP-IDF v6.0.2 2nd stage bootloader
+I (848) boot: compile time Nov  9 2026 16:13:28
+I (848) boot: Multicore bootloader
+I (925) boot: chip revision: v0.0
+I (933) boot.esp32: SPI Speed      : 40MHz
+I (933) boot.esp32: SPI Mode       : DIO
+I (933) boot.esp32: SPI Flash Size : 2MB
+I (956) boot: Enabling RNG early entropy source...
+I (1012) boot: Partition Table:
+I (1012) boot: ## Label            Usage          Type ST Offset   Length
+I (1012) boot:  0 nvs              WiFi data        01 02 00009000 00006000
+I (1013) boot:  1 phy_init         RF data          01 01 0000f000 00001000
+I (1013) boot:  2 factory          factory app      00 00 00010000 00100000
+I (1017) boot: End of partition table
+I (1191) esp_image: segment 0: paddr=00010020 vaddr=3f400020 size=08638h ( 34360) map
+I (1363) esp_image: segment 1: paddr=00018660 vaddr=3ffb0000 size=02a1ch ( 10780) load
+I (1515) esp_image: segment 2: paddr=0001b084 vaddr=40080000 size=04f94h ( 20372) load
+I (1626) esp_image: segment 3: paddr=00020020 vaddr=400d0020 size=0c464h ( 50276) map
+I (1766) esp_image: segment 4: paddr=0002c48c vaddr=40084f94 size=05bfch ( 23548) load
+I (1824) esp_image: segment 5: paddr=00032090 vaddr=50000000 size=00028h (    40) load
+I (1931) boot: Loaded app from partition at offset 0x10000
+I (1931) boot: Disabling RNG early entropy source...
+I (1951) cpu_start: Multicore app
+I (3521) cpu_start: GPIO 3 and 1 are used as console UART I/O pins
+I (3525) cpu_start: Pro cpu start user code
+I (3525) cpu_start: cpu freq: 160000000 Hz
+I (3526) app_init: Application information:
+I (3526) app_init: Project name:     gpio
+I (3526) app_init: App version:      1828aa0-dirty
+I (3526) app_init: Compile time:     Nov  9 2026 16:13:20
+I (3526) app_init: ELF file SHA256:  6c3090396...
+I (3526) app_init: ESP-IDF:          v6.0.2
+I (3527) efuse_init: Min chip rev:     v0.0
+I (3527) efuse_init: Max chip rev:     v3.99 
+I (3527) efuse_init: Chip rev:         v0.0
+I (3528) heap_init: Initializing. RAM available for dynamic allocation:
+I (3530) heap_init: At 3FFAE6E0 len 00001920 (6 KiB): DRAM
+I (3530) heap_init: At 3FFB33C0 len 0002CC40 (179 KiB): DRAM
+I (3530) heap_init: At 3FFE0440 len 00003AE0 (14 KiB): D/IRAM
+I (3530) heap_init: At 3FFE4350 len 0001BCB0 (111 KiB): D/IRAM
+I (3530) heap_init: At 4008AB90 len 00015470 (85 KiB): IRAM
+I (3562) spi_flash: detected chip: gd
+I (3574) spi_flash: flash io: dio
+W (3581) spi_flash: Detected size(4096k) larger than the size in the binary image header(2048k). Using the size in the binary image header.
+I (3590) main_task: Started on CPU0
+I (3590) main_task: Calling app_main()
+E (3590) gpio: io_num=34 can only be input
+ESP_ERROR_CHECK failed: esp_err_t 0x102 (ESP_ERR_INVALID_ARG) at 0x400d5889
+file: "./main/main.c" line 33
+func: app_main
+expression: gpio_set_direction(GPIO_NUM_34, GPIO_MODE_OUTPUT)
+abort() was called at PC 0x40085bf3 on core 0
+Backtrace: 0x40085c99:0x3ffb45a0 0x40085c61:0x3ffb45c0 0x400858fd:0x3ffb45e0 0x40085bf3:0x3ffb4650 0x400d5889:0x3ffb4680 0x400d38b1:0x3ffb46a0 0x400da3d9:0x3ffb46d0
+ELF file SHA256: 6c3090396
+Rebooting...
+ets Jul 29 2019 12:21:46
+rst:0xc (SW_CPU_RESET),boot:0x12 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0040,len:6272
+load:0x40078000,len:15820
+load:0x40080400,len:3920
+entry 0x40080644
+I (12018) boot: ESP-IDF v6.0.2 2nd stage bootloader
+I (12018) boot: compile time Nov  9 2026 16:13:28
+I (12018) boot: Multicore bootloader
+I (12154) boot: chip revision: v0.0
+I (12158) boot.esp32: SPI Speed      : 40MHz
+I (12159) boot.esp32: SPI Mode       : DIO
+I (12159) boot.esp32: SPI Flash Size : 2MB
+I (12180) boot: Enabling RNG early entropy source...
+I (12204) boot: Partition Table:
+I (12204) boot: ## Label            Usage          Type ST Offset   Length
+I (12205) boot:  0 nvs              WiFi data        01 02 00009000 00006000
+I (12205) boot:  1 phy_init         RF data          01 01 0000f000 00001000
+I (12206) boot:  2 factory          factory app      00 00 00010000 00100000
+I (12215) boot: End of partition table
+I (12401) esp_image: segment 0: paddr=00010020 vaddr=3f400020 size=08638h ( 34360) map
+I (12516) esp_image: segment 1: paddr=00018660 vaddr=3ffb0000 size=02a1ch ( 10780) load
+I (12623) esp_image: segment 2: paddr=0001b084 vaddr=40080000 size=04f94h ( 20372) load
+I (12684) esp_image: segment 3: paddr=00020020 vaddr=400d0020 size=0c464h ( 50276) map
+I (12720) esp_image: segment 4: paddr=0002c48c vaddr=40084f94 size=05bfch ( 23548) load
+I (12785) esp_image: segment 5: paddr=00032090 vaddr=50000000 size=00028h (    40) load
+I (12988) boot: Loaded app from partition at offset 0x10000
+I (12988) boot: Disabling RNG early entropy source...
+I (13026) cpu_start: Multicore app
+I (16140) cpu_start: GPIO 3 and 1 are used as console UART I/O pins
+I (16142) cpu_start: Pro cpu start user code
+I (16142) cpu_start: cpu freq: 160000000 Hz
+I (16143) app_init: Application information:
+I (16143) app_init: Project name:     gpio
+I (16143) app_init: App version:      1828aa0-dirty
+I (16143) app_init: Compile time:     Nov  9 2026 16:13:20
+I (16143) app_init: ELF file SHA256:  6c3090396...
+I (16143) app_init: ESP-IDF:          v6.0.2
+I (16143) efuse_init: Min chip rev:     v0.0
+I (16143) efuse_init: Max chip rev:     v3.99 
+I (16144) efuse_init: Chip rev:         v0.0
+I (16145) heap_init: Initializing. RAM available for dynamic allocation:
+I (16146) heap_init: At 3FFAE6E0 len 00001920 (6 KiB): DRAM
+I (16146) heap_init: At 3FFB33C0 len 0002CC40 (179 KiB): DRAM
+I (16146) heap_init: At 3FFE0440 len 00003AE0 (14 KiB): D/IRAM
+I (16146) heap_init: At 3FFE4350 len 0001BCB0 (111 KiB): D/IRAM
+I (16146) heap_init: At 4008AB90 len 00015470 (85 KiB): IRAM
+I (16181) spi_flash: detected chip: gd
+I (16186) spi_flash: flash io: dio
+W (16196) spi_flash: Detected size(4096k) larger than the size in the binary image header(2048k). Using the size in the binary image header.
+I (16208) main_task: Started on CPU0
+I (16228) main_task: Calling app_main()
+E (16228) gpio: io_num=34 can only be input
+ESP_ERROR_CHECK failed: esp_err_t 0x102 (ESP_ERR_INVALID_ARG) at 0x400d5889
+file: "./main/main.c" line 33
+func: app_main
+expression: gpio_set_direction(GPIO_NUM_34, GPIO_MODE_OUTPUT)
+abort() was called at PC 0x40085bf3 on core 0
+Backtrace: 0x40085c99:0x3ffb45a0 0x40085c61:0x3ffb45c0 0x400858fd:0x3ffb45e0 0x40085bf3:0x3ffb4650 0x400d5889:0x3ffb4680 0x400d38b1:0x3ffb46a0 0x400da3d9:0x3ffb46d0
+ELF file SHA256: 6c3090396
+Rebooting...
+ets Jul 29 2019 12:21:46
+rst:0xc (SW_CPU_RESET),boot:0x12 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0040,len:6272
+load:0x40078000,len:15820
+load:0x40080400,len:3920
+entry 0x40080644
+I (5687) boot: ESP-IDF v6.0.2 2nd stage bootloader
+I (5688) boot: compile time Nov  9 2026 16:13:28
+I (5688) boot: Multicore bootloader
+I (5845) boot: chip revision: v0.0
+I (5849) boot.esp32: SPI Speed      : 40MHz
+I (5850) boot.esp32: SPI Mode       : DIO
+I (5850) boot.esp32: SPI Flash Size : 2MB
+I (5859) boot: Enabling RNG early entropy source...
+I (5872) boot: Partition Table:
+I (5873) boot: ## Label            Usage          Type ST Offset   Length
+I (5873) boot:  0 nvs              WiFi data        01 02 00009000 00006000
+I (5873) boot:  1 phy_init         RF data          01 01 0000f000 00001000
+I (5873) boot:  2 factory          factory app      00 00 00010000 00100000
+I (5878) boot: End of partition table
+I (5961) esp_image: segment 0: paddr=00010020 vaddr=3f400020 size=08638h ( 34360) map
+I (6085) esp_image: segment 1: paddr=00018660 vaddr=3ffb0000 size=02a1ch ( 10780) load
+I (6135) esp_image: segment 2: paddr=0001b084 vaddr=40080000 size=04f94h ( 20372) load
+I (6178) esp_image: segment 3: paddr=00020020 vaddr=400d0020 size=0c464h ( 50276) map
+I (6222) esp_image: segment 4: paddr=0002c48c vaddr=40084f94 size=05bfch ( 23548) load
+I (6316) esp_image: segment 5: paddr=00032090 vaddr=50000000 size=00028h (    40) load
+I (6587) boot: Loaded app from partition at offset 0x10000
+I (6588) boot: Disabling RNG early entropy source...
+I (6646) cpu_start: Multicore app
+I (11264) cpu_start: GPIO 3 and 1 are used as console UART I/O pins
+I (11267) cpu_start: Pro cpu start user code
+I (11267) cpu_start: cpu freq: 160000000 Hz
+I (11267) app_init: Application information:
+I (11267) app_init: Project name:     gpio
+I (11268) app_init: App version:      1828aa0-dirty
+I (11268) app_init: Compile time:     Nov  9 2026 16:13:20
+I (11268) app_init: ELF file SHA256:  6c3090396...
+I (11268) app_init: ESP-IDF:          v6.0.2
+I (11269) efuse_init: Min chip rev:     v0.0
+I (11269) efuse_init: Max chip rev:     v3.99 
+I (11269) efuse_init: Chip rev:         v0.0
+I (11272) heap_init: Initializing. RAM available for dynamic allocation:
+I (11273) heap_init: At 3FFAE6E0 len 00001920 (6 KiB): DRAM
+I (11273) heap_init: At 3FFB33C0 len 0002CC40 (179 KiB): DRAM
+I (11273) heap_init: At 3FFE0440 len 00003AE0 (14 KiB): D/IRAM
+I (11273) heap_init: At 3FFE4350 len 0001BCB0 (111 KiB): D/IRAM
+I (11273) heap_init: At 4008AB90 len 00015470 (85 KiB): IRAM
+I (11318) spi_flash: detected chip: gd
+I (11336) spi_flash: flash io: dio
+W (11361) spi_flash: Detected size(4096k) larger than the size in the binary image header(2048k). Using the size in the binary image header.
+I (11373) main_task: Started on CPU0
+I (11373) main_task: Calling app_main()
+E (11383) gpio: io_num=34 can only be input
+ESP_ERROR_CHECK failed: esp_err_t 0x102 (ESP_ERR_INVALID_ARG) at 0x400d5889
+file: "./main/main.c" line 33
+func: app_main
+expression: gpio_set_direction(GPIO_NUM_34, GPIO_MODE_OUTPUT)
+abort() was called at PC 0x40085bf3 on core 0
+Backtrace: 0x40085c99:0x3ffb45a0 0x40085c61:0x3ffb45c0 0x400858fd:0x3ffb45e0 0x40085bf3:0x3ffb4650 0x400d5889:0x3ffb4680 0x400d38b1:0x3ffb46a0 0x400da3d9:0x3ffb46d0
+ELF file SHA256: 6c3090396
+Rebooting...
+ets Jul 29 2019 12:21:46
+rst:0xc (SW_CPU_RESET),boot:0x12 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0040,len:6272
+load:0x40078000,len:15820
+load:0x40080400,len:3920
+entry 0x40080644
+I (36990) boot: ESP-IDF v6.0.2 2nd stage bootloader
+I (36990) boot: compile time Nov  9 2026 16:13:28
+I (36990) boot: Multicore bootloader
+I (37109) boot: chip revision: v0.0
+I (37114) boot.esp32: SPI Speed      : 40MHz
+I (37114) boot.esp32: SPI Mode       : DIO
+I (37114) boot.esp32: SPI Flash Size : 2MB
+I (37132) boot: Enabling RNG early entropy source...
+I (37160) boot: Partition Table:
+I (37160) boot: ## Label            Usage          Type ST Offset   Length
+I (37160) boot:  0 nvs              WiFi data        01 02 00009000 00006000
+I (37161) boot:  1 phy_init         RF data          01 01 0000f000 00001000
+I (37161) boot:  2 factory          factory app      00 00 00010000 00100000
+I (37171) boot: End of partition table
+I (37289) esp_image: segment 0: paddr=00010020 vaddr=3f400020 size=08638h ( 34360) map
+I (37371) esp_image: segment 1: paddr=00018660 vaddr=3ffb0000 size=02a1ch ( 10780) load
+I (37457) esp_image: segment 2: paddr=0001b084 vaddr=40080000 size=04f94h ( 20372) load
+I (37533) esp_image: segment 3: paddr=00020020 vaddr=400d0020 size=0c464h ( 50276) map
+I (37587) esp_image: segment 4: paddr=0002c48c vaddr=40084f94 size=05bfch ( 23548) load
+I (37638) esp_image: segment 5: paddr=00032090 vaddr=50000000 size=00028h (    40) load
+I (37747) boot: Loaded app from partition at offset 0x10000
+I (37748) boot: Disabling RNG early entropy source...
+I (37819) cpu_start: Multicore app
+I (17021) cpu_start: GPIO 3 and 1 are used as console UART I/O pins
+I (17025) cpu_start: Pro cpu start user code
+I (17025) cpu_start: cpu freq: 160000000 Hz
+I (17026) app_init: Application information:
+I (17026) app_init: Project name:     gpio
+I (17028) app_init: App version:      1828aa0-dirty
+I (17028) app_init: Compile time:     Nov  9 2026 16:13:20
+I (17028) app_init: ELF file SHA256:  6c3090396...
+I (17029) app_init: ESP-IDF:          v6.0.2
+I (17029) efuse_init: Min chip rev:     v0.0
+I (17029) efuse_init: Max chip rev:     v3.99 
+I (17029) efuse_init: Chip rev:         v0.0
+I (17031) heap_init: Initializing. RAM available for dynamic allocation:
+I (17033) heap_init: At 3FFAE6E0 len 00001920 (6 KiB): DRAM
+I (17033) heap_init: At 3FFB33C0 len 0002CC40 (179 KiB): DRAM
+I (17033) heap_init: At 3FFE0440 len 00003AE0 (14 KiB): D/IRAM
+I (17034) heap_init: At 3FFE4350 len 0001BCB0 (111 KiB): D/IRAM
+I (17034) heap_init: At 4008AB90 len 00015470 (85 KiB): IRAM
+I (17094) spi_flash: detected chip: gd
+I (17107) spi_flash: flash io: dio
+W (17136) spi_flash: Detected size(4096k) larger than the size in the binary image header(2048k). Using the size in the binary image header.
+I (17150) main_task: Started on CPU0
+I (17150) main_task: Calling app_main()
+E (17150) gpio: io_num=34 can only be input
+ESP_ERROR_CHECK failed: esp_err_t 0x102 (ESP_ERR_INVALID_ARG) at 0x400d5889
+file: "./main/main.c" line 33
+func: app_main
+expression: gpio_set_direction(GPIO_NUM_34, GPIO_MODE_OUTPUT)
+abort() was called at PC 0x40085bf3 on core 0
+Backtrace: 0x40085c99:0x3ffb45a0 0x40085c61:0x3ffb45c0 0x400858fd:0x3ffb45e0 0x40085bf3:0x3ffb4650 0x400d5889:0x3ffb4680 0x400d38b1:0x3ffb46a0 0x400da3d9:0x3ffb46d0
+ELF file SHA256: 6c3090396
+Rebooting...
+ets Jul 29 2019 12:21:46
+rst:0xc (SW_CPU_RESET),boot:0x12 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0040,len:6272
+load:0x40078000,len:15820
+load:0x40080400,len:3920
+entry 0x40080644
+I (3745) boot: ESP-IDF v6.0.2 2nd stage bootloader
+I (3746) boot: compile time Nov  9 2026 16:13:28
+I (3746) boot: Multicore bootloader
+I (4125) boot: chip revision: v0.0
+I (4129) boot.esp32: SPI Speed      : 40MHz
+I (4129) boot.esp32: SPI Mode       : DIO
+I (4129) boot.esp32: SPI Flash Size : 2MB
+I (4144) boot: Enabling RNG early entropy source...
+I (4172) boot: Partition Table:
+I (4172) boot: ## Label            Usage          Type ST Offset   Length
+I (4173) boot:  0 nvs              WiFi data        01 02 00009000 00006000
+I (4174) boot:  1 phy_init         RF data          01 01 0000f000 00001000
+I (4174) boot:  2 factory          factory app      00 00 00010000 00100000
+I (4180) boot: End of partition table
+I (4310) esp_image: segment 0: paddr=00010020 vaddr=3f400020 size=08638h ( 34360) map
+I (4457) esp_image: segment 1: paddr=00018660 vaddr=3ffb0000 size=02a1ch ( 10780) load
+I (4502) esp_image: segment 2: paddr=0001b084 vaddr=40080000 size=04f94h ( 20372) load
+I (4629) esp_image: segment 3: paddr=00020020 vaddr=400d0020 size=0c464h ( 50276) map
+I (4708) esp_image: segment 4: paddr=0002c48c vaddr=40084f94 size=05bfch ( 23548) load
+I (4747) esp_image: segment 5: paddr=00032090 vaddr=50000000 size=00028h (    40) load
+qemu-system-xtensa: terminating on signal 15 from pid 2465444 (timeout)

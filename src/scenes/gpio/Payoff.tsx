@@ -1,5 +1,5 @@
 /**
- * 10 · PAYOFF — "Make it an output. Set its level. That's GPIO." + the recap,
+ * 10 · PAYOFF — "So: make the pin an output, then set its level. That's GPIO." + the recap,
  * ending on the limitation that the PWM video picks up.
  */
 import React from 'react';
@@ -21,8 +21,8 @@ export const Payoff: React.FC = () => {
     <Scene durationInFrames={Math.round(sceneDur('payoff') * FPS)}>
       <AbsoluteFill style={{ display: 'grid', placeItems: 'center', alignContent: 'center', gap: 40 }}>
         <div style={{ display: 'flex', gap: 40, fontSize: 48, fontWeight: 600, color: C.ink }}>
-          <span style={{ opacity: o, transform: `translateY(${(1 - o) * 14}px)` }}>Make it an output.</span>
-          <span style={{ opacity: l, transform: `translateY(${(1 - l) * 14}px)` }}>Set its level.</span>
+          <span style={{ opacity: o, transform: `translateY(${(1 - o) * 14}px)` }}>Make the pin an output,</span>
+          <span style={{ opacity: l, transform: `translateY(${(1 - l) * 14}px)` }}>then set its level.</span>
         </div>
         <div style={{ ...GRAD_TEXT, fontSize: 150, fontWeight: 800, letterSpacing: '.03em', opacity: hit, transform: `scale(${0.92 + 0.08 * hit})` }}>
           That's GPIO.

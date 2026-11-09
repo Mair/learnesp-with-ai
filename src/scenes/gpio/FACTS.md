@@ -12,6 +12,25 @@ pin's reservation; nothing on screen depends on that). The matrix-default routin
 the `gpio_hal_matrix_out_default` macro → `gpio_ll_set_output_signal_matrix_source`,
 which writes the `func_sel` field = 256.
 
+## Lab: the log lines on screen are real (v3, narration pass)
+
+The program in `lab/main/main.c` built with ESP-IDF v6.0.2 (target `esp32`, defaults) and run
+in Espressif's QEMU (`qemu-xtensa esp_develop_9.2.2_20250817`, machine `esp32`). Raw logs in
+`lab/logs/`; variants listed at the top of `main.c`. QEMU has no LED: "the LED stays dark" /
+"lights" comes from the driver source (below), not from the lab.
+
+- v1, the first try (`gpio_set_level(LED, 1)` alone, the return value printed):
+  `I (3244) main_task: Calling app_main()` / `I (3254) lab: gpio_set_level returned ESP_OK`
+  / `I (3254) main_task: Returned from app_main()` — no error, no warning.
+- v2, `gpio_set_direction(GPIO_NUM_34, GPIO_MODE_OUTPUT)`: `E (3226) gpio: io_num=34 can only
+  be input`, returns `ESP_ERR_INVALID_ARG`.
+- v3, the same inside `ESP_ERROR_CHECK`: `ESP_ERROR_CHECK failed: esp_err_t 0x102
+  (ESP_ERR_INVALID_ARG) at 0x400d5889` / `file: "./main/main.c" line 33` / … / `abort() was
+  called at PC 0x40085bf3 on core 0` → reboot.
+- v4, the loop without delays: `I (3647) main_task: Calling app_main()` → `E (8647) task_wdt:
+  Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:`
+  / `E (8647) task_wdt:  - IDLE0 (CPU 0)` — exactly 5 s later, and again every 5 s (13647 …).
+
 ## The program
 
 | Fact (as said or shown) | Source |

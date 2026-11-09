@@ -18,7 +18,7 @@ import { Panel } from '../../components/Panel';
 import { Kicker, Scene } from '../../components/Type';
 import { C, FONT, hexA } from '../../theme/palette';
 import { after, Pill } from './parts';
-import { FPS, PROBLEM as P, sceneDur } from './timeline';
+import { FPS, LOG_FIRST_TRY, PROBLEM as P, sceneDur } from './timeline';
 
 const CODE = ['#define LED GPIO_NUM_2', '', 'void app_main(void)', '{', '    gpio_set_level(LED, 1);', '}'];
 const LIVE = 4;
@@ -41,7 +41,7 @@ export const Problem: React.FC = () => {
       <AbsoluteFill>
         <div style={{ position: 'absolute', top: 70, width: '100%', display: 'grid', placeItems: 'center' }}>
           <Kicker delay={0.1} accent="amber">
-            The problem
+            Let's say you want…
           </Kicker>
         </div>
 
@@ -66,10 +66,11 @@ export const Problem: React.FC = () => {
               </Panel>
             </div>
             <div style={{ height: 160 }}>
-              <Panel label="idf.py monitor" accent={C.muted}>
-                <div style={{ fontFamily: FONT.mono, fontSize: 22, display: 'grid', gap: 10, paddingTop: 4 }}>
-                  <span style={{ opacity: boot, color: GREEN }}>I (…) main_task: Calling app_main()</span>
-                  <span style={{ opacity: ok, color: hexA(C.ink, 0.7), fontStyle: 'italic' }}>…no error. Nothing to say.</span>
+              <Panel label="recorded in QEMU · the return value printed" accent={C.muted}>
+                <div style={{ fontFamily: FONT.mono, fontSize: 21, display: 'grid', gap: 8, paddingTop: 2 }}>
+                  <span style={{ opacity: boot, color: '#cfd6ff' }}>{LOG_FIRST_TRY[0]}</span>
+                  <span style={{ opacity: ok, color: GREEN }}>{LOG_FIRST_TRY[1]}</span>
+                  <span style={{ opacity: ok, color: hexA(C.ink, 0.7), fontStyle: 'italic' }}>no error · no warning</span>
                 </div>
               </Panel>
             </div>

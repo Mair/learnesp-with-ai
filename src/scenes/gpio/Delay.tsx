@@ -18,7 +18,7 @@ import { Led } from '../../components/Gadgets';
 import { fusion, integrate, pinHigh } from '../../components/pwm';
 import { C, FONT, hexA } from '../../theme/palette';
 import { after, clamp01, inOutLocal, Pill } from './parts';
-import { DELAY as S, DELAY_MS, FPS, msToTicks, sceneDur, TICK_HZ } from './timeline';
+import { DELAY as S, DELAY_MS, FPS, LOG_WDT, msToTicks, sceneDur, TICK_HZ } from './timeline';
 
 const ARG_COLOR = [C.cyan, C.amber];
 const TICKS = msToTicks(DELAY_MS);
@@ -42,7 +42,7 @@ export const Delay: React.FC = () => {
         { at: V.ticks, component: TicksView, active: [1], label: 'milliseconds → FreeRTOS ticks', accent: C.cyan, right: (t) => (t >= S.ticks.fifty && t < S.ticks.fifty + 0.7 ? 'real time' : `CONFIG_FREERTOS_HZ = ${TICK_HZ}`) },
         { at: V.round, component: RoundView, active: [1], label: 'pdMS_TO_TICKS rounds down · projdefs.h', accent: C.amber },
         { at: V.sleep, component: SleepView, active: [0], label: 'while your task is blocked', accent: GREEN, right: () => 'not to scale' },
-        { at: V.wdt, component: WdtView, active: [0], label: 'take the delays out · the task watchdog', accent: RED, right: () => 'idf.py monitor' },
+        { at: V.wdt, component: WdtView, active: [0], label: 'take the delays out · the task watchdog', accent: RED, right: () => 'recorded in QEMU' },
         { at: V.dimmer, component: DimmerView, active: [0], label: 'take the delays out · the LED', accent: RED },
       ]}
     />
@@ -245,8 +245,11 @@ const WdtView: React.FC<{ t: number }> = ({ t }) => {
           <span style={mono(24, C.ink)}>task watchdog · {Math.round(clock * 5)} / 5 s</span>
         </div>
         <div style={{ opacity: fire, borderRadius: 14, border: `1px solid ${hexA(RED, 0.5)}`, padding: '14px 18px', background: 'rgba(10,4,32,.6)', ...mono(19, RED), lineHeight: 1.5 }}>
-          E (…) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:
-          <br />E (…) task_wdt:  - IDLE0 (CPU 0)
+          {LOG_WDT[0]}
+          <br />
+          {LOG_WDT[1]}
+          <br />
+          <span style={{ color: C.muted }}>recorded in QEMU · 5 s after app_main started (3647 → 8647 ms)</span>
         </div>
         <div style={{ opacity: idle, fontSize: 23, color: C.ink, lineHeight: 1.45 }}>
           your task (priority 1, CPU 0) never blocks → the <b style={{ color: C.cyan }}>idle task</b> (priority 0) never runs

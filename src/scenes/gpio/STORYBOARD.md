@@ -1,3 +1,15 @@
+# GPIO — storyboard v3 (narration pass)
+
+> **v3 (narration pass, after the queues / mutexes reviews):** the VO is rewritten to
+> `SCRIPT.md` "Sound like a teacher, not a list": whole sentences, signposts, transitions, no
+> headline fragments ("Two steps.", "Which pin? Not just any."). It opens on the want: "Let's say
+> you want your code to switch on an LED." → the obvious first try (`gpio_set_level` alone) →
+> ESP_OK, no error, the LED stays dark → why → "So how do you make a pin switch something on?".
+> Every log line on screen is now real QEMU output (`lab/`). The timeline moved to `vo-plan`
+> word cues (`w(line, word)`), so wording changes re-time the picture. Scenes, visuals and facts
+> are otherwise unchanged. As built: 6:35 (394.6 s). `VO` in `timeline.ts` is the script as built;
+> the per-line tables below are v2.
+
 # GPIO — storyboard v2 (pure ESP-IDF, draft for approval)
 
 > **Course sections:** PWM moved to section 3 (Advanced GPIO), so y6 no longer promises it next ("We'll come back to that.") and the payoff's "next:" points to GPIO input.

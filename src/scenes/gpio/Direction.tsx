@@ -13,7 +13,7 @@ import { useCurrentFrame, useVideoConfig } from 'remotion';
 import { Explainer, GREEN, mono, RED } from '../../components/Explainer';
 import { C, FONT, hexA } from '../../theme/palette';
 import { after, inOutLocal, PinDriver, Pill, Verdict } from './parts';
-import { DIRECTION as S, FPS, sceneDur } from './timeline';
+import { DIRECTION as S, FPS, LOG_CHECK, LOG_INPUT_ONLY, sceneDur } from './timeline';
 
 const ARG_COLOR = [C.pink, C.amber];
 
@@ -35,7 +35,7 @@ export const Direction: React.FC = () => {
       views={[
         { at: V.driver, component: DriverView, active: [1], label: 'mode · inside the pin', accent: C.amber },
         { at: V.modes, component: ModesView, active: [1], label: 'the mode, in bits · gpio_types.h', accent: C.cyan, right: () => 'gpio_mode_t' },
-        { at: V.fail, component: FailView, active: [0, 1], label: 'a pin that can only listen', accent: RED, right: () => 'idf.py monitor' },
+        { at: V.fail, component: FailView, active: [0, 1], label: 'a pin that can only listen', accent: RED, right: () => 'recorded in QEMU' },
         { at: V.start, component: StartView, active: [0], label: 'the starting level', accent: C.cyan, right: () => 'TRM · GPIO_OUT_REG reset value: x' },
       ]}
     />
@@ -143,8 +143,8 @@ const FailView: React.FC<{ t: number }> = ({ t }) => {
           gpio_set_direction(<span style={{ color: RED }}>GPIO_NUM_34</span>, GPIO_MODE_OUTPUT);
         </div>
         <div style={{ ...box('rgba(255,255,255,.14)'), opacity: log }}>
-          <div style={mono(15, C.muted, { letterSpacing: '.14em', marginBottom: 8 })}>IDF.PY MONITOR</div>
-          <div style={mono(22, RED)}>E (…) gpio: io_num=34 can only be input</div>
+          <div style={mono(15, C.muted, { letterSpacing: '.14em', marginBottom: 8 })}>RECORDED IN QEMU (ESP32 EMULATOR)</div>
+          <div style={mono(22, RED)}>{LOG_INPUT_ONLY}</div>
         </div>
         <div style={{ opacity: ret, ...mono(26, C.ink) }}>
           returns <b style={{ color: RED }}>ESP_ERR_INVALID_ARG</b> <span style={{ color: C.muted }}>(0x102)</span>
@@ -157,9 +157,9 @@ const FailView: React.FC<{ t: number }> = ({ t }) => {
         </div>
         <div style={{ ...box(hexA(RED, 0.5)), opacity: stops }}>
           <div style={{ ...mono(19, RED), lineHeight: 1.5 }}>
-            ESP_ERROR_CHECK failed: esp_err_t 0x102 (ESP_ERR_INVALID_ARG) at 0x…
+            {LOG_CHECK}
             <br />
-            <span style={{ color: C.muted }}>file: "main/main.c" line … · expression: gpio_set_direction(…)</span>
+            <span style={{ color: C.muted }}>recorded in QEMU · then abort() and a restart</span>
           </div>
         </div>
         <Verdict ok p={stops} size={24}>
