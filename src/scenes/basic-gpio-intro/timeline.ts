@@ -17,23 +17,23 @@ export const FPS = 30;
 export const SECTION = '1-basic-gpio';
 
 // ── generated: VO plan (node scripts/vo-plan.ts basic-gpio-intro) — do not edit by hand ──
-export const VO_AT: Record<string, number> = {"w1":0.8,"w2":5.76,"w3":13.26,"g1":0.5,"g2":7.1,"g3":11.3,"g4":17.64,"g5":22.52,"m1":0.5,"m2":2.86,"m3":9.56,"n1":0.5,"n2":7.66,"n3":13.62,"n4":21.34,"z1":0.6};
-export const SCENE_DUR: Record<string, number> = {"want":16.68,"what":27.84,"map":20.16,"needs":26.18,"go":6.94};
+export const VO_AT: Record<string, number> = {"w1":0.8,"w2":5.76,"w3":13.26,"g1":0.5,"g2":7.18,"g3":11.78,"g4":18.92,"g5":23.9,"m1":0.5,"m2":2.86,"m3":9.22,"n1":0.5,"n2":7.34,"n3":13.4,"n4":21.28,"z1":0.6};
+export const SCENE_DUR: Record<string, number> = {"want":16.68,"what":30.48,"map":20.26,"needs":26.12,"go":6.94};
 export const VO_WORDS: Record<string, [string, number][]> = {
   w1: [["Here's",0],["an",0.36],["ESP32",0.46],["on",1.56],["a",1.92],["breadboard",2.06],["with",2.5],["an",2.94],["LED",3.08],["and",3.5],["a",4.1],["button.",4.2]],
   w2: [["By",0],["the",0.24],["end",0.36],["of",0.48],["this",0.58],["section,",0.74],["your",1.56],["code",1.64],["will",1.9],["switch",2.1],["that",2.42],["LED",2.7],["on",3.08],["and",3.58],["off",3.72],["and",4.02],["read",4.7],["that",4.9],["button.",5.12]],
   w3: [["So",0],["how",0.26],["does",0.4],["code",0.58],["reach",0.86],["the",1.34],["outside",1.56],["world?",1.92]],
-  g1: [["Through",0],["its",0.32],["pins,",0.46],["most",1.48],["of",1.6],["them",1.76],["are",1.94],["GPIO,",2.22],["general",4.02],["purpose",4.14],["input",4.5],["and",4.94],["output.",5.2]],
-  g2: [["General",0],["purpose,",0.42],["because",1.22],["your",1.48],["code",1.64],["decides",1.96],["what",2.44],["each",2.74],["pin",2.98],["does.",3.26]],
-  g3: [["Make",0],["one",0.24],["an",0.38],["output,",0.48],["and",1.24],["your",1.4],["code",1.5],["sets",1.76],["it",2],["high,",2.16],["3",3.1],[".3",3.26],["volts",3.82],["or",4.04],["low",4.62],["zero.",4.82]],
-  g4: [["Make",0],["it",0.26],["an",0.34],["input",0.46],["and",0.84],["your",1.42],["code",1.52],["reads",1.94],["which",2.48],["of",2.7],["the",2.8],["two",2.88],["it",3.06],["sees.",3.18]],
-  g5: [["Two",0],["levels,",0.3],["nothing",1.18],["in",1.32],["between.",1.52],["That's",2.5],["what",2.58],["digital",2.66],["means.",2.88]],
+  g1: [["It",0],["does",0.22],["it",0.34],["through",0.48],["its",0.68],["pins,",0.84],["and",1.74],["most",1.8],["of",2.02],["them",2.18],["are",2.32],["GPIO,",2.48],["general",4.26],["purpose",4.4],["input",4.72],["and",5.22],["output.",5.48]],
+  g2: [["They're",0],["called",0.28],["general",0.54],["purpose,",1],["because",1.86],["your",2.08],["code",2.22],["decides",2.52],["what",2.96],["each",3.2],["pin",3.4],["does.",3.68]],
+  g3: [["If",0],["you",0.22],["make",0.28],["a",0.38],["pin",0.48],["in",0.6],["output,",0.72],["your",1.58],["code",1.66],["sets",1.88],["it",2.1],["high",2.24],["at",2.54],["3",3.26],[".3",3.66],["volts",4.16],["or",4.38],["low",5],["at",5.34],["zero.",5.88]],
+  g4: [["If",0],["you",0.22],["make",0.28],["it",0.4],["an",0.5],["input,",0.58],["your",1.46],["code",1.54],["reads",1.92],["which",2.5],["of",2.82],["the",2.96],["two",3.06],["levels",3.28],["it",3.52],["sees.",3.68]],
+  g5: [["There",0],["are",0.24],["only",0.38],["two",0.66],["levels",1.02],["with",1.46],["nothing",1.82],["in",2.22],["between,",2.48],["and",3.38],["that's",3.54],["what",3.76],["digital",3.86],["means.",4.16]],
   m1: [["This",0],["section",0.28],["has",0.7],["two",1.12],["videos.",1.38]],
-  m2: [["First,",0],["GPIO",0.9],["output.",1.22],["You",2.26],["set",2.3],["up",2.44],["a",2.54],["pin",2.64],["to",2.84],["drive",3.04],["an",3.3],["LED,",3.44],["then",4.54],["blink",4.76],["it.",5.08]],
-  m3: [["Then,",0],["GPIO",0.78],["input.",1.18],["Your",2.22],["code",2.32],["reads",2.66],["a",3.12],["button,",3.32],["lights",4],["the",4.42],["LED",4.64],["while",5],["it's",5.44],["held,",5.6],["and",6.36],["counts",6.46],["the",6.7],["presses.",6.86]],
-  n1: [["On",0],["the",0.22],["bench,",0.34],["an",1.28],["ESP32",1.5],["board,",2.66],["a",3.58],["USB",3.62],["cable,",4.06],["a",5.14],["breadboard,",5.18],["and",5.88],["a",5.92],["few",6.02],["wires.",6.22]],
-  n2: [["An",0],["LED",0.24],["with",0.72],["a",1.36],["220",1.58],["ohm",2.22],["resistor",2.52],["to",2.72],["go",2.94],["with",3.06],["it,",3.22],["and",3.84],["a",4.3],["push",4.56],["button.",4.74]],
-  n3: [["On",0],["your",0.24],["computer,",0.36],["ESP",1.42],["-IDF",1.68],["version",3.16],["6,",3.76],["so",4.66],["you",4.84],["can",4.94],["build,",5.06],["flash,",5.72],["and",6.46],["watch",6.5],["the",6.7],["log.",6.88]],
+  m2: [["First",0],["comes",0.34],["GPIO",0.64],["output,",1.14],["where",2.08],["you",2.26],["set",2.36],["up",2.52],["a",2.64],["pin",2.74],["to",2.94],["drive",3.16],["an",3.44],["LED,",3.58],["and",4.58],["then",4.74],["blink",4.86],["it.",5.14]],
+  m3: [["Then",0],["comes",0.32],["GPIO",0.6],["input,",1.14],["where",2.3],["code",2.4],["reads",2.76],["a",3.26],["button,",3.42],["lights",4.2],["the",4.54],["LED",4.82],["while",5.26],["it's",5.84],["held,",6],["and",6.76],["counts",6.88],["the",7.12],["presses.",7.3]],
+  n1: [["On",0],["the",0.24],["bench,",0.34],["you",1.16],["need",1.24],["an",1.36],["ESP32",1.52],["board,",2.58],["a",3.48],["USB",3.48],["cable,",3.9],["a",4.82],["breadboard,",4.86],["and",5.64],["few",5.7],["wires.",5.92]],
+  n2: [["You",0],["also",0.22],["need",0.42],["an",0.62],["LED,",0.78],["a",1.94],["220",1.98],["ohm",2.58],["resistor",2.88],["to",3.1],["go",3.38],["with",3.46],["it,",3.62],["and",4.16],["a",4.48],["push",4.68],["button.",4.88]],
+  n3: [["On",0],["your",0.24],["computer,",0.34],["you",1.22],["need",1.44],["ESP",1.6],["-IDF",2.16],["version",3.62],["6,",3.76],["so",4.58],["you",4.76],["can",4.86],["build,",4.98],["flash,",5.7],["and",6.62],["watch",6.66],["the",6.88],["log.",7.04]],
   n4: [["This",0],["is",0.22],["the",0.34],["first",0.46],["section,",0.66],["so",1.46],["that's",1.68],["all",1.84],["you",1.96],["need.",2.12]],
   z1: [["First",0],["up,",0.36],["GPIO",1.02],["output.",1.34]],
 };
@@ -218,17 +218,17 @@ export const VO: VoLine[] = [
   L('w1', 'want', "Here's an ESP32 on a breadboard, with an LED and a button.", undefined, 0.8),
   L('w2', 'want', 'By the end of this section, your code will switch that LED on and off, and read that button.'),
   L('w3', 'want', 'So how does code reach the outside world?', undefined, 2.2),
-  L('g1', 'what', 'Through its pins. Most of them are GPIO: general-purpose input and output.', 'Through its pins. Most of them are G P I O: general-purpose input and output.'),
-  L('g2', 'what', 'General-purpose, because your code decides what each pin does.', undefined, 1.0),
-  L('g3', 'what', 'Make one an output, and your code sets it high, 3.3 volts, or low, zero.', 'Make one an output, and your code sets it high, three point three volts, or low, zero.'),
-  L('g4', 'what', 'Make it an input, and your code reads which of the two it sees.', undefined, 1.2),
-  L('g5', 'what', "Two levels, nothing in between. That's what digital means.", undefined, 1.4),
+  L('g1', 'what', 'It does it through its pins, and most of them are GPIO: general-purpose input and output.', 'It does it through its pins, and most of them are G P I O: general-purpose input and output.'),
+  L('g2', 'what', "They're called general-purpose, because your code decides what each pin does.", undefined, 0.8),
+  L('g3', 'what', 'If you make a pin an output, your code sets it high, at 3.3 volts, or low, at zero.', 'If you make a pin an output, your code sets it high, at three point three volts, or low, at zero.'),
+  L('g4', 'what', 'If you make it an input, your code reads which of the two levels it sees.', undefined, 1.0),
+  L('g5', 'what', "There are only two levels, with nothing in between, and that's what digital means.", undefined, 1.0),
   L('m1', 'map', 'This section has two videos.'),
-  L('m2', 'map', 'First, GPIO output. You set up a pin to drive an LED, then blink it.'),
-  L('m3', 'map', "Then GPIO input. Your code reads a button, lights the LED while it's held, and counts the presses.", undefined, 1.4),
-  L('n1', 'needs', 'On the bench: an ESP32 board, a USB cable, a breadboard and a few wires.'),
-  L('n2', 'needs', 'An LED, with a 220 ohm resistor to go with it, and a push button.', 'An LED, with a two hundred and twenty ohm resistor to go with it, and a push button.'),
-  L('n3', 'needs', 'On your computer: ESP-IDF, version six, so you can build, flash and watch the log.', 'On your computer: E S P I D F, version six, so you can build, flash, and watch the log.', 0.9),
+  L('m2', 'map', 'First comes GPIO output, where you set up a pin to drive an LED, and then blink it.'),
+  L('m3', 'map', "Then comes GPIO input, where your code reads a button, lights the LED while it's held, and counts the presses.", undefined, 1.0),
+  L('n1', 'needs', 'On the bench, you need an ESP32 board, a USB cable, a breadboard and a few wires.'),
+  L('n2', 'needs', 'You also need an LED, a 220 ohm resistor to go with it, and a push button.', 'You also need an LED, a two hundred and twenty ohm resistor to go with it, and a push button.'),
+  L('n3', 'needs', 'On your computer, you need ESP-IDF version six, so you can build, flash, and watch the log.', 'On your computer, you need E S P I D F version six, so you can build, flash, and watch the log.', 0.9),
   L('n4', 'needs', "This is the first section, so that's all you need."),
   L('z1', 'go', 'First up: GPIO output.', undefined, 0.6),
 ];
