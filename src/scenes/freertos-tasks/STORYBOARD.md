@@ -1,3 +1,9 @@
+> **v2 (narration pass):** VO rewritten to `SCRIPT.md` "Sound like a teacher, not a list"; opens
+> on the want ("Let's say you want two LEDs blinking at two different speeds…") and the obvious
+> first try (one loop → 1400 ms); the four one-word step lines ("LED on." "Wait." …) became one
+> sentence with word cues; "the blink video" → "the GPIO video"; log lines are real QEMU output
+> (`lab/`); cues are `vo-plan` word cues. As built: 6:02 (362.3 s).
+
 # FreeRTOS tasks: storyboard v1 (pure ESP-IDF)
 
 - Slug `freertos-tasks`, composition `FreeRTOSTasks`, output `out/2-freertos/freertos-tasks.mp4`, about 5½ min.

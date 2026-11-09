@@ -27,6 +27,19 @@ Short names used below:
 | `freertos.rst` | `docs/en/api-reference/system/freertos.rst` |
 | `freertos_idf.rst` | `docs/en/api-reference/system/freertos_idf.rst` |
 
+
+## Lab: the log lines on screen are real (v2, narration pass)
+
+`lab/main/main.c`, ESP-IDF v6.0.2 (target `esp32`, defaults), Espressif QEMU
+`esp_develop_9.2.2_20250817`. Raw logs: `lab/logs/`.
+
+- v0, the program: `I (3200) main_task: Started on CPU0` / `I (3210) main_task: Calling
+  app_main()` / `I (3210) main_task: Returned from app_main()`.
+- v1, a task function that returns: `E (1759) FreeRTOS: FreeRTOS Task "blink_fast" should not
+  return, Aborting now!` → `abort()` → reboot.
+- v2, blink_fast with a 400-byte stack: `***ERROR*** A stack overflow in task blink_fast has been
+  detected.` → reboot (512 bytes did not overflow in this program; 400 and 320 did).
+
 ## The program
 
 Pure ESP-IDF. GPIO is limited to the output calls from the `gpio` video

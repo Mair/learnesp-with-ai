@@ -8,7 +8,7 @@ import { useCurrentFrame, useVideoConfig } from 'remotion';
 import { GREEN, mono, RED } from '../../components/Explainer';
 import { C, hexA } from '../../theme/palette';
 import { after, CodeAndViews, LedCard, Pill, SerialLog, Verdict } from './parts';
-import { FAST, FN as S, FPS, sceneDur, TASK_CODE, TASK_CODE_DEL, wanted } from './timeline';
+import { FAST, FN as S, FPS, LOG_RETURN, sceneDur, TASK_CODE, TASK_CODE_DEL, wanted } from './timeline';
 
 const Box: React.FC<{ children: React.ReactNode; color: string; p?: number; style?: React.CSSProperties }> = ({ children, color, p = 1, style }) => (
   <div
@@ -112,7 +112,7 @@ const NeverView: React.FC<{ t: number }> = ({ t }) => {
         <span style={{ ...mono(22, RED, { fontWeight: 700 }), opacity: back }}>← returns?</span>
       </div>
       <div style={{ opacity: after(t, s.logs - 0.2) }}>
-        <SerialLog t={t} size={18} label="idf.py monitor" lines={[{ at: s.logs, text: 'E (…) FreeRTOS: FreeRTOS Task "blink_fast" should not return, Aborting now!', color: RED }]} />
+        <SerialLog t={t} size={18} label="recorded in QEMU" lines={[{ at: s.logs, text: LOG_RETURN, color: RED }]} />
       </div>
       <div style={{ opacity: after(t, s.aborts) }}>
         <Verdict ok={false} p={after(t, s.aborts)} size={24}>

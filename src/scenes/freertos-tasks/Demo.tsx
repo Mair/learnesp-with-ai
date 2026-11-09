@@ -12,7 +12,7 @@ import { Panel } from '../../components/Panel';
 import { Kicker, Scene } from '../../components/Type';
 import { C, hexA } from '../../theme/palette';
 import { after, Code, GREEN, LedCard, SerialLog, StackBox } from './parts';
-import { DEMO as D, FAST, FPS, sceneDur, SLOW, wanted } from './timeline';
+import { DEMO as D, FAST, FPS, LOG_BOOT, sceneDur, SLOW, wanted } from './timeline';
 
 export const Demo: React.FC = () => {
   const frame = useCurrentFrame();
@@ -40,11 +40,11 @@ export const Demo: React.FC = () => {
             <SerialLog
               t={t}
               size={22}
-              label="idf.py monitor"
+              label="recorded in QEMU (ESP32 emulator)"
               lines={[
-                { at: D.flash + 0.2, text: 'I (…) main_task: Started on CPU0' },
-                { at: D.flash + 0.6, text: 'I (…) main_task: Calling app_main()' },
-                { at: D.returns, text: 'I (…) main_task: Returned from app_main()', color: GREEN },
+                { at: D.flash + 0.2, text: LOG_BOOT[0] },
+                { at: D.flash + 0.6, text: LOG_BOOT[1] },
+                { at: D.returns, text: LOG_BOOT[2], color: GREEN },
               ]}
             />
           </div>

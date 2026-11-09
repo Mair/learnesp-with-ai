@@ -15,11 +15,11 @@ export const FPS = 30;
 export const SECTION = '2-freertos';
 
 // ── generated: VO plan (node scripts/vo-plan.ts freertos-intro) — do not edit by hand ──
-export const VO_AT: Record<string, number> = {"w1":0.8,"w2":7.36,"w3":14.92,"g1":0.5,"g2":7.66,"g3":13.52,"g4":19.7,"g5":23.82,"g6":28,"m1":0.5,"m2":3.42,"m3":13.78,"m4":22.88,"n1":0.5,"n2":7.42,"z1":0.6};
-export const SCENE_DUR: Record<string, number> = {"want":18.04,"what":35.7,"map":31.26,"needs":14.2,"go":6.38};
+export const VO_AT: Record<string, number> = {"w1":0.8,"w2":8.14,"w3":15.76,"g1":0.5,"g2":7.66,"g3":13.52,"g4":19.7,"g5":23.82,"g6":28,"m1":0.5,"m2":3.42,"m3":13.78,"m4":22.88,"n1":0.5,"n2":6.76,"z1":0.6};
+export const SCENE_DUR: Record<string, number> = {"want":18.88,"what":35.7,"map":31.26,"needs":14.74,"go":6.38};
 export const VO_WORDS: Record<string, [string, number][]> = {
-  w1: [["One",0],["LED",0.48],["blinking",1],["fast,",1.4],["another",2.46],["blinking",2.64],["slow,",2.96],["and",3.92],["a",4.12],["button",4.22],["you",4.44],["can",4.62],["press",4.74],["at",5.02],["any",5.18],["moment.",5.3]],
-  w2: [["Each",0],["one",0.26],["is",0.42],["easy",0.58],["on",0.9],["its",1.12],["own,",1.24],["put",1.86],["all",2.02],["three",2.3],["in",2.76],["one",3.04],["loop",3.28],["and",3.66],["every",4.26],["delay",4.72],["holds",5.1],["up",5.42],["the",5.58],["others.",5.72]],
+  w1: [["Let's",0],["say",0.3],["you",0.42],["want",0.56],["one",0.74],["LED",1.12],["blinking",1.7],["fast,",2.12],["another",3.26],["blinking",3.44],["slow,",3.76],["and",4.78],["a",5],["button",5.12],["you",5.34],["can",5.52],["press",5.66],["at",5.92],["any",6.12],["moment.",6.26]],
+  w2: [["Each",0],["one",0.28],["is",0.46],["easy",0.62],["on",0.98],["its",1.22],["own,",1.36],["but",2],["put",2.16],["all",2.32],["three",2.58],["in",3.02],["one",3.3],["loop,",3.54],["and",4.24],["every",4.4],["delay",4.74],["holds",5.12],["up",5.46],["the",5.62],["others.",5.78]],
   w3: [["So",0],["how",0.26],["do",0.36],["you",0.44],["do",0.52],["several",0.66],["things",0.98],["at",1.22],["once?",1.4]],
   g1: [["with",0],["FreeRTOS,",0.28],["a",2],["small",2.1],["operating",2.36],["system",2.8],["that",3.28],["comes",3.6],["built",3.86],["into",4.16],["ESP",4.52],["-IDF.",5.08]],
   g2: [["You",0],["split",0.22],["your",0.4],["program",0.54],["into",0.88],["tasks.",1.12],["Each",2.26],["task",2.42],["is",2.92],["a",3.24],["loop",3.4],["of",3.6],["its",3.76],["own",3.88],["with",4.2],["its",4.58],["own",4.72],["delays.",4.94]],
@@ -31,8 +31,8 @@ export const VO_WORDS: Record<string, [string, number][]> = {
   m2: [["First,",0],["task",1.08],["themselves,",1.14],["how",2.26],["the",2.46],["scheduler",2.6],["picks",2.98],["which",3.2],["one",3.48],["runs,",3.72],["keeping",4.66],["a",4.92],["steady",5.12],["beat,",5.32],["using",6.16],["both",6.42],["cores,",6.78],["and",7.7],["giving",7.84],["each",8.06],["task",8.42],["enough",8.88],["memory.",9.12]],
   m3: [["then",0],["tasks",0.34],["working",0.76],["together,",1.16],["passing",2.1],["data,",2.5],["sharing",3.38],["safely,",3.76],["a",4.92],["trap",5],["called",5.28],["priority",5.54],["inversion,",5.94],["and",6.94],["ways",7.1],["to",7.34],["signal",7.54],["each",7.8],["other.",8]],
   m4: [["and",0],["the",0.22],["tools",0.3],["around",0.56],["them,",0.86],["timers,",1.62],["critical",2.28],["sections,",2.4],["and",3.52],["stats",3.66],["on",3.96],["where",4.18],["the",4.28],["CPU",4.4],["time",4.72],["goes.",5.08]],
-  n1: [["The",0],["same",0.24],["board",0.48],["is",0.72],["basic",0.92],["GPIO",1.26],["with",1.82],["a",2.42],["second",2.56],["LED",2.84],["and",3.26],["resistor",3.8],["on",4.24],["GPIO19.",5.14]],
-  n2: [["In",0],["the",0.22],["calls",0.3],["from",0.5],["that",0.72],["section,",0.88],["set",1.8],["a",2],["pin's",2.14],["direction,",2.44],["write",3.46],["a",3.56],["level,",3.72],["read",4.38],["one.",4.5]],
+  n1: [["You",0],["need",0.24],["the",0.36],["same",0.48],["board",0.72],["as",0.98],["in",1.16],["basic",1.32],["GPIO",1.66],["with",2.24],["a",2.88],["second",3.02],["LED",3.28],["and",3.62],["resistor",4.14],["on",4.5],["GPIO",4.86],["19.",5.26]],
+  n2: [["You",0],["also",0.24],["need",0.48],["the",0.76],["calls",0.92],["from",1.2],["that",1.42],["section,",1.6],["setting",2.48],["a",2.74],["pin's",2.9],["direction,",3.18],["writing",4.1],["a",4.36],["level,",4.54],["and",5.26],["reading",5.46],["one.",5.68]],
   z1: [["First",0],["up,",0.34],["Tasks.",0.94]],
 };
 // ── end generated ──
@@ -179,7 +179,7 @@ export const MAP = {
 export const NEEDS = {
   board: 0.2,
   led2: w('n1', 'second'),
-  calls: [w('n2', 'direction'), w('n2', 'write'), w('n2', 'read')],
+  calls: [w('n2', 'direction'), w('n2', 'writing'), w('n2', 'reading')],
   heading: at('n2'),
   captions: [
     { at: at('n1'), text: 'the Basic GPIO board + a second LED and 220 Ω on GPIO 19' },
@@ -225,8 +225,8 @@ export const VOICE = 'en-US-AndrewMultilingualNeural';
 const L = (id: string, scene: SceneId, text: string, say?: string, pause?: number): VoLine => ({ id, scene, at: at(id), text, say, pause });
 
 export const VO: VoLine[] = [
-  L('w1', 'want', 'One LED blinking fast, another blinking slow, and a button you can press at any moment.', undefined, 0.8),
-  L('w2', 'want', 'Each one is easy on its own. Put all three in one loop, and every delay holds up the others.', undefined, 1.0),
+  L('w1', 'want', "Let's say you want one LED blinking fast, another blinking slow, and a button you can press at any moment.", undefined, 0.8),
+  L('w2', 'want', 'Each one is easy on its own. But put all three in one loop, and every delay holds up the others.', undefined, 0.8),
   L('w3', 'want', 'So how do you do several things at once?', undefined, 1.6),
   L('g1', 'what', 'With FreeRTOS, a small operating system that comes built into ESP-IDF.', 'With free R-T-O-S, a small operating system that comes built into E S P I D F.'),
   L('g2', 'what', 'You split your program into tasks. Each task is a loop of its own, with its own delays.', undefined, 1.0),
@@ -238,7 +238,7 @@ export const VO: VoLine[] = [
   L('m2', 'map', 'First, tasks themselves: how the scheduler picks which one runs, keeping a steady beat, using both cores, and giving each task enough memory.'),
   L('m3', 'map', 'Then tasks working together: passing data, sharing safely, a trap called priority inversion, and ways to signal each other.', undefined, 0.9),
   L('m4', 'map', 'And the tools around them: timers, critical sections, and stats on where the CPU time goes.', undefined, 0.9),
-  L('n1', 'needs', 'The same board as Basic GPIO, with a second LED and resistor, on GPIO 19.', 'The same board as Basic GPIO, with a second LED and resistor, on GPIO nineteen.'),
-  L('n2', 'needs', "And the calls from that section: set a pin's direction, write a level, read one."),
+  L('n1', 'needs', 'You need the same board as in Basic GPIO, with a second LED and resistor on GPIO 19.', 'You need the same board as in Basic GPIO, with a second LED and resistor on GPIO nineteen.'),
+  L('n2', 'needs', "You also need the calls from that section: setting a pin's direction, writing a level, and reading one."),
   L('z1', 'go', 'First up: tasks.', undefined, 0.6),
 ];

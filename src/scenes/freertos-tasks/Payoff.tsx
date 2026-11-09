@@ -1,5 +1,5 @@
 /**
- * 9 · PAYOFF — "Give every job its own loop. That's a task." + the recap.
+ * 9 · PAYOFF — "Give every job its own loop, and let the scheduler run them. That's a task." + the recap.
  */
 import React from 'react';
 import { AbsoluteFill, useCurrentFrame, useVideoConfig } from 'remotion';
@@ -13,7 +13,7 @@ export const Payoff: React.FC = () => {
   const { fps } = useVideoConfig();
   const t = frame / fps;
   const hit = after(t, P.line, 0.5);
-  const words = [{ at: P.job - 0.6, s: 'Give every job its own loop.' }];
+  const words = [{ at: P.job - 0.6, s: 'Give every job its own loop, and let the scheduler run them.' }];
   return (
     <Scene durationInFrames={Math.round(sceneDur('payoff') * FPS)}>
       <AbsoluteFill style={{ display: 'grid', placeItems: 'center', alignContent: 'center', gap: 36 }}>

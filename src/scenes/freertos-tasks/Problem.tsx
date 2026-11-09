@@ -59,7 +59,7 @@ export const Problem: React.FC = () => {
       <AbsoluteFill>
         <div style={{ position: 'absolute', top: 40, width: '100%', display: 'grid', placeItems: 'center' }}>
           <Kicker delay={0.1} accent="amber">
-            The problem
+            Let's say you want…
           </Kicker>
         </div>
         <div style={{ position: 'absolute', left: 160, top: 116, width: 1600, display: 'grid', gridTemplateColumns: '760px 1fr', gridTemplateRows: '410px 360px', gap: 22 }}>

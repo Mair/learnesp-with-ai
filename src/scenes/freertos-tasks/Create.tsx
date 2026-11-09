@@ -11,7 +11,7 @@ import { ease, Explainer, ExplainerArg, GREEN, inOut, mono, RED, VIEW_H as H, VI
 import { Panel } from '../../components/Panel';
 import { C, FONT, hexA } from '../../theme/palette';
 import { after, Pill, SerialLog, StackBox, Verdict } from './parts';
-import { CREATE as S, CREATE_CODE, FPS, IDLE_STACK, MAIN_CODE, MAIN_CREATE_LINE, MAIN_STACK, sceneDur, STACK } from './timeline';
+import { CREATE as S, CREATE_CODE, FPS, IDLE_STACK, LOG_OVERFLOW, MAIN_CODE, MAIN_CREATE_LINE, MAIN_STACK, sceneDur, STACK } from './timeline';
 
 /** the opening: app_main with both calls; the first is picked out, the rest fades, the panel lifts away */
 const MainIntro: React.FC<{ t: number }> = ({ t }) => {
@@ -293,7 +293,7 @@ const OverflowView: React.FC<{ t: number }> = ({ t }) => {
         </div>
         <div style={{ opacity: after(t, s.check), ...mono(21, C.ink) }}>at every task switch, FreeRTOS checks the end of each stack</div>
         <div style={{ opacity: after(t, s.prints - 0.2) }}>
-          <SerialLog t={t} size={18} label="idf.py monitor" lines={[{ at: s.prints, text: '***ERROR*** A stack overflow in task blink_fast has been detected.', color: RED }]} />
+          <SerialLog t={t} size={18} label="recorded in QEMU · a 400-byte stack" lines={[{ at: s.prints, text: LOG_OVERFLOW, color: RED }]} />
         </div>
         <div style={{ display: 'flex', gap: 16, alignItems: 'center' }}>
           <div style={{ opacity: after(t, s.restarts) }}>
