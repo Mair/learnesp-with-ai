@@ -1,3 +1,9 @@
+> **v2 (narration pass):** VO rewritten to `SCRIPT.md` "Sound like a teacher, not a list" (no more
+> "Case one." / "It uses one rule." / "Now it never runs." fragments; each line a whole, joined
+> sentence); opens "Let's say you have the two blinking LEDs…". The out-of-range assert is real QEMU
+> output; the demo and trap logs are labelled illustrations (QEMU can't run this two-core load, see
+> FACTS). As built: 6:12 (371.9 s).
+
 # FreeRTOS scheduler & priorities: storyboard v2 (simple English, as built)
 
 - Slug `freertos-scheduler`, composition `FreeRTOSScheduler`, output `out/2-freertos/freertos-scheduler.mp4`, about 6 min.

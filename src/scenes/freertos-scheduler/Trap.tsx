@@ -90,7 +90,7 @@ const LogView: React.FC<{ t: number }> = ({ t }) => {
       <SerialLog
         t={t}
         size={16}
-        label="idf.py monitor"
+        label="illustration · what a board prints"
         lines={[
           ...WDT_LOG.map((l, i) => ({ at: S.prints + i * 0.12, text: l, color: i === 1 || i === 2 ? '#ff8aa0' : RED })),
           { at: S.prints + 1.2, text: 'Backtrace: …', color: C.muted },

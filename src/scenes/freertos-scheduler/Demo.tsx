@@ -65,7 +65,7 @@ export const Demo: React.FC = () => {
           <SerialLog
             t={t}
             size={21}
-            label="idf.py monitor"
+            label="illustration · the lines the button task prints"
             lines={[
               { at: D.flash + 0.1, text: `I (${demoLogMs(D.flash)}) main_task: Calling app_main()` },
               { at: D.flash + 0.3, text: `I (${demoLogMs(D.flash) + 2}) main_task: Returned from app_main()`, color: C.muted },

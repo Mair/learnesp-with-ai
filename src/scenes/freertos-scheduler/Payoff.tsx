@@ -1,5 +1,5 @@
 /**
- * 9 · PAYOFF — "The highest-priority ready task runs. That's the scheduler." + the recap.
+ * 9 · PAYOFF — "The highest-priority task that's ready gets to run. That's the scheduler." + the recap.
  */
 import React from 'react';
 import { AbsoluteFill, useCurrentFrame, useVideoConfig } from 'remotion';
@@ -17,7 +17,7 @@ export const Payoff: React.FC = () => {
   return (
     <Scene durationInFrames={Math.round(sceneDur('payoff') * FPS)}>
       <AbsoluteFill style={{ display: 'grid', placeItems: 'center', alignContent: 'center', gap: 30 }}>
-        <div style={{ fontSize: 56, fontWeight: 700, color: C.ink, opacity: first, transform: `translateY(${(1 - first) * 14}px)` }}>The highest-priority ready task runs.</div>
+        <div style={{ fontSize: 56, fontWeight: 700, color: C.ink, opacity: first, transform: `translateY(${(1 - first) * 14}px)` }}>The highest-priority task that's ready gets to run.</div>
         <div style={{ ...GRAD_TEXT, fontSize: 120, fontWeight: 800, letterSpacing: '.02em', opacity: hit, transform: `scale(${0.92 + 0.08 * hit})` }}>That's the scheduler.</div>
         <div style={{ display: 'grid', gap: 10, marginTop: 10 }}>
           {P.recap.map((r) => {

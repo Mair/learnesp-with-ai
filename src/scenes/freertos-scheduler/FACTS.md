@@ -24,6 +24,21 @@ ipc 24; `xTaskCreate` creates an **unpinned** task; two cores by default; tick =
 10 ms; `pdMS_TO_TICKS(200)` = 20 ticks; `vTaskDelay` blocks only the caller;
 the handle argument; the main task is pinned to CPU 0 at priority 1.
 
+
+## Lab (v2, narration pass): what QEMU can and can't show here
+
+`lab/main/main.c`, ESP-IDF v6.0.2, Espressif QEMU `esp_develop_9.2.2_20250817`; logs in
+`lab/logs/`; variants at the top of `main.c`.
+
+- v3, `vTaskPrioritySet(NULL, 25)`: `assert failed: vTaskPrioritySet tasks.c:1792 (uxNewPriority <
+  ( 25 ))` → reboot. Shown on screen, labelled "recorded in QEMU".
+- **QEMU can't run this program's two-core load faithfully.** With the workers' busy loops
+  (`esp_timer_get_time`), QEMU keeps both workers on core 0, even when they are pinned to core 1
+  (v4: the watchdog lists only `IDLE0`, `CPU 1: IDLE1`), and the watchdog fires even with the
+  rests in (v1), while `app_main` returns 3.9 s late. So the demo's and the trap's log panels stay
+  **illustrations** of what a board prints (worked out from the rules and `task_wdt.c`), and are
+  labelled "illustration".
+
 ## The program
 
 Pure ESP-IDF. GPIO is limited to what Basic GPIO taught (`gpio_reset_pin`,

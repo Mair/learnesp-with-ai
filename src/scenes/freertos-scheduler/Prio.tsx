@@ -11,7 +11,7 @@ import { Panel } from '../../components/Panel';
 import type { Mark } from '../../components/pwm';
 import { C, FONT, hexA } from '../../theme/palette';
 import { after, GREEN, Ladder, MiniBoard, Pill, RED, SerialLog, TaskChip, Verdict } from './parts';
-import { BUTTON_CODE, FPS, mainCode, PRIO as S, sceneDur, SET_CODE } from './timeline';
+import { BUTTON_CODE, FPS, LOG_PRIO_25, mainCode, PRIO as S, sceneDur, SET_CODE } from './timeline';
 
 const MAIN_H = ['static TaskHandle_t work_a, work_b;', '', ...mainCode(4, true)];
 
@@ -111,6 +111,9 @@ const RangeView: React.FC<{ t: number }> = ({ t }) => (
         <b style={{ color: RED }}>25</b> or more → the program stops with an error
       </Verdict>
     </div>
+    <div style={{ textAlign: 'center', fontFamily: 'JetBrains Mono, monospace', fontSize: 19, color: RED, opacity: after(t, S.stops) }}>
+      {LOG_PRIO_25} <span style={{ color: C.muted }}>· recorded in QEMU</span>
+    </div>
   </div>
 );
 
@@ -191,7 +194,7 @@ const LogView: React.FC<{ t: number }> = ({ t }) => (
     <div style={mono(30, '#cfd6ff')}>
       ESP_LOGI(TAG, <span style={{ color: C.amber }}>"work tasks now at %u"</span>, p);
     </div>
-    <SerialLog t={t} size={26} label="idf.py monitor" lines={[{ at: S.prints + 0.3, text: 'I (8120) prio: work tasks now at 6', color: GREEN }]} />
+    <SerialLog t={t} size={26} label="illustration · the line it prints" lines={[{ at: S.prints + 0.3, text: 'I (…) prio: work tasks now at 6', color: GREEN }]} />
   </div>
 );
 
