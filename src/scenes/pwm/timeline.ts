@@ -23,22 +23,22 @@ import type { Beat, Caption, RateKey } from '../../components/pwm';
 export const FPS = 30;
 
 // ── generated: VO plan (node scripts/vo-plan.ts pwm) — do not edit by hand ──
-export const VO_AT: Record<string, number> = {"p1":0.6,"p2":5.2,"p3":12.6,"a1":0.4,"c1":0.5,"c2":9.26,"c2b":13.18,"c3":21.92,"c4":25.44,"c5":28.04,"t1":0.5,"t2":9.66,"t3":17.78,"t4":20.98,"t5":32.78,"t6":39.26,"t7":50.32,"t8":59.92,"t9":63.64,"t10":72.6,"t11":82.5,"t12":89.88,"t13":95.58,"h1":0.5,"h2":9.18,"h3":14.54,"h4":23.2,"h6":31.14,"h7":42.08,"h8":48.22,"w1":0.5,"w2":10,"w3":18.12,"w4":26.5,"w5":28.26,"w6":36.56,"w8":46.98,"w9":51.06,"w10":57.28,"d0":0.5,"d1":5.24,"d2":13.62,"d3":19.4,"d4":24.06,"d5":28.88,"f1":0.5,"f2":10.88,"f3":17.46,"f4":26.26,"f5":32.26,"f6":45.88,"f7":61.18,"f9":68.66,"f10":79.74,"f11":83.02,"f12":91.86,"n1":0.5,"n2":8.48,"n3":16.96,"n4":25.46,"z1":0.7};
-export const SCENE_DUR: Record<string, number> = {"setup":29.96,"timer":105.58,"channel":56.02,"write":64.24,"duty":37.56,"fade":104.08,"tone":30.66,"payoff":6.16};
+export const VO_AT: Record<string, number> = {"p1":0.6,"p2":5.2,"p3":12.6,"a1":0.4,"c1":0.5,"c2":9.26,"c2b":14.74,"c3":23.48,"c4":26.84,"c5":29.44,"t1":0.5,"t2":9.66,"t3":17.78,"t4":20.96,"t5":32.76,"t6":39.24,"t7":50.3,"t8":59.9,"t9":63.62,"t10":72.58,"t11":82.48,"t12":89.86,"t13":95.56,"h1":0.5,"h2":9.18,"h3":15.32,"h4":23.98,"h6":31.92,"h7":42.86,"h8":49,"w1":0.5,"w2":10,"w3":18.12,"w4":26.5,"w5":28.26,"w6":36.56,"w8":46.98,"w9":51.06,"w10":57.28,"d0":0.5,"d1":5.26,"d2":14.48,"d3":20.26,"d4":25.16,"d5":30.28,"f1":0.5,"f2":10.88,"f3":17.46,"f4":26.26,"f5":32.26,"f6":45.88,"f7":61.18,"f9":68.66,"f10":79.74,"f11":83.02,"f12":91.86,"n1":0.5,"n2":8.74,"n3":17.52,"n4":26.02,"z1":0.7};
+export const SCENE_DUR: Record<string, number> = {"setup":31.42,"timer":105.56,"channel":56.8,"write":64.24,"duty":38.96,"fade":104.08,"tone":32.3,"payoff":6.16};
 export const VO_WORDS: Record<string, [string, number][]> = {
-  p1: [["Say",0],["you",0.3],["want",0.38],["to",0.44],["dim",0.5],["a",0.6],["light,",0.7],["or",1.36],["change",1.54],["the",1.84],["pitch",2.04],["of",2.22],["a",2.36],["sound.",2.48]],
-  p2: [["But",0],["a",0.22],["digital",0.34],["output",0.58],["pin",1],["has",1.38],["only",1.8],["two",2.16],["levels,",2.48],["3",3.56],[".3",3.7],["volts",4.22],["or",4.48],["zero,",5.12],["nothing",6.32],["in",6.52],["between.",6.7]],
+  p1: [["Let's",0],["say",0.28],["you",0.36],["want",0.44],["to",0.5],["dim",0.6],["a",0.68],["light",0.82],["or",1.12],["change",1.72],["the",2.06],["pitch",2.22],["of",2.38],["sound.",2.54]],
+  p2: [["But",0],["a",0.24],["digital",0.36],["output",0.64],["pin",1.06],["has",1.36],["only",1.56],["two",1.94],["levels,",2.28],["3",3.42],[".3",3.56],["volts",4.18],["or",4.42],["zero,",4.98],["with",5.8],["nothing",6],["in",6.24],["between.",6.42]],
   p3: [["So",0],["how",0.3],["do",0.4],["you",0.48],["get",0.54],["something",0.66],["in",0.94],["between?",1.14]],
   a1: [["You",0],["switch",0.2],["it",0.36],["on",0.48],["and",0.58],["off",0.7],["really",0.94],["fast.",1.2],["That's",2.42],["PWM",2.54],["pulse",3.32],["width",4.16],["modulation.",4.54]],
   c1: [["An",0],["ESP",0.26],["-IDF,",0.7],["the",2.46],["LED",2.52],["controller,",2.94],["LEDC,",4.4],["makes",5.42],["the",5.74],["pulses",5.9],["for",6.2],["you.",6.46],["You",7.04],["set",7.16],["it",7.3],["up",7.38],["with",7.48],["two",7.62],["calls.",7.82]],
-  c2: [["A",0],["timer,",0.22],["which",0.96],["sets",1.08],["how",1.34],["fast",1.68],["and",2.24],["how",2.86],["fine.",3.02]],
+  c2: [["First,",0],["a",1],["timer,",1.14],["which",1.86],["sets",1.94],["how",2.14],["fast",2.4],["and",2.92],["how",3.64],["fine",3.88],["the",4.18],["pulses",4.28],["are.",4.52]],
   c2b: [["Each",0],["setup",0.3],["call",0.58],["takes",1.12],["a",1.58],["struct,",1.82],["a",2.72],["bundle",2.78],["of",3.04],["settings,",3.22],["each",3.98],["one",4.22],["filled",4.5],["in",4.78],["by",4.98],["name.",5.14],["The",5.84],["ampersand",5.96],["hands",6.52],["the",6.84],["whole",7.06],["bundle",7.3],["to",7.64],["the",7.82],["call.",7.9]],
-  c3: [["and",0],["a",0.3],["channel,",0.48],["which",1.36],["connects",1.52],["that",1.84],["timer",2.1],["to",2.4],["a",2.62],["pin.",2.74]],
+  c3: [["then",0],["a",0.32],["channel,",0.48],["which",1.22],["connects",1.38],["that",1.7],["timer",1.94],["to",2.26],["a",2.46],["pin.",2.56]],
   c4: [["Then",0],["two",0.3],["more",0.54],["lines",0.76],["set",1.22],["the",1.6],["brightness.",1.72]],
-  c5: [["Start",0],["with",0.36],["the",0.5],["timer.",0.66]],
+  c5: [["Let's",0],["start",0.34],["with",0.5],["the",0.64],["timer.",0.74]],
   t1: [["LEDC",0],["Timer",0.66],["Config",1.24],["takes",1.32],["a",1.7],["struct",1.92],["and",2.22],["five",2.78],["fields",3.18],["matter.",3.52],["The",4.4],["speed",4.54],["mode,",4.8],["which",5.48],["timer,",5.58],["the",6.24],["frequency,",6.34],["the",7.3],["resolution,",7.32],["and",8.14],["the",8.3],["clock.",8.36]],
   t2: [["For",0],["the",0.22],["speed",0.3],["mode,",0.52],["use",1.2],["low",1.3],["speed.",1.54],["Every",2.46],["ESP32",2.68],["chip",3.8],["has",4.08],["it,",4.36],["and",4.92],["the",5.1],["timer",5.18],["and",5.46],["the",5.86],["channel",5.94],["must",6.22],["say",6.5],["the",6.78],["same",6.94],["thing.",7.22]],
-  t3: [["There",0],["are",0.24],["four",0.34],["timers.",0.66],["This",1.7],["is",1.88],["timer",2.04],["zero.",2.32]],
+  t3: [["There",0],["are",0.24],["four",0.34],["timers,",0.64],["and",1.56],["this",1.68],["is",1.86],["timer",2.04],["zero.",2.34]],
   t4: [["The",0],["frequency",0.24],["is",0.54],["how",1.06],["many",1.36],["complete",1.86],["on",2.58],["-off",3.02],["cycles",3.26],["happen",3.7],["every",4.18],["second.",4.72],["At",5.66],["1000",5.76],["Hz,",6.26],["each",7.06],["cycle",7.34],["lasts",7.72],["1",8.1],["millisecond.",8.54],["That",9.6],["window",9.76],["is",10.06],["called",10.52],["the",10.76],["period.",10.94]],
   t5: [["Frequency",0],["doesn't",0.6],["change",1.44],["the",1.7],["brightness.",1.92],["It",3],["only",3.08],["has",3.24],["to",3.46],["be",3.56],["fast",3.68],["enough",4.04],["that",4.3],["your",4.52],["eye",4.64],["can't",4.82],["see",5.2],["the",5.44],["flicker.",5.6]],
   t6: [["The",0],["resolution",0.22],["is",0.66],["8",1.26],["bits.",1.64],["Inside,",2.98],["the",3.68],["timer",3.76],["is",3.98],["a",4.18],["counter",4.32],["that",4.52],["splits",4.76],["every",5.14],["period",5.7],["into",6.08],["2",6.36],["to",6.78],["the",7],["8th,",7.14],["or",7.96],["256",8.04],["tiny",9.04],["steps.",10.04]],
@@ -50,7 +50,7 @@ export const VO_WORDS: Record<string, [string, number][]> = {
   t12: [["LEDC",0],["timer",0.74],["config",1.12],["logs",1.52],["that",1.88],["it",2.06],["can't",2.18],["be",2.48],["done",2.58],["and",2.86],["returns",3.46],["ESP",3.9],["fail.",4.52]],
   t13: [["Inside",0],["ESP",0.6],["error",1.28],["check,",1.74],["the",2.48],["program",2.54],["stops",2.78],["right",3.12],["there",3.42],["and",3.8],["tells",4.12],["you",4.32],["which",4.46],["line.",4.6],["Fewer",5.56],["bits",5.74],["or",5.98],["a",6.52],["lower",6.64],["frequency",6.86],["fixes",7.52],["it.",8.12]],
   h1: [["Next,",0],["LEDC",1.04],["channel",1.46],["config.",1.74],["It's",2.64],["struct",2.86],["says",3.1],["which",3.54],["channel,",3.82],["which",4.72],["timer",4.86],["it",5.18],["follows,",5.36],["which",6.22],["pin",6.32],["it",6.52],["drives,",6.66],["and",7.46],["where",7.64],["it",7.74],["starts.",7.86]],
-  h2: [["same",0],["speed",0.36],["mode",0.64],["as",0.92],["the",1.36],["timer.",1.48],["There",2.3],["are",2.44],["8",2.6],["channels",2.86],["and",3.24],["this",3.94],["is",4.1],["channel",4.28],["0.",4.44]],
+  h2: [["It",0],["uses",0.22],["the",0.44],["same",0.68],["speed",0.96],["mode",1.3],["as",1.62],["the",2.06],["timer.",2.18],["There",3.08],["are",3.16],["eight",3.32],["channels,",3.54],["and",4.58],["this",4.64],["is",4.92],["channel",5.1],["zero.",5.28]],
   h3: [["Timer",0],["Select",0.42],["picks",0.66],["the",1],["counter",1.3],["this",1.6],["channel",1.86],["watches.",2.14],["Several",3.26],["channels",3.44],["can",3.76],["share",4.04],["one",4.3],["timer,",4.66],["but",5.44],["then",5.72],["they",5.92],["share",6.08],["its",6.28],["frequency",6.44],["and",6.92],["resolution.",7.68]],
   h4: [["GPIO",0],["number",0.52],["is",0.72],["the",1],["pin,",1.16],["GPIO2.",2.08],["The",3.26],["driver",3.46],["connects",3.72],["the",4.12],["channel",4.32],["to",4.56],["it",4.8],["for",4.92],["you,",5.06],["so",5.56],["you",5.78],["don't",5.86],["call",6.06],["GPIO",6.26],["set",6.74],["direction.",7.02]],
   h6: [["The",0],["duty",0.24],["is",0.56],["where",1.24],["the",1.36],["pin",1.48],["turns",1.78],["off.",2.12],["Think",3.06],["of",3.14],["it",3.26],["as",3.36],["a",3.48],["line",3.62],["across",3.86],["the",4.14],["counter.",4.32],["While",5.14],["the",5.26],["count",5.38],["is",5.6],["below",5.88],["the",6.18],["line,",6.36],["the",7.04],["pin",7.1],["is",7.28],["on.",7.44],["Once",8.18],["it",8.3],["passes",8.44],["the",8.72],["line,",8.94],["the",9.56],["pin",9.74],["is",9.9],["off.",10.04]],
@@ -65,11 +65,11 @@ export const VO_WORDS: Record<string, [string, number][]> = {
   w8: [["And",0],["on",0.22],["its",0.38],["own,",0.52],["it",1.12],["changes",1.22],["nothing.",1.56],["It",2.52],["only",2.6],["gets",2.74],["the",2.94],["number",3.08],["ready.",3.24]],
   w9: [["LEDC",0],["update",0.68],["duty",0.98],["says",1.46],["go",1.8],["the",2.12],["new",2.66],["duty",2.84],["takes",3.26],["effect",3.78],["at",4.16],["the",4.38],["start",4.48],["of",4.78],["the",4.94],["next",5.04],["period",5.24]],
   w10: [["Both",0],["calls",0.3],["return",0.52],["straight",0.88],["away.",1.18],["From",2],["then",2.08],["on,",2.24],["the",2.94],["hardware",2.98],["keeps",3.36],["the",3.74],["pin",4.04],["switching",4.4],["on",4.86],["its",5.1],["own.",5.24]],
-  d0: [["Now",0],["in",0.28],["a",0.4],["real",0.56],["LED.",1],["1000",2.58],["Hz,",2.86],["8",3.64],["bits.",3.82]],
-  d1: [["Duty",0],["128,",0.34],["that's",1.38],["half.",1.56],["Slow",2.7],["down",2.74],["500",3],["times,",3.4],["it's",4.06],["fully",4.22],["on,",4.4],["then",5.1],["fully",5.24],["off.",5.58]],
+  d0: [["Now",0],["let's",0.26],["try",0.48],["it",0.64],["on",0.72],["a",0.78],["real",0.94],["LED",1.26],["at",1.92],["1000",2.56],["Hz",3.02],["and",3.34],["8",3.74],["bits.",3.9]],
+  d1: [["Duty",0],["of",0.42],["128",0.62],["is",1.18],["half",1.66],["slow",2.3],["down",2.88],["500",3.24],["times",3.76],["you",4.28],["can",4.6],["see",4.68],["it's",4.84],["fully",4.98],["on",5.2],["then",5.64],["fully",6.04],["off",6.4]],
   d2: [["At",0],["full",0.26],["speed,",0.6],["a",1.58],["thousand",1.68],["times",2.04],["a",2.34],["second,",2.52],["your",3.32],["eye",3.38],["just",3.48],["sees",3.62],["the",4.02],["average.",4.24]],
-  d3: [["64",0],["on",0.76],["a",1.46],["quarter",1.58],["of",1.86],["the",2.02],["time",2.06],["a",2.4],["quarter",2.96],["of",3.26],["the",3.44],["light",3.52]],
-  d4: [["230.",0],["Nearly",1.3],["all",1.48],["the",1.74],["time,",1.9],["nearly",2.68],["full",2.98],["brightness.",3.44]],
+  d3: [["At",0],["64,",0.26],["it's",1.26],["on",1.4],["a",1.48],["quarter",1.64],["of",1.84],["the",2],["time,",2.1],["so",2.76],["you",2.94],["get",3.06],["a",3.16],["quarter",3.3],["of",3.54],["the",3.7],["light.",3.76]],
+  d4: [["At",0],["230,",0.24],["it's",1.24],["on",1.38],["nearly",1.52],["all",1.76],["the",2.04],["time,",2.18],["at",2.96],["nearly",3.18],["full",3.5],["brightness.",3.86]],
   d5: [["A",0],["fade",0.22],["slides",0.46],["it",0.8],["down",0.98],["for",1.14],["you.",1.38],["The",1.98],["pin",2.12],["never",2.32],["dims.",2.56],["It",3.52],["just",3.62],["spends",3.74],["less",4],["time",4.22],["on.",4.46]],
   f1: [["A",0],["fade",0.24],["takes",0.4],["three",0.68],["calls.",1.06],["Call",2.14],["this",2.2],["one",2.36],["once",2.6],["when",2.96],["your",3.46],["program",3.58],["starts.",3.88],["LEDC",5.24],["fade",5.74],["function",6.08],["install.",6.56],["It",7.5],["switches",7.62],["fading",7.98],["on.",8.4],["Pass",9.18],["zero.",9.4]],
   f2: [["Forget",0],["it,",0.38],["and",0.98],["the",1.08],["Fade",1.18],["call",1.44],["logs.",1.62],["Fade",2.62],["service",2.9],["not",3.22],["installed",3.54],["and",4],["returns",4.48],["ESP",4.96],["fail.",5.5]],
@@ -82,10 +82,10 @@ export const VO_WORDS: Record<string, [string, number][]> = {
   f10: [["Then",0],["LEDC",0.3],["fade,",1.18],["start",1.92],["says",2.16],["go.",2.38]],
   f11: [["With",0],["LEDC",0.26],["fade",1.02],["weight",1.24],["done,",1.52],["your",2.32],["task",2.48],["waits",2.78],["until",3.04],["the",3.44],["fade",3.56],["ends,",3.9],["then",4.76],["carries",5],["on.",5.34],["While",6.06],["it",6.22],["waits,",6.34],["the",7.14],["CPU",7.2],["is",7.56],["free.",7.92]],
   f12: [["Pass",0],["LEDC",0.42],["fade,",1.18],["no",2.06],["wait",2.38],["instead,",2.7],["and",3.84],["it",3.9],["returns",3.96],["at",4.28],["once,",4.46],["but",4.96],["on",5.48],["the",5.6],["ESP32,",5.74],["your",7.5],["next",7.58],["duty",7.88],["change",8.1],["waits",8.46],["until",8.86],["the",9.34],["fade",9.46],["is",9.78],["done.",9.96]],
-  n1: [["Second",0],["knob",0.44],["a",0.7],["speaker",1.24],["on",1.52],["GPIO",1.76],["4",2.28],["gets",2.96],["its",3.2],["own",3.34],["timer",3.52],["because",3.88],["the",4.44],["frequency",4.68],["belongs",5.08],["to",5.58],["the",5.8],["timer",5.9],["not",6.22],["the",6.86],["channel",7.04]],
-  n2: [["10",0],["bits",0.32],["and",0.7],["a",1.24],["duty",1.36],["of",1.64],["512.",1.92],["That's",3.22],["half",3.58],["and",3.88],["it",4.4],["stays",4.48],["half",4.72],["at",5.08],["any",5.38],["frequency",5.68],["because",6.26],["it's",6.96],["counted",7.16],["in",7.38],["steps.",7.56]],
+  n1: [["Now",0],["for",0.3],["the",0.5],["second",0.62],["knob.",0.92],["A",1.7],["speaker",1.76],["on",2],["GPIO",2.24],["4",2.74],["gets",3.38],["its",3.58],["own",3.74],["timer,",3.96],["because",4.56],["the",4.86],["frequency",5.06],["belongs",5.4],["to",5.88],["the",6.12],["timer,",6.22],["not",6.98],["the",7.2],["channel.",7.36]],
+  n2: [["It",0],["uses",0.24],["10",0.48],["bits",0.84],["and",1.18],["a",1.68],["duty",1.8],["of",2.04],["512.",2.28],["That's",3.58],["half,",3.92],["and",4.72],["it",4.82],["stays",4.9],["half",5.16],["at",5.56],["any",5.86],["frequency",6.12],["because",6.62],["it's",7.3],["counted",7.52],["in",7.74],["steps.",7.9]],
   n3: [["LEDC",0],["set",0.76],["frequency",1],["changes",1.62],["the",2.44],["frequency",2.66],["and",3.1],["nothing",3.72],["else.",3.94]],
-  n4: [["Pulse",0],["width",0.3],["sets",0.5],["brightness.",0.84],["Frequency",2.08],["sets",2.38],["pitch.",3.1]],
+  n4: [["So",0],["the",0.26],["pulse",0.38],["width",0.62],["sets",0.96],["the",1.34],["brightness",1.56],["and",1.9],["the",2.68],["frequency",2.78],["sets",3.2],["the",4],["pitch.",4.24]],
   z1: [["That's",0],["PWM.",0.38]],
 };
 // ── end generated ──
@@ -356,7 +356,7 @@ export const CHANNEL = {
     { token: '&channel', at: w('h1', 'starts', 0, 0.3), title: 'hpoint', value: '0', sub: 'where it turns on' },
   ],
   views: { channels: at('h2'), timersel: at('h3'), pin: at('h4'), duty: at('h6'), hpoint: at('h7'), start: at('h8') },
-  channels: { same: w('h2', 'same'), eight: w('h2', '8'), zero: w('h2', 'this') },
+  channels: { same: w('h2', 'same'), eight: w('h2', 'eight'), zero: w('h2', 'this') },
   timersel: { picks: w('h3', 'picks'), several: w('h3', 'Several'), share: w('h3', 'share', 1) },
   pin: { pin: w('h4', 'pin'), driver: w('h4', 'driver'), call: w('h4', 'call') },
   duty: {
@@ -664,8 +664,8 @@ export const VOICE = 'en-US-AndrewMultilingualNeural';
 const L = (id: string, scene: SceneId, text: string, say?: string, pause?: number): VoLine => ({ id, scene, at: at(id), text, say, pause });
 
 export const VO: VoLine[] = [
-  { id: 'p1', scene: 'problem', at: 0.6, fixed: true, text: 'Say you want to dim a light. Or change the pitch of a sound.' },
-  { id: 'p2', scene: 'problem', at: 5.2, fixed: true, text: 'But a digital output pin has only two levels. Three point three volts, or zero. Nothing in between.' },
+  { id: 'p1', scene: 'problem', at: 0.6, fixed: true, text: "Let's say you want to dim a light, or change the pitch of a sound." },
+  { id: 'p2', scene: 'problem', at: 5.2, fixed: true, text: 'But a digital output pin has only two levels, three point three volts or zero, with nothing in between.' },
   { id: 'p3', scene: 'problem', at: 12.6, fixed: true, text: 'So how do you get something in between?' },
   {
     id: 'a1',
@@ -678,16 +678,16 @@ export const VO: VoLine[] = [
 
   // 3 · setup: the whole app_main
   L('c1', 'setup', 'In ESP-IDF, the LED controller, LEDC, makes the pulses for you. You set it up with two calls.', 'In E S P I D F, the LED controller, LED-C, makes the pulses for you. You set it up with two calls.'),
-  L('c2', 'setup', 'A timer, which sets how fast and how fine.'),
+  L('c2', 'setup', 'First, a timer, which sets how fast and how fine the pulses are.'),
   L('c2b', 'setup', 'Each setup call takes a struct: a bundle of settings, each one filled in by name. The ampersand hands the whole bundle to the call.'),
-  L('c3', 'setup', 'And a channel, which connects that timer to a pin.'),
+  L('c3', 'setup', 'Then a channel, which connects that timer to a pin.'),
   L('c4', 'setup', 'Then two more lines set the brightness.'),
-  L('c5', 'setup', 'Start with the timer.'),
+  L('c5', 'setup', "Let's start with the timer."),
 
   // 4 · timer: ledc_timer_config
   L('t1', 'timer', 'ledc_timer_config takes a struct, and five fields matter: the speed mode, which timer, the frequency, the resolution, and the clock.', 'LED-C timer config takes a struct, and five fields matter: the speed mode, which timer, the frequency, the resolution, and the clock.'),
   L('t2', 'timer', 'For the speed mode, use low speed. Every ESP32 chip has it, and the timer and the channel must say the same thing.'),
-  L('t3', 'timer', 'There are four timers. This is timer zero.'),
+  L('t3', 'timer', 'There are four timers, and this is timer zero.'),
   L('t4', 'timer', 'The frequency is how many complete on-off cycles happen every second. At a thousand hertz, each cycle lasts one millisecond. That window is called the period.'),
   L('t5', 'timer', "Frequency doesn't change the brightness. It only has to be fast enough that your eye can't see the flicker."),
   L('t6', 'timer', 'The resolution is eight bits. Inside, the timer is a counter that splits every period into two to the eighth, or two hundred and fifty-six, tiny steps.'),
@@ -701,7 +701,7 @@ export const VO: VoLine[] = [
 
   // 5 · channel: ledc_channel_config
   L('h1', 'channel', 'Next, ledc_channel_config. Its struct says which channel, which timer it follows, which pin it drives, and where it starts.', 'Next, LED-C channel config. Its struct says which channel, which timer it follows, which pin it drives, and where it starts.'),
-  L('h2', 'channel', 'Same speed mode as the timer. There are eight channels, and this is channel zero.'),
+  L('h2', 'channel', 'It uses the same speed mode as the timer. There are eight channels, and this is channel zero.'),
   L('h3', 'channel', 'timer_sel picks the counter this channel watches. Several channels can share one timer, but then they share its frequency and resolution.', 'Timer select picks the counter this channel watches. Several channels can share one timer, but then they share its frequency and resolution.'),
   L('h4', 'channel', "gpio_num is the pin: GPIO two. The driver connects the channel to it for you, so you don't call gpio_set_direction.", "GPIO num is the pin: GPIO two. The driver connects the channel to it for you, so you don't call GPIO set direction."),
   L('h6', 'channel', 'The duty is where the pin turns off. Think of it as a line across the counter. While the count is below the line, the pin is on. Once it passes the line, the pin is off.'),
@@ -720,11 +720,11 @@ export const VO: VoLine[] = [
   L('w10', 'write', 'Both calls return straight away. From then on, the hardware keeps the pin switching on its own.'),
 
   // 7 · duty: knob 1 on a real LED
-  L('d0', 'duty', 'Now on a real LED. A thousand hertz, eight bits.'),
-  L('d1', 'duty', "Duty one twenty-eight: that's half. Slowed down five hundred times, it's fully on, then fully off."),
+  L('d0', 'duty', "Now let's try it on a real LED, at a thousand hertz and eight bits."),
+  L('d1', 'duty', "A duty of one twenty-eight is half. Slowed down five hundred times, you can see it's fully on, then fully off."),
   L('d2', 'duty', 'At full speed, a thousand times a second, your eye just sees the average.', undefined, 2.4),
-  L('d3', 'duty', 'Sixty-four: on a quarter of the time, a quarter of the light.', undefined, 1.2),
-  L('d4', 'duty', 'Two thirty: nearly all the time, nearly full brightness.', undefined, 0.9),
+  L('d3', 'duty', "At sixty-four, it's on a quarter of the time, so you get a quarter of the light.", undefined, 1.2),
+  L('d4', 'duty', "At two thirty, it's on nearly all the time, at nearly full brightness.", undefined, 0.9),
   L('d5', 'duty', 'A fade slides it down for you. The pin never dims. It just spends less time on.', undefined, 0.9),
 
   // 8 · fade: install / set_fade_with_time / fade_start
@@ -741,10 +741,10 @@ export const VO: VoLine[] = [
   L('f12', 'fade', 'Pass LEDC_FADE_NO_WAIT instead, and it returns at once. But on the ESP32, your next duty change waits until the fade is done.', 'Pass LED-C fade no wait instead, and it returns at once. But on the ESP32, your next duty change waits until the fade is done.'),
 
   // 9 · tone: knob 2
-  L('n1', 'tone', 'Second knob. A speaker on GPIO four gets its own timer, because the frequency belongs to the timer, not the channel.'),
-  L('n2', 'tone', "Ten bits, and a duty of five twelve. That's half, and it stays half at any frequency, because it's counted in steps."),
+  L('n1', 'tone', 'Now for the second knob. A speaker on GPIO four gets its own timer, because the frequency belongs to the timer, not the channel.'),
+  L('n2', 'tone', "It uses ten bits, and a duty of five twelve. That's half, and it stays half at any frequency, because it's counted in steps."),
   L('n3', 'tone', 'ledc_set_freq changes the frequency, and nothing else.', 'LED-C set frequency changes the frequency, and nothing else.'),
-  L('n4', 'tone', 'Pulse width sets brightness. Frequency sets pitch.', undefined, 4.2),
+  L('n4', 'tone', 'So the pulse width sets the brightness, and the frequency sets the pitch.', undefined, 4.2),
 
   // 10 · payoff
   L('z1', 'payoff', "That's PWM.", "That's P W M.", 0.7),

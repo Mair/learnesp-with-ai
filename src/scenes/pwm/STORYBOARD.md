@@ -1,3 +1,7 @@
+> **Narration pass:** VO revised to `SCRIPT.md` "Sound like a teacher, not a list" ("Let's say you
+> want to dim a light…"; "Second knob." / "Sixty-four: on a quarter…" style fragments became whole
+> sentences); the two driver error logs are real QEMU output (`lab/`). As built: 7:42 (461.5 s).
+
 # PWM: storyboard v2 (pure ESP-IDF rewrite, draft for approval)
 
 - Slug `pwm`, composition `PWM`, output `out/3-advanced-gpio/pwm.mp4`. Rendered length 7:36 (v1 was 4:25): two set-up calls replace `ledcAttach`, and the fade is now three calls.

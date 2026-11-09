@@ -65,7 +65,7 @@ export const Fade: React.FC = () => {
       captions={F.captions}
       views={[
         { at: V.install, component: InstallView, active: [0], label: 'ledc_fade_func_install · once, at start-up', accent: C.cyan },
-        { at: V.forget, component: ForgetView, active: [0], label: 'forget it', accent: RED, right: () => 'idf.py monitor' },
+        { at: V.forget, component: ForgetView, active: [0], label: 'forget it', accent: RED, right: () => 'recorded in QEMU' },
         { at: V.from, component: FromView, active: [2, 3], label: 'where to end, and how long', accent: DUTY },
         { at: V.ramp, component: RampView, active: [2, 3], label: 'the duty over time', accent: DUTY, right: () => 'real time' },
         {
@@ -117,8 +117,8 @@ const ForgetView: React.FC<{ t: number }> = ({ t }) => {
         at={G.logs}
         width={1480}
         lines={[
-          { text: 'E (318) ledc: Fade service not installed, call ledc_fade_func_install' },
-          { text: 'E (318) ledc: ledc_set_fade_with_time(1491): LEDC fade channel init error, not enough memory or service not installed' },
+          { text: 'E (1509) ledc: Fade service not installed, call ledc_fade_func_install' },
+          { text: 'E (1509) ledc: ledc_set_fade_with_time(1491): LEDC fade channel init error, not enough memory or service not installed' },
         ]}
       />
       <div style={{ ...mono(32, RED, { fontWeight: 700 }), opacity: after(t, G.fail) }}>the fade call → ESP_FAIL</div>

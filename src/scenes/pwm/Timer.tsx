@@ -70,8 +70,8 @@ export const Timer: React.FC = () => {
         },
         { at: V.bits, component: BitsView, active: [3], label: 'resolution · bits vs smoothness', accent: C.cyan },
         { at: V.clock, component: ClockView, active: [2, 3, 4], label: 'clk_cfg · counts per second must fit the clock', accent: C.cyan },
-        { at: V.log, component: LogView, active: [3], label: 'what you see · 17 bits', accent: RED, right: () => 'idf.py monitor' },
-        { at: V.check, component: CheckView, active: [3], label: 'ESP_ERROR_CHECK · stop right there', accent: RED, right: () => 'idf.py monitor' },
+        { at: V.log, component: LogView, active: [3], label: 'what you see · 17 bits', accent: RED, right: () => 'recorded in QEMU' },
+        { at: V.check, component: CheckView, active: [3], label: 'ESP_ERROR_CHECK · stop right there', accent: RED, right: () => 'recorded in QEMU' },
       ]}
     />
   );
@@ -612,7 +612,7 @@ const LogView: React.FC<{ t: number }> = ({ t }) => {
         at={L.logs}
         width={1480}
         lines={[
-          { text: 'E (312) ledc: requested frequency 1000 and duty resolution 17 can not be achieved,' },
+          { text: 'E (1519) ledc: requested frequency 1000 and duty resolution 17 can not be achieved,' },
           { text: 'try reducing freq_hz or duty_resolution. div_param=0' },
         ]}
       />
@@ -634,8 +634,8 @@ const CheckView: React.FC<{ t: number }> = ({ t }) => {
         width={1480}
         size={20}
         lines={[
-          { text: 'ESP_ERROR_CHECK failed: esp_err_t 0xffffffff (ESP_FAIL) at 0x400d2b1e' },
-          { text: 'file: "…/main/main.c" line 17', color: C.amber },
+          { text: 'ESP_ERROR_CHECK failed: esp_err_t 0xffffffff (ESP_FAIL) at 0x400d5d96' },
+          { text: 'file: "./main/main.c" line 39', color: C.amber },
           { text: 'func: app_main' },
           { text: 'expression: ledc_timer_config(&timer)', color: C.amber },
         ]}

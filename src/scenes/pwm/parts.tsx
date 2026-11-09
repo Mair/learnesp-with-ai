@@ -132,7 +132,7 @@ export const LogBox: React.FC<{ t: number; at: number; lines: { text: string; co
         gap: 4,
       }}
     >
-      <div style={mono(14, C.muted, { letterSpacing: '.2em' })}>IDF.PY MONITOR</div>
+      <div style={mono(14, C.muted, { letterSpacing: '.2em' })}>RECORDED IN QEMU</div>
       {lines.map((l, i) => {
         const n = Math.max(0, Math.min(l.text.length, budget));
         budget -= l.text.length;

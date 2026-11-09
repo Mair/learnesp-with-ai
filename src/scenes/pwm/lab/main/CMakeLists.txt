@@ -1,0 +1,5 @@
+idf_component_register(SRCS "main.c" PRIV_REQUIRES esp_driver_ledc)
+# lab only: idf.py -DLAB_VARIANT=n build (see main.c)
+if(DEFINED LAB_VARIANT)
+    target_compile_definitions(${COMPONENT_LIB} PRIVATE LAB_VARIANT=${LAB_VARIANT})
+endif()

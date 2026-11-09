@@ -1,0 +1,770 @@
+Adding SPI flash device
+ets Jul 29 2019 12:21:46
+rst:0x1 (POWERON_RESET),boot:0x12 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0040,len:6272
+load:0x40078000,len:15820
+load:0x40080400,len:3920
+entry 0x40080644
+I (671) boot: ESP-IDF v6.0.2 2nd stage bootloader
+I (672) boot: compile time Nov 10 2026 09:22:02
+I (672) boot: Multicore bootloader
+I (701) boot: chip revision: v0.0
+I (703) boot.esp32: SPI Speed      : 40MHz
+I (704) boot.esp32: SPI Mode       : DIO
+I (704) boot.esp32: SPI Flash Size : 2MB
+I (712) boot: Enabling RNG early entropy source...
+I (719) boot: Partition Table:
+I (719) boot: ## Label            Usage          Type ST Offset   Length
+I (720) boot:  0 nvs              WiFi data        01 02 00009000 00006000
+I (720) boot:  1 phy_init         RF data          01 01 0000f000 00001000
+I (720) boot:  2 factory          factory app      00 00 00010000 00100000
+I (724) boot: End of partition table
+I (753) esp_image: segment 0: paddr=00010020 vaddr=3f400020 size=09658h ( 38488) map
+I (771) esp_image: segment 1: paddr=00019680 vaddr=3ffb0000 size=02abch ( 10940) load
+I (786) esp_image: segment 2: paddr=0001c144 vaddr=40080000 size=03ed4h ( 16084) load
+I (802) esp_image: segment 3: paddr=00020020 vaddr=400d0020 size=0e674h ( 58996) map
+I (821) esp_image: segment 4: paddr=0002e69c vaddr=40083ed4 size=07550h ( 30032) load
+I (837) esp_image: segment 5: paddr=00035bf4 vaddr=50000000 size=00028h (    40) load
+I (870) boot: Loaded app from partition at offset 0x10000
+I (870) boot: Disabling RNG early entropy source...
+I (887) cpu_start: Multicore app
+I (1471) cpu_start: GPIO 3 and 1 are used as console UART I/O pins
+I (1474) cpu_start: Pro cpu start user code
+I (1474) cpu_start: cpu freq: 160000000 Hz
+I (1474) app_init: Application information:
+I (1474) app_init: Project name:     pwm
+I (1475) app_init: App version:      58870dc-dirty
+I (1475) app_init: Compile time:     Nov 10 2026 09:21:58
+I (1475) app_init: ELF file SHA256:  aae61fd7f...
+I (1475) app_init: ESP-IDF:          v6.0.2
+I (1475) efuse_init: Min chip rev:     v0.0
+I (1475) efuse_init: Max chip rev:     v3.99 
+I (1476) efuse_init: Chip rev:         v0.0
+I (1477) heap_init: Initializing. RAM available for dynamic allocation:
+I (1477) heap_init: At 3FFAE6E0 len 00001920 (6 KiB): DRAM
+I (1478) heap_init: At 3FFB34F8 len 0002CB08 (178 KiB): DRAM
+I (1478) heap_init: At 3FFE0440 len 00003AE0 (14 KiB): D/IRAM
+I (1478) heap_init: At 3FFE4350 len 0001BCB0 (111 KiB): D/IRAM
+I (1478) heap_init: At 4008B424 len 00014BDC (82 KiB): IRAM
+I (1497) spi_flash: detected chip: gd
+I (1505) spi_flash: flash io: dio
+W (1508) spi_flash: Detected size(4096k) larger than the size in the binary image header(2048k). Using the size in the binary image header.
+I (1516) main_task: Started on CPU0
+I (1516) main_task: Calling app_main()
+E (1516) ledc: requested frequency 1000 and duty resolution 17 can not be achieved, try reducing freq_hz or duty_resolution. div_param=0
+ESP_ERROR_CHECK failed: esp_err_t 0xffffffff (ESP_FAIL) at 0x400d5d96
+file: "./main/main.c" line 39
+func: app_main
+expression: ledc_timer_config(&timer)
+abort() was called at PC 0x40086487 on core 0
+Backtrace: 0x4008652d:0x3ffb46a0 0x400864f5:0x3ffb46c0 0x40086131:0x3ffb46e0 0x40086487:0x3ffb4750 0x400d5d96:0x3ffb4780 0x400d3d0d:0x3ffb47e0 0x400dc565:0x3ffb4810
+ELF file SHA256: aae61fd7f
+Rebooting...
+ets Jul 29 2019 12:21:46
+rst:0xc (SW_CPU_RESET),boot:0x12 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0040,len:6272
+load:0x40078000,len:15820
+load:0x40080400,len:3920
+entry 0x40080644
+I (5541) boot: ESP-IDF v6.0.2 2nd stage bootloader
+I (5542) boot: compile time Nov 10 2026 09:22:02
+I (5542) boot: Multicore bootloader
+I (5570) boot: chip revision: v0.0
+I (5572) boot.esp32: SPI Speed      : 40MHz
+I (5573) boot.esp32: SPI Mode       : DIO
+I (5573) boot.esp32: SPI Flash Size : 2MB
+I (5580) boot: Enabling RNG early entropy source...
+I (5588) boot: Partition Table:
+I (5588) boot: ## Label            Usage          Type ST Offset   Length
+I (5588) boot:  0 nvs              WiFi data        01 02 00009000 00006000
+I (5589) boot:  1 phy_init         RF data          01 01 0000f000 00001000
+I (5589) boot:  2 factory          factory app      00 00 00010000 00100000
+I (5593) boot: End of partition table
+I (5620) esp_image: segment 0: paddr=00010020 vaddr=3f400020 size=09658h ( 38488) map
+I (5636) esp_image: segment 1: paddr=00019680 vaddr=3ffb0000 size=02abch ( 10940) load
+I (5649) esp_image: segment 2: paddr=0001c144 vaddr=40080000 size=03ed4h ( 16084) load
+I (5671) esp_image: segment 3: paddr=00020020 vaddr=400d0020 size=0e674h ( 58996) map
+I (5690) esp_image: segment 4: paddr=0002e69c vaddr=40083ed4 size=07550h ( 30032) load
+I (5714) esp_image: segment 5: paddr=00035bf4 vaddr=50000000 size=00028h (    40) load
+I (5751) boot: Loaded app from partition at offset 0x10000
+I (5751) boot: Disabling RNG early entropy source...
+I (5766) cpu_start: Multicore app
+I (6985) cpu_start: GPIO 3 and 1 are used as console UART I/O pins
+I (6987) cpu_start: Pro cpu start user code
+I (6987) cpu_start: cpu freq: 160000000 Hz
+I (6987) app_init: Application information:
+I (6987) app_init: Project name:     pwm
+I (6988) app_init: App version:      58870dc-dirty
+I (6988) app_init: Compile time:     Nov 10 2026 09:21:58
+I (6988) app_init: ELF file SHA256:  aae61fd7f...
+I (6988) app_init: ESP-IDF:          v6.0.2
+I (6988) efuse_init: Min chip rev:     v0.0
+I (6988) efuse_init: Max chip rev:     v3.99 
+I (6989) efuse_init: Chip rev:         v0.0
+I (6990) heap_init: Initializing. RAM available for dynamic allocation:
+I (6990) heap_init: At 3FFAE6E0 len 00001920 (6 KiB): DRAM
+I (6991) heap_init: At 3FFB34F8 len 0002CB08 (178 KiB): DRAM
+I (6991) heap_init: At 3FFE0440 len 00003AE0 (14 KiB): D/IRAM
+I (6991) heap_init: At 3FFE4350 len 0001BCB0 (111 KiB): D/IRAM
+I (6991) heap_init: At 4008B424 len 00014BDC (82 KiB): IRAM
+I (7011) spi_flash: detected chip: gd
+I (7014) spi_flash: flash io: dio
+W (7022) spi_flash: Detected size(4096k) larger than the size in the binary image header(2048k). Using the size in the binary image header.
+I (7031) main_task: Started on CPU0
+I (7031) main_task: Calling app_main()
+E (7031) ledc: requested frequency 1000 and duty resolution 17 can not be achieved, try reducing freq_hz or duty_resolution. div_param=0
+ESP_ERROR_CHECK failed: esp_err_t 0xffffffff (ESP_FAIL) at 0x400d5d96
+file: "./main/main.c" line 39
+func: app_main
+expression: ledc_timer_config(&timer)
+abort() was called at PC 0x40086487 on core 0
+Backtrace: 0x4008652d:0x3ffb46a0 0x400864f5:0x3ffb46c0 0x40086131:0x3ffb46e0 0x40086487:0x3ffb4750 0x400d5d96:0x3ffb4780 0x400d3d0d:0x3ffb47e0 0x400dc565:0x3ffb4810
+ELF file SHA256: aae61fd7f
+Rebooting...
+ets Jul 29 2019 12:21:46
+rst:0xc (SW_CPU_RESET),boot:0x12 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0040,len:6272
+load:0x40078000,len:15820
+load:0x40080400,len:3920
+entry 0x40080644
+I (26322) boot: ESP-IDF v6.0.2 2nd stage bootloader
+I (26322) boot: compile time Nov 10 2026 09:22:02
+I (26323) boot: Multicore bootloader
+I (26346) boot: chip revision: v0.0
+I (26348) boot.esp32: SPI Speed      : 40MHz
+I (26348) boot.esp32: SPI Mode       : DIO
+I (26349) boot.esp32: SPI Flash Size : 2MB
+I (26355) boot: Enabling RNG early entropy source...
+I (26362) boot: Partition Table:
+I (26363) boot: ## Label            Usage          Type ST Offset   Length
+I (26363) boot:  0 nvs              WiFi data        01 02 00009000 00006000
+I (26363) boot:  1 phy_init         RF data          01 01 0000f000 00001000
+I (26363) boot:  2 factory          factory app      00 00 00010000 00100000
+I (26366) boot: End of partition table
+I (26392) esp_image: segment 0: paddr=00010020 vaddr=3f400020 size=09658h ( 38488) map
+I (26411) esp_image: segment 1: paddr=00019680 vaddr=3ffb0000 size=02abch ( 10940) load
+I (26422) esp_image: segment 2: paddr=0001c144 vaddr=40080000 size=03ed4h ( 16084) load
+I (26442) esp_image: segment 3: paddr=00020020 vaddr=400d0020 size=0e674h ( 58996) map
+I (26460) esp_image: segment 4: paddr=0002e69c vaddr=40083ed4 size=07550h ( 30032) load
+I (26484) esp_image: segment 5: paddr=00035bf4 vaddr=50000000 size=00028h (    40) load
+I (26521) boot: Loaded app from partition at offset 0x10000
+I (26521) boot: Disabling RNG early entropy source...
+I (26537) cpu_start: Multicore app
+I (1539) cpu_start: GPIO 3 and 1 are used as console UART I/O pins
+I (1541) cpu_start: Pro cpu start user code
+I (1541) cpu_start: cpu freq: 160000000 Hz
+I (1541) app_init: Application information:
+I (1542) app_init: Project name:     pwm
+I (1542) app_init: App version:      58870dc-dirty
+I (1542) app_init: Compile time:     Nov 10 2026 09:21:58
+I (1542) app_init: ELF file SHA256:  aae61fd7f...
+I (1542) app_init: ESP-IDF:          v6.0.2
+I (1542) efuse_init: Min chip rev:     v0.0
+I (1543) efuse_init: Max chip rev:     v3.99 
+I (1543) efuse_init: Chip rev:         v0.0
+I (1544) heap_init: Initializing. RAM available for dynamic allocation:
+I (1545) heap_init: At 3FFAE6E0 len 00001920 (6 KiB): DRAM
+I (1545) heap_init: At 3FFB34F8 len 0002CB08 (178 KiB): DRAM
+I (1545) heap_init: At 3FFE0440 len 00003AE0 (14 KiB): D/IRAM
+I (1545) heap_init: At 3FFE4350 len 0001BCB0 (111 KiB): D/IRAM
+I (1545) heap_init: At 4008B424 len 00014BDC (82 KiB): IRAM
+I (1565) spi_flash: detected chip: gd
+I (1568) spi_flash: flash io: dio
+W (1574) spi_flash: Detected size(4096k) larger than the size in the binary image header(2048k). Using the size in the binary image header.
+I (1583) main_task: Started on CPU0
+I (1583) main_task: Calling app_main()
+E (1583) ledc: requested frequency 1000 and duty resolution 17 can not be achieved, try reducing freq_hz or duty_resolution. div_param=0
+ESP_ERROR_CHECK failed: esp_err_t 0xffffffff (ESP_FAIL) at 0x400d5d96
+file: "./main/main.c" line 39
+func: app_main
+expression: ledc_timer_config(&timer)
+abort() was called at PC 0x40086487 on core 0
+Backtrace: 0x4008652d:0x3ffb46a0 0x400864f5:0x3ffb46c0 0x40086131:0x3ffb46e0 0x40086487:0x3ffb4750 0x400d5d96:0x3ffb4780 0x400d3d0d:0x3ffb47e0 0x400dc565:0x3ffb4810
+ELF file SHA256: aae61fd7f
+Rebooting...
+ets Jul 29 2019 12:21:46
+rst:0xc (SW_CPU_RESET),boot:0x12 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0040,len:6272
+load:0x40078000,len:15820
+load:0x40080400,len:3920
+entry 0x40080644
+I (3281) boot: ESP-IDF v6.0.2 2nd stage bootloader
+I (3281) boot: compile time Nov 10 2026 09:22:02
+I (3281) boot: Multicore bootloader
+I (3305) boot: chip revision: v0.0
+I (3307) boot.esp32: SPI Speed      : 40MHz
+I (3307) boot.esp32: SPI Mode       : DIO
+I (3307) boot.esp32: SPI Flash Size : 2MB
+I (3313) boot: Enabling RNG early entropy source...
+I (3320) boot: Partition Table:
+I (3320) boot: ## Label            Usage          Type ST Offset   Length
+I (3321) boot:  0 nvs              WiFi data        01 02 00009000 00006000
+I (3321) boot:  1 phy_init         RF data          01 01 0000f000 00001000
+I (3321) boot:  2 factory          factory app      00 00 00010000 00100000
+I (3324) boot: End of partition table
+I (3352) esp_image: segment 0: paddr=00010020 vaddr=3f400020 size=09658h ( 38488) map
+I (3370) esp_image: segment 1: paddr=00019680 vaddr=3ffb0000 size=02abch ( 10940) load
+I (3383) esp_image: segment 2: paddr=0001c144 vaddr=40080000 size=03ed4h ( 16084) load
+I (3403) esp_image: segment 3: paddr=00020020 vaddr=400d0020 size=0e674h ( 58996) map
+I (3421) esp_image: segment 4: paddr=0002e69c vaddr=40083ed4 size=07550h ( 30032) load
+I (3444) esp_image: segment 5: paddr=00035bf4 vaddr=50000000 size=00028h (    40) load
+I (3480) boot: Loaded app from partition at offset 0x10000
+I (3480) boot: Disabling RNG early entropy source...
+I (3496) cpu_start: Multicore app
+I (5963) cpu_start: GPIO 3 and 1 are used as console UART I/O pins
+I (5965) cpu_start: Pro cpu start user code
+I (5965) cpu_start: cpu freq: 160000000 Hz
+I (5965) app_init: Application information:
+I (5965) app_init: Project name:     pwm
+I (5965) app_init: App version:      58870dc-dirty
+I (5966) app_init: Compile time:     Nov 10 2026 09:21:58
+I (5966) app_init: ELF file SHA256:  aae61fd7f...
+I (5966) app_init: ESP-IDF:          v6.0.2
+I (5966) efuse_init: Min chip rev:     v0.0
+I (5966) efuse_init: Max chip rev:     v3.99 
+I (5966) efuse_init: Chip rev:         v0.0
+I (5967) heap_init: Initializing. RAM available for dynamic allocation:
+I (5968) heap_init: At 3FFAE6E0 len 00001920 (6 KiB): DRAM
+I (5968) heap_init: At 3FFB34F8 len 0002CB08 (178 KiB): DRAM
+I (5969) heap_init: At 3FFE0440 len 00003AE0 (14 KiB): D/IRAM
+I (5969) heap_init: At 3FFE4350 len 0001BCB0 (111 KiB): D/IRAM
+I (5969) heap_init: At 4008B424 len 00014BDC (82 KiB): IRAM
+I (5991) spi_flash: detected chip: gd
+I (5995) spi_flash: flash io: dio
+W (5998) spi_flash: Detected size(4096k) larger than the size in the binary image header(2048k). Using the size in the binary image header.
+I (6007) main_task: Started on CPU0
+I (6007) main_task: Calling app_main()
+E (6007) ledc: requested frequency 1000 and duty resolution 17 can not be achieved, try reducing freq_hz or duty_resolution. div_param=0
+ESP_ERROR_CHECK failed: esp_err_t 0xffffffff (ESP_FAIL) at 0x400d5d96
+file: "./main/main.c" line 39
+func: app_main
+expression: ledc_timer_config(&timer)
+abort() was called at PC 0x40086487 on core 0
+Backtrace: 0x4008652d:0x3ffb46a0 0x400864f5:0x3ffb46c0 0x40086131:0x3ffb46e0 0x40086487:0x3ffb4750 0x400d5d96:0x3ffb4780 0x400d3d0d:0x3ffb47e0 0x400dc565:0x3ffb4810
+ELF file SHA256: aae61fd7f
+Rebooting...
+ets Jul 29 2019 12:21:46
+rst:0xc (SW_CPU_RESET),boot:0x12 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0040,len:6272
+load:0x40078000,len:15820
+load:0x40080400,len:3920
+entry 0x40080644
+I (19734) boot: ESP-IDF v6.0.2 2nd stage bootloader
+I (19734) boot: compile time Nov 10 2026 09:22:02
+I (19734) boot: Multicore bootloader
+I (19758) boot: chip revision: v0.0
+I (19760) boot.esp32: SPI Speed      : 40MHz
+I (19760) boot.esp32: SPI Mode       : DIO
+I (19761) boot.esp32: SPI Flash Size : 2MB
+I (19769) boot: Enabling RNG early entropy source...
+I (19776) boot: Partition Table:
+I (19777) boot: ## Label            Usage          Type ST Offset   Length
+I (19777) boot:  0 nvs              WiFi data        01 02 00009000 00006000
+I (19777) boot:  1 phy_init         RF data          01 01 0000f000 00001000
+I (19777) boot:  2 factory          factory app      00 00 00010000 00100000
+I (19781) boot: End of partition table
+I (19807) esp_image: segment 0: paddr=00010020 vaddr=3f400020 size=09658h ( 38488) map
+I (19826) esp_image: segment 1: paddr=00019680 vaddr=3ffb0000 size=02abch ( 10940) load
+I (19840) esp_image: segment 2: paddr=0001c144 vaddr=40080000 size=03ed4h ( 16084) load
+I (19860) esp_image: segment 3: paddr=00020020 vaddr=400d0020 size=0e674h ( 58996) map
+I (19878) esp_image: segment 4: paddr=0002e69c vaddr=40083ed4 size=07550h ( 30032) load
+I (19901) esp_image: segment 5: paddr=00035bf4 vaddr=50000000 size=00028h (    40) load
+I (19939) boot: Loaded app from partition at offset 0x10000
+I (19939) boot: Disabling RNG early entropy source...
+I (19953) cpu_start: Multicore app
+I (23050) cpu_start: GPIO 3 and 1 are used as console UART I/O pins
+I (23052) cpu_start: Pro cpu start user code
+I (23052) cpu_start: cpu freq: 160000000 Hz
+I (23053) app_init: Application information:
+I (23053) app_init: Project name:     pwm
+I (23053) app_init: App version:      58870dc-dirty
+I (23053) app_init: Compile time:     Nov 10 2026 09:21:58
+I (23053) app_init: ELF file SHA256:  aae61fd7f...
+I (23053) app_init: ESP-IDF:          v6.0.2
+I (23054) efuse_init: Min chip rev:     v0.0
+I (23054) efuse_init: Max chip rev:     v3.99 
+I (23054) efuse_init: Chip rev:         v0.0
+I (23055) heap_init: Initializing. RAM available for dynamic allocation:
+I (23056) heap_init: At 3FFAE6E0 len 00001920 (6 KiB): DRAM
+I (23056) heap_init: At 3FFB34F8 len 0002CB08 (178 KiB): DRAM
+I (23056) heap_init: At 3FFE0440 len 00003AE0 (14 KiB): D/IRAM
+I (23056) heap_init: At 3FFE4350 len 0001BCB0 (111 KiB): D/IRAM
+I (23057) heap_init: At 4008B424 len 00014BDC (82 KiB): IRAM
+I (23077) spi_flash: detected chip: gd
+I (23080) spi_flash: flash io: dio
+W (23088) spi_flash: Detected size(4096k) larger than the size in the binary image header(2048k). Using the size in the binary image header.
+I (23096) main_task: Started on CPU0
+I (23096) main_task: Calling app_main()
+E (23096) ledc: requested frequency 1000 and duty resolution 17 can not be achieved, try reducing freq_hz or duty_resolution. div_param=0
+ESP_ERROR_CHECK failed: esp_err_t 0xffffffff (ESP_FAIL) at 0x400d5d96
+file: "./main/main.c" line 39
+func: app_main
+expression: ledc_timer_config(&timer)
+abort() was called at PC 0x40086487 on core 0
+Backtrace: 0x4008652d:0x3ffb46a0 0x400864f5:0x3ffb46c0 0x40086131:0x3ffb46e0 0x40086487:0x3ffb4750 0x400d5d96:0x3ffb4780 0x400d3d0d:0x3ffb47e0 0x400dc565:0x3ffb4810
+ELF file SHA256: aae61fd7f
+Rebooting...
+ets Jul 29 2019 12:21:46
+rst:0xc (SW_CPU_RESET),boot:0x12 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0040,len:6272
+load:0x40078000,len:15820
+load:0x40080400,len:3920
+entry 0x40080644
+I (33138) boot: ESP-IDF v6.0.2 2nd stage bootloader
+I (33139) boot: compile time Nov 10 2026 09:22:02
+I (33139) boot: Multicore bootloader
+I (33163) boot: chip revision: v0.0
+I (33165) boot.esp32: SPI Speed      : 40MHz
+I (33165) boot.esp32: SPI Mode       : DIO
+I (33165) boot.esp32: SPI Flash Size : 2MB
+I (33173) boot: Enabling RNG early entropy source...
+I (33180) boot: Partition Table:
+I (33180) boot: ## Label            Usage          Type ST Offset   Length
+I (33181) boot:  0 nvs              WiFi data        01 02 00009000 00006000
+I (33181) boot:  1 phy_init         RF data          01 01 0000f000 00001000
+I (33181) boot:  2 factory          factory app      00 00 00010000 00100000
+I (33184) boot: End of partition table
+I (33211) esp_image: segment 0: paddr=00010020 vaddr=3f400020 size=09658h ( 38488) map
+I (33229) esp_image: segment 1: paddr=00019680 vaddr=3ffb0000 size=02abch ( 10940) load
+I (33243) esp_image: segment 2: paddr=0001c144 vaddr=40080000 size=03ed4h ( 16084) load
+I (33264) esp_image: segment 3: paddr=00020020 vaddr=400d0020 size=0e674h ( 58996) map
+I (33283) esp_image: segment 4: paddr=0002e69c vaddr=40083ed4 size=07550h ( 30032) load
+I (33307) esp_image: segment 5: paddr=00035bf4 vaddr=50000000 size=00028h (    40) load
+I (33343) boot: Loaded app from partition at offset 0x10000
+I (33344) boot: Disabling RNG early entropy source...
+I (33360) cpu_start: Multicore app
+I (10245) cpu_start: GPIO 3 and 1 are used as console UART I/O pins
+I (10247) cpu_start: Pro cpu start user code
+I (10247) cpu_start: cpu freq: 160000000 Hz
+I (10247) app_init: Application information:
+I (10247) app_init: Project name:     pwm
+I (10247) app_init: App version:      58870dc-dirty
+I (10247) app_init: Compile time:     Nov 10 2026 09:21:58
+I (10248) app_init: ELF file SHA256:  aae61fd7f...
+I (10248) app_init: ESP-IDF:          v6.0.2
+I (10248) efuse_init: Min chip rev:     v0.0
+I (10248) efuse_init: Max chip rev:     v3.99 
+I (10248) efuse_init: Chip rev:         v0.0
+I (10249) heap_init: Initializing. RAM available for dynamic allocation:
+I (10250) heap_init: At 3FFAE6E0 len 00001920 (6 KiB): DRAM
+I (10250) heap_init: At 3FFB34F8 len 0002CB08 (178 KiB): DRAM
+I (10251) heap_init: At 3FFE0440 len 00003AE0 (14 KiB): D/IRAM
+I (10251) heap_init: At 3FFE4350 len 0001BCB0 (111 KiB): D/IRAM
+I (10251) heap_init: At 4008B424 len 00014BDC (82 KiB): IRAM
+I (10271) spi_flash: detected chip: gd
+I (10275) spi_flash: flash io: dio
+W (10282) spi_flash: Detected size(4096k) larger than the size in the binary image header(2048k). Using the size in the binary image header.
+I (10291) main_task: Started on CPU0
+I (10291) main_task: Calling app_main()
+E (10291) ledc: requested frequency 1000 and duty resolution 17 can not be achieved, try reducing freq_hz or duty_resolution. div_param=0
+ESP_ERROR_CHECK failed: esp_err_t 0xffffffff (ESP_FAIL) at 0x400d5d96
+file: "./main/main.c" line 39
+func: app_main
+expression: ledc_timer_config(&timer)
+abort() was called at PC 0x40086487 on core 0
+Backtrace: 0x4008652d:0x3ffb46a0 0x400864f5:0x3ffb46c0 0x40086131:0x3ffb46e0 0x40086487:0x3ffb4750 0x400d5d96:0x3ffb4780 0x400d3d0d:0x3ffb47e0 0x400dc565:0x3ffb4810
+ELF file SHA256: aae61fd7f
+Rebooting...
+ets Jul 29 2019 12:21:46
+rst:0xc (SW_CPU_RESET),boot:0x12 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0040,len:6272
+load:0x40078000,len:15820
+load:0x40080400,len:3920
+entry 0x40080644
+I (34342) boot: ESP-IDF v6.0.2 2nd stage bootloader
+I (34342) boot: compile time Nov 10 2026 09:22:02
+I (34342) boot: Multicore bootloader
+I (34368) boot: chip revision: v0.0
+I (34370) boot.esp32: SPI Speed      : 40MHz
+I (34371) boot.esp32: SPI Mode       : DIO
+I (34371) boot.esp32: SPI Flash Size : 2MB
+I (34376) boot: Enabling RNG early entropy source...
+I (34385) boot: Partition Table:
+I (34385) boot: ## Label            Usage          Type ST Offset   Length
+I (34385) boot:  0 nvs              WiFi data        01 02 00009000 00006000
+I (34385) boot:  1 phy_init         RF data          01 01 0000f000 00001000
+I (34386) boot:  2 factory          factory app      00 00 00010000 00100000
+I (34388) boot: End of partition table
+I (34415) esp_image: segment 0: paddr=00010020 vaddr=3f400020 size=09658h ( 38488) map
+I (34432) esp_image: segment 1: paddr=00019680 vaddr=3ffb0000 size=02abch ( 10940) load
+I (34445) esp_image: segment 2: paddr=0001c144 vaddr=40080000 size=03ed4h ( 16084) load
+I (34466) esp_image: segment 3: paddr=00020020 vaddr=400d0020 size=0e674h ( 58996) map
+I (34485) esp_image: segment 4: paddr=0002e69c vaddr=40083ed4 size=07550h ( 30032) load
+I (34508) esp_image: segment 5: paddr=00035bf4 vaddr=50000000 size=00028h (    40) load
+I (34544) boot: Loaded app from partition at offset 0x10000
+I (34544) boot: Disabling RNG early entropy source...
+I (34561) cpu_start: Multicore app
+I (12075) cpu_start: GPIO 3 and 1 are used as console UART I/O pins
+I (12077) cpu_start: Pro cpu start user code
+I (12077) cpu_start: cpu freq: 160000000 Hz
+I (12078) app_init: Application information:
+I (12078) app_init: Project name:     pwm
+I (12078) app_init: App version:      58870dc-dirty
+I (12078) app_init: Compile time:     Nov 10 2026 09:21:58
+I (12078) app_init: ELF file SHA256:  aae61fd7f...
+I (12078) app_init: ESP-IDF:          v6.0.2
+I (12079) efuse_init: Min chip rev:     v0.0
+I (12079) efuse_init: Max chip rev:     v3.99 
+I (12079) efuse_init: Chip rev:         v0.0
+I (12080) heap_init: Initializing. RAM available for dynamic allocation:
+I (12081) heap_init: At 3FFAE6E0 len 00001920 (6 KiB): DRAM
+I (12081) heap_init: At 3FFB34F8 len 0002CB08 (178 KiB): DRAM
+I (12081) heap_init: At 3FFE0440 len 00003AE0 (14 KiB): D/IRAM
+I (12081) heap_init: At 3FFE4350 len 0001BCB0 (111 KiB): D/IRAM
+I (12082) heap_init: At 4008B424 len 00014BDC (82 KiB): IRAM
+I (12102) spi_flash: detected chip: gd
+I (12105) spi_flash: flash io: dio
+W (12113) spi_flash: Detected size(4096k) larger than the size in the binary image header(2048k). Using the size in the binary image header.
+I (12121) main_task: Started on CPU0
+I (12121) main_task: Calling app_main()
+E (12121) ledc: requested frequency 1000 and duty resolution 17 can not be achieved, try reducing freq_hz or duty_resolution. div_param=0
+ESP_ERROR_CHECK failed: esp_err_t 0xffffffff (ESP_FAIL) at 0x400d5d96
+file: "./main/main.c" line 39
+func: app_main
+expression: ledc_timer_config(&timer)
+abort() was called at PC 0x40086487 on core 0
+Backtrace: 0x4008652d:0x3ffb46a0 0x400864f5:0x3ffb46c0 0x40086131:0x3ffb46e0 0x40086487:0x3ffb4750 0x400d5d96:0x3ffb4780 0x400d3d0d:0x3ffb47e0 0x400dc565:0x3ffb4810
+ELF file SHA256: aae61fd7f
+Rebooting...
+ets Jul 29 2019 12:21:46
+rst:0xc (SW_CPU_RESET),boot:0x12 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0040,len:6272
+load:0x40078000,len:15820
+load:0x40080400,len:3920
+entry 0x40080644
+I (40405) boot: ESP-IDF v6.0.2 2nd stage bootloader
+I (40406) boot: compile time Nov 10 2026 09:22:02
+I (40406) boot: Multicore bootloader
+I (40435) boot: chip revision: v0.0
+I (40437) boot.esp32: SPI Speed      : 40MHz
+I (40437) boot.esp32: SPI Mode       : DIO
+I (40438) boot.esp32: SPI Flash Size : 2MB
+I (40445) boot: Enabling RNG early entropy source...
+I (40453) boot: Partition Table:
+I (40454) boot: ## Label            Usage          Type ST Offset   Length
+I (40454) boot:  0 nvs              WiFi data        01 02 00009000 00006000
+I (40454) boot:  1 phy_init         RF data          01 01 0000f000 00001000
+I (40454) boot:  2 factory          factory app      00 00 00010000 00100000
+I (40457) boot: End of partition table
+I (40485) esp_image: segment 0: paddr=00010020 vaddr=3f400020 size=09658h ( 38488) map
+I (40504) esp_image: segment 1: paddr=00019680 vaddr=3ffb0000 size=02abch ( 10940) load
+I (40518) esp_image: segment 2: paddr=0001c144 vaddr=40080000 size=03ed4h ( 16084) load
+I (40538) esp_image: segment 3: paddr=00020020 vaddr=400d0020 size=0e674h ( 58996) map
+I (40557) esp_image: segment 4: paddr=0002e69c vaddr=40083ed4 size=07550h ( 30032) load
+I (40581) esp_image: segment 5: paddr=00035bf4 vaddr=50000000 size=00028h (    40) load
+I (40620) boot: Loaded app from partition at offset 0x10000
+I (40620) boot: Disabling RNG early entropy source...
+I (40634) cpu_start: Multicore app
+I (18787) cpu_start: GPIO 3 and 1 are used as console UART I/O pins
+I (18789) cpu_start: Pro cpu start user code
+I (18789) cpu_start: cpu freq: 160000000 Hz
+I (18789) app_init: Application information:
+I (18789) app_init: Project name:     pwm
+I (18789) app_init: App version:      58870dc-dirty
+I (18790) app_init: Compile time:     Nov 10 2026 09:21:58
+I (18790) app_init: ELF file SHA256:  aae61fd7f...
+I (18790) app_init: ESP-IDF:          v6.0.2
+I (18790) efuse_init: Min chip rev:     v0.0
+I (18790) efuse_init: Max chip rev:     v3.99 
+I (18790) efuse_init: Chip rev:         v0.0
+I (18791) heap_init: Initializing. RAM available for dynamic allocation:
+I (18792) heap_init: At 3FFAE6E0 len 00001920 (6 KiB): DRAM
+I (18793) heap_init: At 3FFB34F8 len 0002CB08 (178 KiB): DRAM
+I (18793) heap_init: At 3FFE0440 len 00003AE0 (14 KiB): D/IRAM
+I (18793) heap_init: At 3FFE4350 len 0001BCB0 (111 KiB): D/IRAM
+I (18793) heap_init: At 4008B424 len 00014BDC (82 KiB): IRAM
+I (18814) spi_flash: detected chip: gd
+I (18822) spi_flash: flash io: dio
+W (18826) spi_flash: Detected size(4096k) larger than the size in the binary image header(2048k). Using the size in the binary image header.
+I (18835) main_task: Started on CPU0
+I (18835) main_task: Calling app_main()
+E (18835) ledc: requested frequency 1000 and duty resolution 17 can not be achieved, try reducing freq_hz or duty_resolution. div_param=0
+ESP_ERROR_CHECK failed: esp_err_t 0xffffffff (ESP_FAIL) at 0x400d5d96
+file: "./main/main.c" line 39
+func: app_main
+expression: ledc_timer_config(&timer)
+abort() was called at PC 0x40086487 on core 0
+Backtrace: 0x4008652d:0x3ffb46a0 0x400864f5:0x3ffb46c0 0x40086131:0x3ffb46e0 0x40086487:0x3ffb4750 0x400d5d96:0x3ffb4780 0x400d3d0d:0x3ffb47e0 0x400dc565:0x3ffb4810
+ELF file SHA256: aae61fd7f
+Rebooting...
+ets Jul 29 2019 12:21:46
+rst:0xc (SW_CPU_RESET),boot:0x12 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0040,len:6272
+load:0x40078000,len:15820
+load:0x40080400,len:3920
+entry 0x40080644
+I (12294) boot: ESP-IDF v6.0.2 2nd stage bootloader
+I (12294) boot: compile time Nov 10 2026 09:22:02
+I (12294) boot: Multicore bootloader
+I (12316) boot: chip revision: v0.0
+I (12318) boot.esp32: SPI Speed      : 40MHz
+I (12318) boot.esp32: SPI Mode       : DIO
+I (12318) boot.esp32: SPI Flash Size : 2MB
+I (12326) boot: Enabling RNG early entropy source...
+I (12334) boot: Partition Table:
+I (12335) boot: ## Label            Usage          Type ST Offset   Length
+I (12335) boot:  0 nvs              WiFi data        01 02 00009000 00006000
+I (12335) boot:  1 phy_init         RF data          01 01 0000f000 00001000
+I (12335) boot:  2 factory          factory app      00 00 00010000 00100000
+I (12338) boot: End of partition table
+I (12366) esp_image: segment 0: paddr=00010020 vaddr=3f400020 size=09658h ( 38488) map
+I (12384) esp_image: segment 1: paddr=00019680 vaddr=3ffb0000 size=02abch ( 10940) load
+I (12397) esp_image: segment 2: paddr=0001c144 vaddr=40080000 size=03ed4h ( 16084) load
+I (12420) esp_image: segment 3: paddr=00020020 vaddr=400d0020 size=0e674h ( 58996) map
+I (12439) esp_image: segment 4: paddr=0002e69c vaddr=40083ed4 size=07550h ( 30032) load
+I (12463) esp_image: segment 5: paddr=00035bf4 vaddr=50000000 size=00028h (    40) load
+I (12499) boot: Loaded app from partition at offset 0x10000
+I (12499) boot: Disabling RNG early entropy source...
+I (12516) cpu_start: Multicore app
+I (18150) cpu_start: GPIO 3 and 1 are used as console UART I/O pins
+I (18152) cpu_start: Pro cpu start user code
+I (18153) cpu_start: cpu freq: 160000000 Hz
+I (18153) app_init: Application information:
+I (18153) app_init: Project name:     pwm
+I (18153) app_init: App version:      58870dc-dirty
+I (18153) app_init: Compile time:     Nov 10 2026 09:21:58
+I (18153) app_init: ELF file SHA256:  aae61fd7f...
+I (18154) app_init: ESP-IDF:          v6.0.2
+I (18154) efuse_init: Min chip rev:     v0.0
+I (18154) efuse_init: Max chip rev:     v3.99 
+I (18154) efuse_init: Chip rev:         v0.0
+I (18155) heap_init: Initializing. RAM available for dynamic allocation:
+I (18156) heap_init: At 3FFAE6E0 len 00001920 (6 KiB): DRAM
+I (18156) heap_init: At 3FFB34F8 len 0002CB08 (178 KiB): DRAM
+I (18156) heap_init: At 3FFE0440 len 00003AE0 (14 KiB): D/IRAM
+I (18157) heap_init: At 3FFE4350 len 0001BCB0 (111 KiB): D/IRAM
+I (18157) heap_init: At 4008B424 len 00014BDC (82 KiB): IRAM
+I (18178) spi_flash: detected chip: gd
+I (18185) spi_flash: flash io: dio
+W (18189) spi_flash: Detected size(4096k) larger than the size in the binary image header(2048k). Using the size in the binary image header.
+I (18197) main_task: Started on CPU0
+I (18197) main_task: Calling app_main()
+E (18197) ledc: requested frequency 1000 and duty resolution 17 can not be achieved, try reducing freq_hz or duty_resolution. div_param=0
+ESP_ERROR_CHECK failed: esp_err_t 0xffffffff (ESP_FAIL) at 0x400d5d96
+file: "./main/main.c" line 39
+func: app_main
+expression: ledc_timer_config(&timer)
+abort() was called at PC 0x40086487 on core 0
+Backtrace: 0x4008652d:0x3ffb46a0 0x400864f5:0x3ffb46c0 0x40086131:0x3ffb46e0 0x40086487:0x3ffb4750 0x400d5d96:0x3ffb4780 0x400d3d0d:0x3ffb47e0 0x400dc565:0x3ffb4810
+ELF file SHA256: aae61fd7f
+Rebooting...
+ets Jul 29 2019 12:21:46
+rst:0xc (SW_CPU_RESET),boot:0x12 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0040,len:6272
+load:0x40078000,len:15820
+load:0x40080400,len:3920
+entry 0x40080644
+I (8471) boot: ESP-IDF v6.0.2 2nd stage bootloader
+I (8472) boot: compile time Nov 10 2026 09:22:02
+I (8472) boot: Multicore bootloader
+I (8498) boot: chip revision: v0.0
+I (8500) boot.esp32: SPI Speed      : 40MHz
+I (8500) boot.esp32: SPI Mode       : DIO
+I (8501) boot.esp32: SPI Flash Size : 2MB
+I (8507) boot: Enabling RNG early entropy source...
+I (8514) boot: Partition Table:
+I (8515) boot: ## Label            Usage          Type ST Offset   Length
+I (8515) boot:  0 nvs              WiFi data        01 02 00009000 00006000
+I (8515) boot:  1 phy_init         RF data          01 01 0000f000 00001000
+I (8515) boot:  2 factory          factory app      00 00 00010000 00100000
+I (8519) boot: End of partition table
+I (8547) esp_image: segment 0: paddr=00010020 vaddr=3f400020 size=09658h ( 38488) map
+I (8565) esp_image: segment 1: paddr=00019680 vaddr=3ffb0000 size=02abch ( 10940) load
+I (8579) esp_image: segment 2: paddr=0001c144 vaddr=40080000 size=03ed4h ( 16084) load
+I (8602) esp_image: segment 3: paddr=00020020 vaddr=400d0020 size=0e674h ( 58996) map
+I (8622) esp_image: segment 4: paddr=0002e69c vaddr=40083ed4 size=07550h ( 30032) load
+I (8648) esp_image: segment 5: paddr=00035bf4 vaddr=50000000 size=00028h (    40) load
+I (8690) boot: Loaded app from partition at offset 0x10000
+I (8690) boot: Disabling RNG early entropy source...
+I (8706) cpu_start: Multicore app
+I (14985) cpu_start: GPIO 3 and 1 are used as console UART I/O pins
+I (14987) cpu_start: Pro cpu start user code
+I (14987) cpu_start: cpu freq: 160000000 Hz
+I (14987) app_init: Application information:
+I (14987) app_init: Project name:     pwm
+I (14988) app_init: App version:      58870dc-dirty
+I (14988) app_init: Compile time:     Nov 10 2026 09:21:58
+I (14988) app_init: ELF file SHA256:  aae61fd7f...
+I (14988) app_init: ESP-IDF:          v6.0.2
+I (14988) efuse_init: Min chip rev:     v0.0
+I (14988) efuse_init: Max chip rev:     v3.99 
+I (14989) efuse_init: Chip rev:         v0.0
+I (14990) heap_init: Initializing. RAM available for dynamic allocation:
+I (14990) heap_init: At 3FFAE6E0 len 00001920 (6 KiB): DRAM
+I (14991) heap_init: At 3FFB34F8 len 0002CB08 (178 KiB): DRAM
+I (14991) heap_init: At 3FFE0440 len 00003AE0 (14 KiB): D/IRAM
+I (14991) heap_init: At 3FFE4350 len 0001BCB0 (111 KiB): D/IRAM
+I (14991) heap_init: At 4008B424 len 00014BDC (82 KiB): IRAM
+I (15014) spi_flash: detected chip: gd
+I (15019) spi_flash: flash io: dio
+W (15022) spi_flash: Detected size(4096k) larger than the size in the binary image header(2048k). Using the size in the binary image header.
+I (15031) main_task: Started on CPU0
+I (15031) main_task: Calling app_main()
+E (15031) ledc: requested frequency 1000 and duty resolution 17 can not be achieved, try reducing freq_hz or duty_resolution. div_param=0
+ESP_ERROR_CHECK failed: esp_err_t 0xffffffff (ESP_FAIL) at 0x400d5d96
+file: "./main/main.c" line 39
+func: app_main
+expression: ledc_timer_config(&timer)
+abort() was called at PC 0x40086487 on core 0
+Backtrace: 0x4008652d:0x3ffb46a0 0x400864f5:0x3ffb46c0 0x40086131:0x3ffb46e0 0x40086487:0x3ffb4750 0x400d5d96:0x3ffb4780 0x400d3d0d:0x3ffb47e0 0x400dc565:0x3ffb4810
+ELF file SHA256: aae61fd7f
+Rebooting...
+ets Jul 29 2019 12:21:46
+rst:0xc (SW_CPU_RESET),boot:0x12 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0040,len:6272
+load:0x40078000,len:15820
+load:0x40080400,len:3920
+entry 0x40080644
+I (48203) boot: ESP-IDF v6.0.2 2nd stage bootloader
+I (48203) boot: compile time Nov 10 2026 09:22:02
+I (48203) boot: Multicore bootloader
+I (48227) boot: chip revision: v0.0
+I (48229) boot.esp32: SPI Speed      : 40MHz
+I (48229) boot.esp32: SPI Mode       : DIO
+I (48230) boot.esp32: SPI Flash Size : 2MB
+I (48236) boot: Enabling RNG early entropy source...
+I (48244) boot: Partition Table:
+I (48244) boot: ## Label            Usage          Type ST Offset   Length
+I (48245) boot:  0 nvs              WiFi data        01 02 00009000 00006000
+I (48245) boot:  1 phy_init         RF data          01 01 0000f000 00001000
+I (48245) boot:  2 factory          factory app      00 00 00010000 00100000
+I (48248) boot: End of partition table
+I (48275) esp_image: segment 0: paddr=00010020 vaddr=3f400020 size=09658h ( 38488) map
+I (48294) esp_image: segment 1: paddr=00019680 vaddr=3ffb0000 size=02abch ( 10940) load
+I (48309) esp_image: segment 2: paddr=0001c144 vaddr=40080000 size=03ed4h ( 16084) load
+I (48331) esp_image: segment 3: paddr=00020020 vaddr=400d0020 size=0e674h ( 58996) map
+I (48354) esp_image: segment 4: paddr=0002e69c vaddr=40083ed4 size=07550h ( 30032) load
+I (48378) esp_image: segment 5: paddr=00035bf4 vaddr=50000000 size=00028h (    40) load
+I (48420) boot: Loaded app from partition at offset 0x10000
+I (48420) boot: Disabling RNG early entropy source...
+I (48437) cpu_start: Multicore app
+I (1673) cpu_start: GPIO 3 and 1 are used as console UART I/O pins
+I (1675) cpu_start: Pro cpu start user code
+I (1675) cpu_start: cpu freq: 160000000 Hz
+I (1676) app_init: Application information:
+I (1676) app_init: Project name:     pwm
+I (1676) app_init: App version:      58870dc-dirty
+I (1676) app_init: Compile time:     Nov 10 2026 09:21:58
+I (1676) app_init: ELF file SHA256:  aae61fd7f...
+I (1676) app_init: ESP-IDF:          v6.0.2
+I (1677) efuse_init: Min chip rev:     v0.0
+I (1677) efuse_init: Max chip rev:     v3.99 
+I (1677) efuse_init: Chip rev:         v0.0
+I (1678) heap_init: Initializing. RAM available for dynamic allocation:
+I (1679) heap_init: At 3FFAE6E0 len 00001920 (6 KiB): DRAM
+I (1679) heap_init: At 3FFB34F8 len 0002CB08 (178 KiB): DRAM
+I (1679) heap_init: At 3FFE0440 len 00003AE0 (14 KiB): D/IRAM
+I (1679) heap_init: At 3FFE4350 len 0001BCB0 (111 KiB): D/IRAM
+I (1680) heap_init: At 4008B424 len 00014BDC (82 KiB): IRAM
+I (1703) spi_flash: detected chip: gd
+I (1709) spi_flash: flash io: dio
+W (1715) spi_flash: Detected size(4096k) larger than the size in the binary image header(2048k). Using the size in the binary image header.
+I (1723) main_task: Started on CPU0
+I (1723) main_task: Calling app_main()
+E (1723) ledc: requested frequency 1000 and duty resolution 17 can not be achieved, try reducing freq_hz or duty_resolution. div_param=0
+ESP_ERROR_CHECK failed: esp_err_t 0xffffffff (ESP_FAIL) at 0x400d5d96
+file: "./main/main.c" line 39
+func: app_main
+expression: ledc_timer_config(&timer)
+abort() was called at PC 0x40086487 on core 0
+Backtrace: 0x4008652d:0x3ffb46a0 0x400864f5:0x3ffb46c0 0x40086131:0x3ffb46e0 0x40086487:0x3ffb4750 0x400d5d96:0x3ffb4780 0x400d3d0d:0x3ffb47e0 0x400dc565:0x3ffb4810
+ELF file SHA256: aae61fd7f
+Rebooting...
+ets Jul 29 2019 12:21:46
+rst:0xc (SW_CPU_RESET),boot:0x12 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0040,len:6272
+load:0x40078000,len:15820
+load:0x40080400,len:3920
+entry 0x40080644
+I (47361) boot: ESP-IDF v6.0.2 2nd stage bootloader
+I (47362) boot: compile time Nov 10 2026 09:22:02
+I (47362) boot: Multicore bootloader
+I (47396) boot: chip revision: v0.0
+I (47398) boot.esp32: SPI Speed      : 40MHz
+I (47398) boot.esp32: SPI Mode       : DIO
+I (47398) boot.esp32: SPI Flash Size : 2MB
+I (47405) boot: Enabling RNG early entropy source...
+I (47415) boot: Partition Table:
+I (47415) boot: ## Label            Usage          Type ST Offset   Length
+I (47415) boot:  0 nvs              WiFi data        01 02 00009000 00006000
+I (47416) boot:  1 phy_init         RF data          01 01 0000f000 00001000
+I (47416) boot:  2 factory          factory app      00 00 00010000 00100000
+I (47419) boot: End of partition table
+I (47451) esp_image: segment 0: paddr=00010020 vaddr=3f400020 size=09658h ( 38488) map
+I (47470) esp_image: segment 1: paddr=00019680 vaddr=3ffb0000 size=02abch ( 10940) load
+I (47485) esp_image: segment 2: paddr=0001c144 vaddr=40080000 size=03ed4h ( 16084) load
+I (47530) esp_image: segment 3: paddr=00020020 vaddr=400d0020 size=0e674h ( 58996) map
+I (47552) esp_image: segment 4: paddr=0002e69c vaddr=40083ed4 size=07550h ( 30032) load
+I (47576) esp_image: segment 5: paddr=00035bf4 vaddr=50000000 size=00028h (    40) load
+I (47614) boot: Loaded app from partition at offset 0x10000
+I (47615) boot: Disabling RNG early entropy source...
+I (47630) cpu_start: Multicore app
+I (1552) cpu_start: GPIO 3 and 1 are used as console UART I/O pins
+I (1554) cpu_start: Pro cpu start user code
+I (1554) cpu_start: cpu freq: 160000000 Hz
+I (1554) app_init: Application information:
+I (1554) app_init: Project name:     pwm
+I (1554) app_init: App version:      58870dc-dirty
+I (1554) app_init: Compile time:     Nov 10 2026 09:21:58
+I (1555) app_init: ELF file SHA256:  aae61fd7f...
+I (1555) app_init: ESP-IDF:          v6.0.2
+I (1555) efuse_init: Min chip rev:     v0.0
+I (1555) efuse_init: Max chip rev:     v3.99 
+I (1555) efuse_init: Chip rev:         v0.0
+I (1556) heap_init: Initializing. RAM available for dynamic allocation:
+I (1557) heap_init: At 3FFAE6E0 len 00001920 (6 KiB): DRAM
+I (1557) heap_init: At 3FFB34F8 len 0002CB08 (178 KiB): DRAM
+I (1558) heap_init: At 3FFE0440 len 00003AE0 (14 KiB): D/IRAM
+I (1558) heap_init: At 3FFE4350 len 0001BCB0 (111 KiB): D/IRAM
+I (1558) heap_init: At 4008B424 len 00014BDC (82 KiB): IRAM
+I (1578) spi_flash: detected chip: gd
+I (1585) spi_flash: flash io: dio
+W (1588) spi_flash: Detected size(4096k) larger than the size in the binary image header(2048k). Using the size in the binary image header.
+I (1597) main_task: Started on CPU0
+I (1597) main_task: Calling app_main()
+E (1597) ledc: requested frequency 1000 and duty resolution 17 can not be achieved, try reducing freq_hz or duty_resolution. div_param=0
+ESP_ERROR_CHECK failed: esp_err_t 0xffffffff (ESP_FAIL) at 0x400d5d96
+file: "./main/main.c" line 39
+func: app_main
+expression: ledc_timer_config(&timer)
+abort() was called at PC 0x40086487 on core 0
+Backtrace: 0x4008652d:0x3ffb46a0 0x400864f5:0x3ffb46c0 0x40086131:0x3ffb46e0 0x40086487:0x3ffb4750 0x400d5d96:0x3ffb4780 0x400d3d0d:0x3ffb47e0 0x400dc565:0x3ffb4810
+ELF file SHA256: aae61fd7f
+Rebooting...
+qemu-system-xtensa: terminating on signal 15 from pid 698609 (timeout)

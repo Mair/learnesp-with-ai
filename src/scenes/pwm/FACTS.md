@@ -24,6 +24,22 @@ v1 of this video used the Arduino core (`ledcAttach`, `ledcWrite`, `ledcFade`,
 | `basic` | `examples/peripherals/ledc/ledc_basic/main/ledc_basic_example_main.c` |
 | `fade` | `examples/peripherals/ledc/ledc_fade/main/ledc_fade_example_main.c` |
 
+
+## Lab: the log lines on screen are real (narration pass)
+
+`lab/main/main.c`, ESP-IDF v6.0.2 (target `esp32`, defaults), Espressif QEMU
+`esp_develop_9.2.2_20250817`; logs in `lab/logs/`. QEMU has no LED or speaker; only the driver's
+messages are checked.
+
+- v1, the timer at 17 bits: `E (1519) ledc: requested frequency 1000 and duty resolution 17 can not
+  be achieved, try reducing freq_hz or duty_resolution. div_param=0` → `ESP_FAIL`.
+- v2, the fade without `ledc_fade_func_install`: `E (1509) ledc: Fade service not installed, call
+  ledc_fade_func_install` / `E (1509) ledc: ledc_set_fade_with_time(1491): LEDC fade channel init
+  error, not enough memory or service not installed` → `ESP_FAIL`.
+- v3, the 17-bit timer inside `ESP_ERROR_CHECK`: `ESP_ERROR_CHECK failed: esp_err_t 0xffffffff
+  (ESP_FAIL) at 0x400d5d96` / `file: "./main/main.c" line 39` / `func: app_main` / `expression:
+  ledc_timer_config(&timer)` → `abort()` → reboot (line 39 of the lab's `main.c`).
+
 ## The program
 
 The same calls as ESP-IDF's `ledc_basic` example (`basic` l.35–80): a
