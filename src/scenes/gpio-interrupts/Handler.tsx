@@ -12,7 +12,7 @@ import { Explainer, GREEN, mono, RED, VIEW_H as H, VIEW_W as W } from '../../com
 import { C, FONT, hexA } from '../../theme/palette';
 import { after, Verdict } from './parts';
 import { HandlerTable } from './Service';
-import { FPS, HANDLER as S, sceneDur } from './timeline';
+import { FPS, HANDLER as S, LOG_ORDER, sceneDur } from './timeline';
 
 const ARG_COLOR = [C.pink, C.amber, C.cyan];
 
@@ -33,7 +33,7 @@ export const Handler: React.FC = () => {
       views={[
         { at: V.table, component: TableView, active: [0, 1, 2], label: "the driver's handler table", accent: C.amber, right: () => 'gpio_context.gpio_isr_func[ ]' },
         { at: V.arg, component: ArgView, active: [2], label: 'the argument comes back', accent: C.cyan },
-        { at: V.order, component: OrderView, active: [0], label: 'it switches the interrupt on · order matters', accent: RED, right: () => 'idf.py monitor' },
+        { at: V.order, component: OrderView, active: [0], label: 'it switches the interrupt on · order matters', accent: RED, right: () => 'recorded in QEMU' },
       ]}
     />
   );
@@ -85,9 +85,9 @@ const OrderView: React.FC<{ t: number }> = ({ t }) => {
   return (
     <div style={{ position: 'absolute', inset: 0, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 40, alignItems: 'center', padding: '0 20px' }}>
       <div style={{ display: 'grid', gap: 12, opacity: after(t, o.on) }}>
-        <div style={mono(20, C.muted, { letterSpacing: '.1em' })}>GPIO_PIN18_REG · INT_ENA</div>
+        <div style={mono(20, C.muted, { letterSpacing: '.1em' })}>GPIO 18 · ITS INTERRUPT</div>
         <div style={{ ...mono(30, C.ink) }}>
-          int_ena = <b style={{ color: GREEN }}>PRO CPU</b> <span style={{ color: C.muted, fontSize: 22 }}>(CPU 0, where app_main runs)</span>
+          interrupt <b style={{ color: GREEN }}>on</b> <span style={{ color: C.muted, fontSize: 22 }}>(handled on CPU 0, where app_main runs)</span>
         </div>
         <Verdict ok p={after(t, o.on + 0.3)} size={22}>
           the pin's interrupt is now live
@@ -99,7 +99,7 @@ const OrderView: React.FC<{ t: number }> = ({ t }) => {
           <div style={{ color: C.muted }}>gpio_install_isr_service(0);</div>
         </div>
         <div style={{ opacity: after(t, o.ret), borderRadius: 12, border: `1px solid ${hexA(RED, 0.5)}`, padding: '12px 16px', background: 'rgba(10,4,32,.6)', ...mono(18, RED), lineHeight: 1.4 }}>
-          E (…) gpio: gpio_isr_handler_add(564): GPIO isr service is not installed, call gpio_install_isr_service() first
+          {LOG_ORDER}
         </div>
         <div style={{ opacity: after(t, o.ret), ...mono(24, C.ink) }}>
           → <b style={{ color: RED }}>ESP_ERR_INVALID_STATE</b>

@@ -95,7 +95,7 @@ const StormView: React.FC<{ t: number }> = ({ t }) => {
         <SerialLog
           t={t}
           size={18}
-          label="idf.py monitor"
+          label="illustration · what the first version prints"
           lines={Array.from({ length: nLogs }, (_, i) => ({ at: s.five + i * 0.12, text: `I (…) button: presses: ${i + 1}`, color: i === 0 ? GREEN : RED }))}
         />
         <Verdict ok={false} p={after(t, s.five + 0.6)} size={22}>

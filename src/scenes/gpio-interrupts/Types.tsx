@@ -12,7 +12,7 @@ import { useCurrentFrame, useVideoConfig } from 'remotion';
 import { GREEN, mono, RED } from '../../components/Explainer';
 import { C, hexA } from '../../theme/palette';
 import { after, BIG_W, Pill, Verdict, ViewStage } from './parts';
-import { FPS, sceneDur, TYPES as S } from './timeline';
+import { FPS, LOG_WAKE, sceneDur, TYPES as S } from './timeline';
 
 export const Types: React.FC = () => {
   const frame = useCurrentFrame();
@@ -147,7 +147,7 @@ const WakeView: React.FC<{ t: number }> = ({ t }) => {
         </div>
         <div style={{ ...mono(26, '#fff'), padding: '10px 16px', borderRadius: 10, border: `1px solid ${hexA(RED, 0.6)}`, background: hexA(RED, 0.06) }}>
           gpio_wakeup_enable(BUTTON, GPIO_INTR_NEGEDGE); <span style={{ color: RED }}>✗</span>
-          <div style={mono(17, RED)}>E (…) gpio: GPIO wakeup only supports level mode, but edge mode set. gpio_num:18 → ESP_ERR_INVALID_ARG</div>
+          <div style={mono(17, RED)}>{LOG_WAKE} → ESP_ERR_INVALID_ARG · recorded in QEMU</div>
         </div>
       </div>
       <Verdict ok p={after(t, w.two)} size={22}>

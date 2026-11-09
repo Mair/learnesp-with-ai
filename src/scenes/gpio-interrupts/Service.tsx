@@ -11,7 +11,7 @@ import { useCurrentFrame, useVideoConfig } from 'remotion';
 import { Explainer, GREEN, mono, RED, VIEW_H as H, VIEW_W as W } from '../../components/Explainer';
 import { C, hexA } from '../../theme/palette';
 import { after, Verdict } from './parts';
-import { FPS, sceneDur, SERVICE as S } from './timeline';
+import { FPS, LOG_TWICE, sceneDur, SERVICE as S } from './timeline';
 
 export const Service: React.FC = () => {
   const frame = useCurrentFrame();
@@ -28,9 +28,9 @@ export const Service: React.FC = () => {
       args={S.args.map((a) => ({ ...a, color: C.amber }))}
       captions={S.captions}
       views={[
-        { at: V.shared, component: SharedView, active: [], label: 'how GPIO interrupts reach your function', accent: C.cyan, right: () => 'gpio.c · gpio_intr_service' },
+        { at: V.shared, component: SharedView, active: [], label: 'how GPIO interrupts reach your function', accent: C.cyan, right: () => 'how the driver does it' },
         { at: V.flags, component: FlagsView, active: [0], label: 'intr_alloc_flags · esp_intr_alloc.h', accent: C.amber },
-        { at: V.once, component: OnceView, active: [], label: 'install it once', accent: RED, right: () => 'idf.py monitor' },
+        { at: V.once, component: OnceView, active: [], label: 'install it once', accent: RED, right: () => 'recorded in QEMU' },
       ]}
     />
   );
@@ -95,7 +95,7 @@ const SharedView: React.FC<{ t: number }> = ({ t }) => {
         <line x1={550} y1={250} x2={610} y2={250} stroke={C.cyan} strokeWidth={3} />
         <rect x={610} y={200} width={300} height={100} rx={14} fill={hexA(C.cyan, 0.2)} stroke={C.cyan} strokeWidth={2.5} />
         <text x={760} y={240} textAnchor="middle" style={mono(19, '#fff', { fontWeight: 700 })}>
-          gpio_intr_service()
+          one shared handler
         </text>
         <text x={760} y={268} textAnchor="middle" style={mono(15, C.muted)}>
           the driver's handler
@@ -146,7 +146,7 @@ const OnceView: React.FC<{ t: number }> = ({ t }) => {
         </div>
       </div>
       <div style={{ opacity: after(t, o.ret), borderRadius: 14, border: `1px solid ${hexA(RED, 0.5)}`, padding: '14px 18px', background: 'rgba(10,4,32,.6)', ...mono(21, RED) }}>
-        E (…) gpio: gpio_install_isr_service(537): GPIO isr service already installed
+        {LOG_TWICE}
       </div>
       <Verdict ok p={after(t, o.ret + 0.5)} size={22}>
         once, at start-up — then add handlers for as many pins as you like

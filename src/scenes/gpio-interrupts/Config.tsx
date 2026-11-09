@@ -13,7 +13,7 @@ import { useCurrentFrame, useVideoConfig } from 'remotion';
 import { GREEN, mono, RED } from '../../components/Explainer';
 import { C, FONT, hexA } from '../../theme/palette';
 import { after, Bits, CodeAndViews, InputPin, Pill, pinState, Verdict, VIEW2_W as W } from './parts';
-import { BTN, CONFIG as S, CONFIG_CODE, FPS, sceneDur } from './timeline';
+import { BTN, CONFIG as S, CONFIG_CODE, FPS, LOG_MASK, sceneDur } from './timeline';
 
 export const Config: React.FC = () => {
   const frame = useCurrentFrame();
@@ -34,7 +34,7 @@ export const Config: React.FC = () => {
         { at: V.mask, component: MaskView, label: 'pin_bit_mask · uint64_t', accent: C.pink, lines: [1], right: () => 'bits 39 … 0' },
         { at: V.fields, component: FieldsView, label: 'mode · pulls', accent: C.amber, lines: [2, 3, 4] },
         { at: V.intr, component: IntrView, label: 'intr_type · gpio_int_type_t', accent: C.magenta, lines: [5], right: () => 'hal/gpio_types.h' },
-        { at: V.errors, component: ErrorsView, label: 'what it checks · gpio.c', accent: RED, lines: [7], right: () => 'idf.py monitor' },
+        { at: V.errors, component: ErrorsView, label: 'what it checks · gpio.c', accent: RED, lines: [7], right: () => 'recorded in QEMU' },
       ]}
     />
   );
@@ -174,7 +174,7 @@ const ErrorsView: React.FC<{ t: number }> = ({ t }) => {
   const row = (code: string, p: number) => (
     <div style={{ opacity: p, display: 'grid', gap: 6, padding: '12px 16px', borderRadius: 12, border: `1px solid ${hexA(RED, 0.5)}`, background: 'rgba(10,4,32,.6)' }}>
       <span style={mono(22, '#fff')}>{code}</span>
-      <span style={mono(19, RED)}>E (…) gpio: GPIO_PIN mask error</span>
+      <span style={mono(19, RED)}>{LOG_MASK}</span>
       <span style={mono(20, C.ink)}>
         → <b style={{ color: RED }}>ESP_ERR_INVALID_ARG</b>
       </span>
@@ -191,7 +191,7 @@ const ErrorsView: React.FC<{ t: number }> = ({ t }) => {
         ESP_ERROR_CHECK turns either into a stop, not a silent bug
       </Verdict>
       <div style={{ opacity: after(t, e.ret), fontSize: 19, color: C.muted, fontFamily: FONT.sans }}>
-        SOC_GPIO_VALID_GPIO_MASK: bits 0–39 except 24 and 28–31
+        GPIOs that exist on the ESP32: 0–39, except 24 and 28–31
       </div>
     </div>
   );

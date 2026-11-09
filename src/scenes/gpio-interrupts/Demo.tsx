@@ -16,9 +16,9 @@ import { DEMO as D, FPS, sceneDur } from './timeline';
 
 const NODES = [
   { at: D.press, k: 'GPIO 18 falls', sub: 'the button goes down', c: C.magenta },
-  { at: D.status, k: 'GPIO_STATUS · bit 18 = 1', sub: 'the peripheral latches it', c: C.magenta },
+  { at: D.status, k: 'the GPIO hardware notices', sub: 'it remembers the edge', c: C.magenta },
   { at: D.jumps, k: 'CPU 0 takes the GPIO interrupt', sub: 'whatever was running pauses', c: C.cyan },
-  { at: D.handler, k: 'gpio_intr_service()', sub: "the driver's handler", c: C.cyan },
+  { at: D.handler, k: "the driver's handler", sub: 'it finds the function for pin 18', c: C.cyan },
   { at: D.isr, k: 'button_isr((void *) 18)', sub: 'your function', c: C.amber },
   { at: D.drops, k: 'queue ← 18', sub: 'xQueueSendFromISR · then return', c: GREEN },
   { at: D.wakes, k: 'task wakes · xQueueReceive returns', sub: 'pin = 18', c: C.cyan },
@@ -78,7 +78,7 @@ export const Demo: React.FC = () => {
                 <div style={mono(22, down ? C.cyan : C.muted, { fontWeight: 700 })}>{down ? 'pressed → 0' : 'released → 1'}</div>
               </div>
             </Panel>
-            <SerialLog t={t} lines={[{ at: D.logs, text: 'I (8312) button: presses: 1', color: GREEN }]} size={22} label="idf.py monitor" />
+            <SerialLog t={t} lines={[{ at: D.logs, text: 'I (…) button: presses: 1', color: GREEN }]} size={22} label="illustration · QEMU has no button" />
           </div>
           <div style={{ gridColumn: '1 / -1', opacity: after(t, D.polling - 0.2) }}>
             <Panel label="wake-ups while nobody presses" accent={C.cyan} right="real time">

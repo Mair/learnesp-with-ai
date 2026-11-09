@@ -13,6 +13,26 @@ ESP32 datasheet v5.3, Ganssle *A Guide to Debouncing*. Line numbers are v6.0.2.
 Input-video facts (pull-ups, thresholds, bounce numbers, GPIO 18 choice) are in
 `src/scenes/gpio-input/FACTS.md` and not repeated.
 
+
+## Lab: the driver messages on screen are real (narration pass)
+
+`lab/main/main.c`, ESP-IDF v6.0.2 (target `esp32`, defaults), Espressif QEMU
+`esp_develop_9.2.2_20250817`; logs in `lab/logs/`. QEMU has no button, so no edge ever arrives:
+the press and bounce log panels stay labelled illustrations.
+
+- v1, `gpio_config` with `.pin_bit_mask = 0`: `E (2069) gpio: GPIO_PIN mask error` →
+  `ESP_ERR_INVALID_ARG`.
+- v2, `gpio_install_isr_service(0)` twice: `E (2491) gpio: gpio_install_isr_service(537): GPIO isr
+  service already installed` → `ESP_ERR_INVALID_STATE`.
+- v3, `gpio_isr_handler_add` before the service: `E (2194) gpio: gpio_isr_handler_add(564): GPIO isr
+  service is not installed, call gpio_install_isr_service() first` → `ESP_ERR_INVALID_STATE`.
+- v4, `gpio_wakeup_enable(BUTTON, GPIO_INTR_NEGEDGE)`: `E (2130) gpio: GPIO wakeup only supports
+  level mode, but edge mode set. gpio_num:18` → `ESP_ERR_INVALID_ARG`.
+
+Narration pass also removed register names and the driver's internal function name from the
+screen (`GPIO_PIN18_REG · INT_ENA`, `GPIO_STATUS · bit 18`, `gpio_intr_service()`,
+`SOC_GPIO_VALID_GPIO_MASK`) per "teach driving, not the engine"; the facts behind them stay above.
+
 ## The program (modelled on Espressif's `generic_gpio` example)
 
 | Fact | Source |

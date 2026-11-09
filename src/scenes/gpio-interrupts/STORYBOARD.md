@@ -1,3 +1,9 @@
+> **Narration pass:** VO rewritten to `SCRIPT.md` "Sound like a teacher, not a list"; opens "Let's
+> say you want your program to react the instant someone presses a button…" with polling as the
+> first try; the four driver messages are real QEMU output (`lab/`); press/bounce logs labelled
+> illustrations; register names and internal driver names removed from the screen; cues ported to
+> `vo-plan` word cues. As built: 5:47 (346.6 s).
+
 # GPIO interrupts — storyboard v1 (pure ESP-IDF)
 
 > **Course sections:** this is now in section 3 (Advanced GPIO), after PWM. p1 and f3 say "back in the GPIO input video" instead of "last time" (re-voiced, re-timed); the payoff's "next:" points to ADC.
