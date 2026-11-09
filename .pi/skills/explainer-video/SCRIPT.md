@@ -80,13 +80,25 @@ A call is never shown out of nowhere. Open on the code the learner has in front 
 - **A trap everyone hits gets three lines, not one**: what goes wrong (the picture fills up and runs past the end) → what the system does (the check, the log line, the reboot) → "you will meet this one" + the fix, shown in green. ~25 s. Overflow, dangling pointers, pdPASS ≠ ESP_OK are this kind.
 - **Say the rule, not just the numbers.** A priority ladder with 0, 1, 5, 24 on it doesn't say "higher runs first"; a line does ("when two tasks are ready, the scheduler runs the one with the higher priority first"), with the two contenders on screen.
 
+### Sound like a teacher, not a list (grammar and flow)
+
+The freertos-mutexes review: "the content is great, but it starts and stops; the grammar sounds wrong in places." The script has to read like someone who knows the subject explaining it to a person in front of them, and pulling them along.
+
+- **Whole sentences only.** Every line is grammatical as spoken: subject, verb, object. No headline fragments in the VO ("Two million. Exactly. Every time.", "What you need... only one task may touch total", "That's worse. It hides."). Say them in full: "This time, the total is exactly two million, and it's the same on every run." / "What you need is a simple rule: …" / "…which actually makes it worse: the bug hides, and only shows up once in a while."
+- **Name the thing; never leave a bare pronoun or a missing noun.** "It hides" → "the bug hides". "Read total" → "First, the task reads the value of total."
+- **Signpost what's coming.** Before steps or a mechanism, say what it is: "Behind the scenes, it happens in three steps. First, … Then … Then …". Before the calls: "Let's look at each call, starting with …". Before a run: "Let's flash it, and see what we get."
+- **Join lines with transitions** so each line follows from the last: *so, and, but, now, then, that's why, this time, in that case, there's a catch, though*. A scene should read as one paragraph, not a stack of captions.
+- **Ellipses (`...`) are rare.** At most one or two in a whole video, only where a word truly needs to land. Lots of them make the voice halt and restart all the time. Let commas and full stops do the pacing.
+- **Gaps between lines stay short inside a beat** (0.4–0.6 s). Use 0.8–1.0 s only where the topic really changes, or while a run plays on screen.
+- **Before voicing: read the whole scene aloud, top to bottom,** and check every line for grammar, a clear subject, and a link to the line before it. After voicing, read the vo-plan sheet and the render's transcript the same way. Whisper mishearing a word is fine; a sentence that reads badly is not.
+
 ### Pauses and emphasis
 
 The voice reads every line at one even pace unless you shape it. Shape every line; uneven pauses are what make it sound like someone explaining rather than reading.
 
 - **Between lines: the `pause`** (the silence before a line; default 0.6 s). About **1.0 s for a new beat** or a new view, **0.3–0.4 s** for a line that finishes the previous line's thought, **0.8 s after a question**, and longer when the picture carries the moment alone (a run playing out, presses landing). Never leave every gap at the default.
 - **Inside a line, in `say`** (all measured on the house voice):
-  - `...` = a beat of about 0.5 s, and the words after it are lifted and stressed. Put it right before the words that matter: "The queue copies that... many bytes", "It returns null... instead", "and does it again... forever".
+  - `...` = a beat of about 0.5 s, and the words after it are lifted and stressed. Put it right before the words that matter ("The queue copies that... many bytes"), but keep it rare: see "Sound like a teacher" above.
   - `.` = a new phrase (~0.45 s and a fresh pitch). Split a long line into short sentences rather than chaining clauses with commas.
   - `,` = a short breath (~0.2 s).
   - Capitals do nothing; emphasis comes from the pause before a word and from putting the key word **last** in a short sentence.

@@ -110,4 +110,10 @@ Lessons from the freertos-queues review (now in `SCRIPT.md`, "The problem" and "
 - no hedges ("a shared flag sort of works" was unclear): say exactly what works and what breaks;
 - show the code of both sides together before pulling out each call; every view of a call that moves something shows both ends at once;
 - shape every pause (`pause` per line; `...` before the stressed words in `say`) and read the `‖` pauses on the vo-plan sheet.
+
+Lessons from the freertos-mutexes review (now in `SCRIPT.md`, "Sound like a teacher, not a list"):
+- whole, grammatical sentences only; no headline fragments; name the subject ("the bug hides", not "it hides");
+- signpost ("Behind the scenes, it happens in three steps. First, … Then …") and join lines with transitions;
+- ellipses rarely (too many made the voice stop and start); short gaps inside a beat;
+- read every scene aloud before voicing, and the transcript after, checking grammar and flow.
 After the pass, update `STORYBOARD.md` (an "v2 (review pass)" note + the per-line tables) and `FACTS.md` (facts for cut scenes stay, marked as cut).
