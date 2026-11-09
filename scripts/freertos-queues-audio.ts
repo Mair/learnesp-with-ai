@@ -19,17 +19,16 @@
 import { join } from 'node:path';
 import { biquad, level, master, pad, ROOT, sfx, talkingEnvelope, track, voiceover } from './lib/audio.ts';
 import {
-  ANSWER,
-  ANSWER_ITEMS,
   BLINK_MS,
   CREATE,
-  DEMO,
+  FLAG,
   FULL,
   PAYOFF,
-  PROBLEM,
+  QUEUE,
   RECV,
   RUN_BURST,
   RUN_DEMO,
+  RUN_FLAG,
   type Run,
   SCENES,
   type SceneId,
@@ -37,9 +36,11 @@ import {
   sceneStart,
   SECONDS,
   SEND,
+  TASKS,
   TRAP,
   VO,
   VOICE,
+  WANT,
 } from '../src/scenes/freertos-queues/timeline.ts';
 
 const PUBLIC = join(ROOT, 'public/freertos-queues');
@@ -63,76 +64,6 @@ console.log('── sfx ──');
 const { buf: sfxBuf, tick, thump, clack, buzz, blip } = sfx(T);
 const LED_AMP = 0.02;
 
-// 1 · problem: presses as clacks, the flag checks as faint ticks
-{
-  const P = PROBLEM;
-  const at = (x: number) => abs('problem', x);
-  tick(at(P.button), 2000, 0.08);
-  clack(at(P.press), 0.12);
-  tick(at(P.led), 2000, 0.08);
-  tick(at(P.flag), 2600, 0.06);
-  for (let x = P.checking - 0.6; x < sceneDur('problem') - 0.3; x += 1.2) tick(at(x), 3200, 0.025);
-  clack(at(P.two), 0.12);
-  clack(at(P.two + 0.45), 0.12);
-  buzz(at(P.one), 0.08);
-}
-
-// 2 · the answer: items in and out of the row
-{
-  const A = ANSWER;
-  const at = (x: number) => abs('answer', x);
-  tick(at(A.row), 2000, 0.09);
-  clack(at(A.boxes), 0.1);
-  for (const it of ANSWER_ITEMS) {
-    tick(at(it.in), 2600, 0.07);
-    tick(at(it.out), 2200, 0.06);
-  }
-  tick(at(A.sleeps), 3100, 0.05);
-  thump(at(A.word), 0.22);
-}
-
-// 3 · xQueueCreate
-{
-  const S = CREATE;
-  const at = (x: number) => abs('create', x);
-  tick(at(S.intro.show), 2000, 0.09);
-  thump(at(S.run), 0.2);
-  S.args.forEach((a, i) => tick(at(a), 2600 + 250 * i, 0.08));
-  Object.values(S.views).forEach((v) => tick(at(v), 2000, 0.07));
-  clack(at(S.twenty), 0.12);
-  tick(at(S.heap), 2800, 0.06);
-  buzz(at(S.null), 0.06);
-}
-
-// 4 · xQueueSend
-{
-  const S = SEND;
-  const at = (x: number) => abs('send', x);
-  tick(at(S.intro.show), 2000, 0.09);
-  thump(at(S.run), 0.2);
-  S.args.forEach((a, i) => tick(at(a), 2600 + 250 * i, 0.08));
-  Object.values(S.views).forEach((v) => tick(at(v), 2000, 0.07));
-  clack(at(S.four), 0.1);
-  tick(at(S.keeps), 3100, 0.05);
-  tick(at(S.zero), 2700, 0.06);
-  blip(at(S.pdtrue), 660, 990, 0.05);
-  buzz(at(S.dropped), 0.07);
-}
-
-// 5 · xQueueReceive
-{
-  const S = RECV;
-  const at = (x: number) => abs('receive', x);
-  tick(at(S.intro.show), 2000, 0.09);
-  thump(at(S.run), 0.2);
-  S.args.forEach((a, i) => tick(at(a), 2600 + 250 * i, 0.08));
-  Object.values(S.views).forEach((v) => tick(at(v), 2000, 0.07));
-  clack(at(S.takes), 0.1);
-  tick(at(S.sleeps), 3100, 0.05);
-  blip(at(S.pdtrue), 660, 990, 0.05);
-  tick(at(S.nothing), 2400, 0.06);
-}
-
 /** a lab run, on the scene's clock: presses, items, LED switches, drops */
 const live = (scene: SceneId, run: Run, tOf: (m: number) => number) => {
   const at = (x: number) => abs(scene, x);
@@ -155,15 +86,127 @@ const live = (scene: SceneId, run: Run, tOf: (m: number) => number) => {
   }
 };
 
-// 6 · demo
+/** three blinks from scene time r: a soft tick on every LED switch */
+const blinkTicks = (scene: SceneId, r: number, end = sceneDur(scene) - 0.2) => {
+  for (let k = 0; k < 6; k++) {
+    const x = r + (k * BLINK_MS) / 1000;
+    if (x < end) tick(abs(scene, x), k % 2 ? 2100 : 3000, LED_AMP);
+  }
+};
+
+// 1 · want: the press and its blinks, the missed press, the split, the question
 {
-  const D = DEMO;
-  thump(abs('demo', D.flash), 0.16);
-  live('demo', RUN_DEMO, D.t);
-  blip(abs('demo', D.never), 660, 990, 0.05);
+  const S = WANT;
+  const at = (x: number) => abs('want', x);
+  tick(at(S.button - 0.2), 2000, 0.07);
+  clack(at(S.press), 0.11);
+  blinkTicks('want', S.press + 0.1);
+  tick(at(S.math), 2400, 0.06);
+  tick(at(S.loop), 2000, 0.07);
+  blinkTicks('want', S.miss - 0.7);
+  clack(at(S.miss), 0.1);
+  buzz(at(S.miss + 0.15), 0.06);
+  thump(at(S.split), 0.14);
+  tick(at(S.btask), 2600, 0.06);
+  tick(at(S.ltask), 2800, 0.06);
+  tick(at(S.how), 3100, 0.06);
 }
 
-// 7 · full
+// 2 · flag: the code beats, then the real run (v5) on the scene's clock
+{
+  const S = FLAG;
+  const at = (x: number) => abs('flag', x);
+  tick(at(S.box), 2000, 0.08);
+  tick(at(S.set), 2600, 0.07);
+  tick(at(S.checks), 2800, 0.07);
+  RUN_FLAG.presses.forEach((m) => clack(at(S.t(m)), 0.09));
+  RUN_FLAG.blinks.forEach((m) => blinkTicks('flag', S.t(m)));
+  blip(at(S.works), 660, 990, 0.05);
+  tick(at(S.hundred), 3200, 0.05);
+  buzz(at(S.t(9090) + 0.05), 0.05);
+  buzz(at(S.t(9240) + 0.05), 0.05);
+  buzz(at(S.lost), 0.08);
+}
+
+// 3 · queue: the diagram, the real run (v1) on the scene's clock, the name, the catch
+{
+  const S = QUEUE;
+  const at = (x: number) => abs('queue', x);
+  tick(at(S.row), 2000, 0.08);
+  clack(at(S.boxes), 0.09);
+  tick(at(S.back), 2600, 0.06);
+  tick(at(S.front), 2200, 0.06);
+  tick(at(S.sleeps), 3100, 0.05);
+  live('queue', RUN_DEMO, S.t);
+  blip(at(S.every), 660, 990, 0.05);
+  thump(at(S.word), 0.22);
+  for (let i = 0; i < 5; i++) tick(at(S.full - 1.0 + i * 0.14), 2600, 0.04);
+  buzz(at(S.dropped), 0.07);
+}
+
+// 4 · tasks: the two presses straight through, the lines lighting
+{
+  const S = TASKS;
+  const at = (x: number) => abs('tasks', x);
+  tick(at(S.left - 0.3), 2000, 0.08);
+  tick(at(S.right - 0.3), 2200, 0.08);
+  tick(at(S.send), 2600, 0.07);
+  for (const [tin, tout] of [[S.goesIn - 0.2, S.goesIn + 0.5], [S.comesOut - 0.7, S.comesOut]]) {
+    clack(at(tin - 0.1), 0.08);
+    tick(at(tin), 2600, 0.04);
+    blinkTicks('tasks', tout);
+  }
+  tick(at(S.recv), 2800, 0.07);
+  tick(at(S.same), 3100, 0.06);
+}
+
+// 7 · xQueueCreate
+{
+  const S = CREATE;
+  const at = (x: number) => abs('create', x);
+  tick(at(S.intro.show), 2000, 0.09);
+  thump(at(S.run), 0.2);
+  S.args.forEach((a, i) => tick(at(a), 2600 + 250 * i, 0.08));
+  Object.values(S.views).forEach((v) => tick(at(v), 2000, 0.07));
+  clack(at(S.twenty), 0.12);
+  tick(at(S.heap), 2800, 0.06);
+  buzz(at(S.null), 0.06);
+}
+
+// 5 · xQueueSend
+{
+  const S = SEND;
+  const at = (x: number) => abs('send', x);
+  thump(at(S.run), 0.2);
+  S.args.forEach((a, i) => tick(at(a), 2600 + 250 * i, 0.08));
+  Object.values(S.views).forEach((v) => tick(at(v), 2000, 0.07));
+  clack(at(S.four), 0.1);
+  tick(at(S.keeps), 3100, 0.05);
+  tick(at(S.takes + 0.45), 2200, 0.06);
+  blinkTicks('send', S.takes + 0.45);
+  tick(at(S.zero), 2700, 0.06);
+  buzz(at(S.zero), 0.05);
+  blip(at(S.pdtrue), 660, 990, 0.05);
+  buzz(at(S.dropped), 0.07);
+}
+
+// 6 · xQueueReceive
+{
+  const S = RECV;
+  const at = (x: number) => abs('receive', x);
+  tick(at(S.intro.show), 2000, 0.09);
+  thump(at(S.run), 0.2);
+  S.args.forEach((a, i) => tick(at(a), 2600 + 250 * i, 0.08));
+  Object.values(S.views).forEach((v) => tick(at(v), 2000, 0.07));
+  clack(at(S.takes), 0.1);
+  tick(at(S.adding), 2600, 0.05);
+  tick(at(S.sleeps), 3100, 0.05);
+  tick(at(S.arrives + 0.1), 2600, 0.05);
+  blip(at(S.pdtrue), 660, 990, 0.05);
+  tick(at(S.nothing), 2400, 0.06);
+}
+
+// 8 · full
 {
   const F = FULL;
   live('full', RUN_BURST, F.t);
@@ -171,7 +214,7 @@ const live = (scene: SceneId, run: Run, tOf: (m: number) => number) => {
   tick(abs('full', F.waitT), 3100, 0.05);
 }
 
-// 8 · the trap
+// 9 · the trap
 {
   const S = TRAP;
   const at = (x: number) => abs('trap', x);
@@ -187,7 +230,7 @@ const live = (scene: SceneId, run: Run, tOf: (m: number) => number) => {
   clack(at(S.fix + 0.1), 0.1);
 }
 
-// 9 · payoff
+// 10 · payoff
 thump(abs('payoff', PAYOFF.word - 0.3), 0.45);
 PAYOFF.recap.forEach((r, i) => tick(abs('payoff', r.at), 1600 + 200 * i, 0.08));
 

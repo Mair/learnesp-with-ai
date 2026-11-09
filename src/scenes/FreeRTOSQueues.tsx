@@ -4,34 +4,36 @@
  * Pure ESP-IDF (xQueueCreate, xQueueSend, xQueueReceive, portMAX_DELAY; GPIO as Basic GPIO
  * taught). Every log line is real output from QEMU (./freertos-queues/lab).
  *
- *   1 problem   a shared flag: polling, and two presses seen as one
- *   2 answer    a row of boxes: in at the back, oldest out at the front → QUEUE
- *   3 create    xQueueCreate(5, sizeof(int))
- *   4 send      xQueueSend(press_queue, &presses, 0)
- *   5 receive   xQueueReceive(press_queue, &n, portMAX_DELAY)
- *   6 demo      three quick presses wait, then come out 1.5 s apart, in order
- *   7 full      eight presses, five boxes: 7 and 8 dropped
- *   8 trap      the queue made after the tasks → assert → boot loop
- *   9 payoff    "That's a queue."
+ *   1 want      let's say you want: a press → three blinks; two tasks, left and right
+ *   2 flag      try 1, a shared flag (real run): simple, but it polls and loses a press
+ *   3 queue     try 2, a queue on the same presses (real run): every press, in order → QUEUE
+ *   4 tasks     the code of both tasks, side by side, over the same queue
+ *   5 send      xQueueSend(press_queue, &presses, 0)
+ *   6 receive   xQueueReceive(press_queue, &press, portMAX_DELAY)
+ *   7 create    xQueueCreate(5, sizeof(int))
+ *   8 full      eight presses, five boxes: 7 and 8 dropped
+ *   9 trap      the queue made after the tasks → assert → boot loop
+ *  10 payoff    "That's a queue."
  *
  * Everything — picture AND soundtrack — is driven by ./freertos-queues/timeline.ts.
  */
 import React from 'react';
 import { Audio, Sequence, staticFile } from 'remotion';
-import { Answer } from './freertos-queues/Answer';
 import { Create } from './freertos-queues/Create';
-import { Demo } from './freertos-queues/Demo';
+import { Flag } from './freertos-queues/Flag';
 import { Full } from './freertos-queues/Full';
 import { Payoff } from './freertos-queues/Payoff';
-import { Problem } from './freertos-queues/Problem';
+import { Queue } from './freertos-queues/Queue';
 import { Receive } from './freertos-queues/Receive';
 import { Send } from './freertos-queues/Send';
+import { Tasks } from './freertos-queues/Tasks';
 import { Trap } from './freertos-queues/Trap';
+import { Want } from './freertos-queues/Want';
 import { FPS, QUEUES_FRAMES, sceneDur, SCENES, SceneId, sceneStart } from './freertos-queues/timeline';
 
 export { QUEUES_FRAMES };
 
-const SCENE_COMPONENTS: Record<SceneId, React.FC> = { problem: Problem, answer: Answer, create: Create, send: Send, receive: Receive, demo: Demo, full: Full, trap: Trap, payoff: Payoff };
+const SCENE_COMPONENTS: Record<SceneId, React.FC> = { want: Want, flag: Flag, queue: Queue, tasks: Tasks, send: Send, receive: Receive, create: Create, full: Full, trap: Trap, payoff: Payoff };
 
 export const FreeRTOSQueues: React.FC = () => (
   <>

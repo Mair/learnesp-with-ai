@@ -1,7 +1,8 @@
 /**
- * 5 · xQueueReceive(press_queue, &press, portMAX_DELAY) — the handle; where to copy the item
+ * 6 · xQueueReceive(press_queue, &press, portMAX_DELAY) — the handle; where to copy the item
  * (press); ticks to wait if empty: portMAX_DELAY = forever, asleep, no CPU. pdTRUE = got one;
  * with a time limit, pdFALSE = nothing came (real, v4).
+ * Every view shows both ends: the LED task taking out, the button task putting in.
  */
 import React from 'react';
 import { useCurrentFrame, useVideoConfig } from 'remotion';
@@ -9,22 +10,31 @@ import { Explainer, mono } from '../../components/Explainer';
 import { C, hexA } from '../../theme/palette';
 import { after, Chip, GREEN, LogPanel, QueueRow, rowWidth, Verdict } from './parts';
 import { Intro } from './Intro';
-import { FPS, ledCode, LOG_TIMEOUT, RECV as S, RECV_CALL, RECV_LINE, sceneDur } from './timeline';
+import { FPS, ledCodeShort, LOG_TIMEOUT, RECV as S, RECV_CALL, RECV_SHORT, sceneDur } from './timeline';
 
 const W = rowWidth(5);
+const ROW_X = (1544 - W) / 2;
 
 const IntoView: React.FC<{ t: number }> = ({ t }) => {
   const out = S.oldest + 0.3;
+  const add = S.adding;
   return (
     <div style={{ position: 'absolute', inset: 0 }}>
-      <div style={{ position: 'absolute', left: 60, top: 130 }}>
-        <QueueRow t={t} items={[{ label: '3', in: S.views.into - 1 }, { label: '4', in: S.views.into - 0.9 }].map((i, k) => ({ ...i, out: k === 0 ? out : undefined }))} endsP={1} />
+      <div style={{ position: 'absolute', left: 30, top: 40 }}>
+        <Chip name="button" glow={t >= add - 0.3 && t < add + 0.1 ? 1 : 0} />
       </div>
-      <div style={{ position: 'absolute', left: 60 + W + 110, top: 120, display: 'grid', gap: 10, justifyItems: 'center' }}>
-        <div style={mono(24, C.muted)}>int press</div>
-        <div style={{ width: 130, height: 110, borderRadius: 14, border: `2.5px solid ${hexA(C.amber, 0.8)}`, display: 'grid', placeItems: 'center', ...mono(56, C.amber, { fontWeight: 800 }) }}>{t >= out + 0.4 ? 3 : ''}</div>
+      <div style={{ position: 'absolute', left: ROW_X, top: 60 }}>
+        <QueueRow t={t} items={[{ label: '3', in: -10, out }, { label: '4', in: -9.9 }, { label: '5', in: add }]} endsP={1} />
       </div>
-      <div style={{ position: 'absolute', left: 0, right: 0, top: 380, textAlign: 'center', ...mono(28, C.ink, { fontWeight: 700 }), opacity: after(t, S.takes) }}>
+      <div style={{ position: 'absolute', left: ROW_X - 260, top: 10, ...mono(22, C.cyan, { fontWeight: 700 }), opacity: after(t, add) }}>new presses in →</div>
+      <div style={{ position: 'absolute', left: 1294, top: 40 }}>
+        <Chip name="led" glow={t >= out && t < out + 1.5 ? 1 : 0} />
+      </div>
+      <div style={{ position: 'absolute', left: 1334, top: 150, display: 'grid', gap: 8, justifyItems: 'center' }}>
+        <div style={mono(22, C.muted)}>int press</div>
+        <div style={{ width: 130, height: 100, borderRadius: 14, border: `2.5px solid ${hexA(C.amber, 0.8)}`, display: 'grid', placeItems: 'center', ...mono(54, C.amber, { fontWeight: 800 }) }}>{t >= out + 0.4 ? 3 : ''}</div>
+      </div>
+      <div style={{ position: 'absolute', left: 0, right: 0, top: 400, textAlign: 'center', ...mono(28, C.ink, { fontWeight: 700 }), opacity: after(t, S.takes) }}>
         the oldest → press · <span style={{ color: GREEN }}>and it leaves the queue</span>
       </div>
     </div>
@@ -36,16 +46,19 @@ const WaitView: React.FC<{ t: number }> = ({ t }) => {
   const asleep = t >= S.sleeps && t < arrive + 0.1 ? 1 : 0;
   return (
     <div style={{ position: 'absolute', inset: 0 }}>
-      <div style={{ position: 'absolute', left: 60, top: 110 }}>
-        <QueueRow t={t} items={[{ label: '5', in: arrive - 0.45, out: arrive + 0.1 }]} />
+      <div style={{ position: 'absolute', left: 30, top: 40 }}>
+        <Chip name="button" glow={t >= arrive - 0.75 && t < arrive - 0.4 ? 1 : 0} note={t >= arrive - 0.75 ? 'a press' : undefined} />
       </div>
-      <div style={{ position: 'absolute', left: 60 + W + 120, top: 120 }}>
-        <Chip name="led" sleep={asleep * after(t, S.sleeps)} glow={t >= arrive + 0.1 && t < arrive + 1 ? 1 : 0} note={t >= arrive + 0.1 ? 'awake: got press 5' : t >= S.sleeps ? 'no CPU while it waits' : undefined} />
+      <div style={{ position: 'absolute', left: ROW_X, top: 60 }}>
+        <QueueRow t={t} items={[{ label: '6', in: arrive - 0.55, out: arrive + 0.1 }]} />
       </div>
-      <div style={{ position: 'absolute', left: 60, top: 330, ...mono(30, C.ink, { fontWeight: 700 }), opacity: after(t, S.forever) }}>
+      <div style={{ position: 'absolute', left: 1294, top: 40 }}>
+        <Chip name="led" sleep={asleep * after(t, S.sleeps)} glow={t >= arrive + 0.1 && t < arrive + 1 ? 1 : 0} note={t >= arrive + 0.1 ? 'awake: got press 6' : t >= S.sleeps ? 'no CPU while it waits' : undefined} />
+      </div>
+      <div style={{ position: 'absolute', left: 0, right: 0, top: 300, textAlign: 'center', ...mono(30, C.ink, { fontWeight: 700 }), opacity: after(t, S.forever) }}>
         <span style={{ color: C.magenta }}>portMAX_DELAY</span> = wait forever
       </div>
-      <div style={{ position: 'absolute', left: 60, top: 390, ...mono(22, C.muted), opacity: after(t, S.forever + 0.5) }}>blocked, like vTaskDelay · woken by the next item</div>
+      <div style={{ position: 'absolute', left: 0, right: 0, top: 360, textAlign: 'center', ...mono(22, C.muted), opacity: after(t, S.forever + 0.5) }}>blocked, like vTaskDelay · woken by the next item</div>
     </div>
   );
 };
@@ -86,12 +99,12 @@ export const Receive: React.FC = () => {
         ]}
         captions={S.captions}
         views={[
-          { at: V.into, component: IntoView, active: [1], label: 'the oldest item, copied into press', accent: C.amber },
+          { at: V.into, component: IntoView, active: [1], label: 'the oldest item, copied into press · both ends', accent: C.amber },
           { at: V.wait, component: WaitView, active: [2], label: 'when the queue is empty', accent: C.magenta },
           { at: V.ret, component: ReturnView, active: [], label: 'the return value', accent: GREEN },
         ]}
       />
-      <Intro t={t} show={S.intro.show} out={S.intro.out} label="main/main.c · led_task" code={ledCode} lit={[ledCode.indexOf(RECV_LINE)]} size={24} top={170} />
+      <Intro t={t} show={S.intro.show} out={S.intro.out} label="main/main.c · led_task" code={ledCodeShort} lit={[ledCodeShort.indexOf(RECV_SHORT)]} size={24} top={170} />
     </>
   );
 };

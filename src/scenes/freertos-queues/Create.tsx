@@ -1,5 +1,5 @@
 /**
- * 3 · xQueueCreate(5, sizeof(int)) — length 5, item size 4 bytes (sizeof(int)); every item
+ * 7 · xQueueCreate(5, sizeof(int)) — length 5, item size 4 bytes (sizeof(int)); every item
  * the same size, copied; 5 × 4 = 20 bytes + bookkeeping from the heap, once; returns the
  * handle both tasks use (NULL if the heap is too full); from freertos/queue.h.
  */
@@ -26,7 +26,8 @@ const SizeView: React.FC<{ t: number }> = ({ t }) => (
     <div style={{ ...mono(34, C.ink, { fontWeight: 700 }), opacity: after(t, S.int) }}>
       sizeof(int) = <span style={{ color: C.amber }}>4</span> bytes
     </div>
-    <div style={{ ...mono(24, C.muted), opacity: after(t, S.same) }}>every item the same size · the queue copies 4 bytes each time</div>
+    <div style={{ ...mono(24, C.muted), opacity: after(t, S.same) }}>every item the same size</div>
+    <div style={{ ...mono(46, C.amber, { fontWeight: 800 }), opacity: after(t, S.many - 0.1), transform: `scale(${0.9 + 0.1 * after(t, S.many - 0.1)})` }}>4 bytes copied, every time</div>
   </div>
 );
 
