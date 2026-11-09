@@ -1,5 +1,12 @@
 # FreeRTOS queues: storyboard v2 (review pass)
 
+## v2.1 (narration pass)
+
+The VO now follows `SCRIPT.md` "Sound like a teacher, not a list": the 21 "..." beats are gone
+(only "that... many bytes" stays, as asked), and fragments ("Press once.", "It works. And it's
+simple.", "Every press. Nothing lost.") became whole sentences. Structure and visuals unchanged.
+As built: 5:53 (353.2 s).
+
 ## v2 (review pass)
 
 The user's notes on the v1 render (4:11), and what changed:
