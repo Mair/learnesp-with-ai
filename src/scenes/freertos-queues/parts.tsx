@@ -145,8 +145,8 @@ export const QueueRow: React.FC<{
 
 export const TASK_COL: Record<string, string> = { button: C.cyan, led: C.amber };
 
-export const Chip: React.FC<{ name: string; sleep?: number; glow?: number; note?: React.ReactNode; w?: number }> = ({ name, sleep = 0, glow = 0, note, w = 220 }) => {
-  const col = TASK_COL[name] ?? '#9aa7ff';
+export const Chip: React.FC<{ name: string; sleep?: number; glow?: number; note?: React.ReactNode; w?: number; color?: string }> = ({ name, sleep = 0, glow = 0, note, w = 220, color }) => {
+  const col = color ?? TASK_COL[name] ?? '#9aa7ff';
   return (
     <div style={{ position: 'relative', width: w, height: 84, opacity: 1 - 0.45 * sleep }}>
       <div
@@ -264,7 +264,7 @@ export const Snippet: React.FC<{ t: number; title: string; color: string; lines:
 
 /** ✓ / ✗ score for each try: the flag (left column), the queue (right) */
 export type ScoreRow = { at: number; ok: boolean; text: string };
-export const ScoreCard: React.FC<{ t: number; flag: ScoreRow[]; queue?: ScoreRow[]; dimFlag?: number; queueShow?: number }> = ({ t, flag, queue = [], dimFlag = 0, queueShow = 0 }) => {
+export const ScoreCard: React.FC<{ t: number; flag: ScoreRow[]; queue?: ScoreRow[]; dimFlag?: number; queueShow?: number; titles?: [string, string] }> = ({ t, flag, queue = [], dimFlag = 0, queueShow = 0, titles = ['try 1 · shared flag', 'try 2 · queue'] }) => {
   const col = (title: string, rows: ScoreRow[], op: number) => (
     <div style={{ display: 'grid', alignContent: 'start', gap: 12, opacity: op }}>
       <div style={mono(17, C.muted, { letterSpacing: '.2em', textTransform: 'uppercase' })}>{title}</div>
@@ -277,8 +277,8 @@ export const ScoreCard: React.FC<{ t: number; flag: ScoreRow[]; queue?: ScoreRow
   );
   return (
     <div style={{ boxSizing: 'border-box', width: 760, borderRadius: 18, border: '1px solid rgba(255,255,255,.1)', background: `linear-gradient(165deg, ${hexA(C.purple, 0.15)}, rgba(10,4,32,.8))`, padding: '22px 28px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 26, minHeight: 230 }}>
-      {col('try 1 · shared flag', flag, 1 - 0.45 * dimFlag)}
-      {col('try 2 · queue', queue, queueShow)}
+      {col(titles[0], flag, 1 - 0.45 * dimFlag)}
+      {col(titles[1], queue, queueShow)}
     </div>
   );
 };

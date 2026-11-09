@@ -9,6 +9,7 @@ import { FreeRTOSDelayUntil, UNTIL_FRAMES } from './scenes/FreeRTOSDelayUntil';
 import { CORES_FRAMES, FreeRTOSTwoCores } from './scenes/FreeRTOSTwoCores';
 import { FreeRTOSStacksWatchdog, STACKS_FRAMES } from './scenes/FreeRTOSStacksWatchdog';
 import { FreeRTOSQueues, QUEUES_FRAMES } from './scenes/FreeRTOSQueues';
+import { FreeRTOSMutexes, MUTEXES_FRAMES } from './scenes/FreeRTOSMutexes';
 import { GPIOInterrupts, IRQ_FRAMES } from './scenes/GPIOInterrupts';
 import { PWM, PWM_FRAMES } from './scenes/PWM';
 import { BasicGPIOIntro, BASIC_INTRO_FRAMES } from './scenes/BasicGPIOIntro';
@@ -206,6 +207,19 @@ export const RemotionRoot: React.FC = () => (
         </Stage>
       )}
       durationInFrames={QUEUES_FRAMES}
+      fps={FPS}
+      width={W}
+      height={H}
+    />
+    {/* FreeRTOS mutexes (pure ESP-IDF): xSemaphoreCreateMutex, xSemaphoreTake, xSemaphoreGive */}
+    <Composition
+      id="FreeRTOSMutexes"
+      component={() => (
+        <Stage floor={false}>
+          <FreeRTOSMutexes />
+        </Stage>
+      )}
+      durationInFrames={MUTEXES_FRAMES}
       fps={FPS}
       width={W}
       height={H}

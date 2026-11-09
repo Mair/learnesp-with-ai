@@ -1,4 +1,27 @@
-# FreeRTOS mutexes: storyboard v1
+# FreeRTOS mutexes: storyboard v2 (flow and grammar pass)
+
+- **v2 (review):** "content and structure great; the flow stops and starts, some grammar
+  sounds wrong; be explicit." Every VO line rewritten as whole, joined sentences with
+  transitions; nearly all `...` removed; gaps 0.4–0.6 s inside a beat. Specific notes:
+  0:48 → "Behind the scenes, it happens in three steps. First, the task reads the value of
+  total. Then it adds one to it. Then it writes the new value back." (plus an on-screen
+  "behind the scenes, total++ is three steps"); 1:08 "That's worse. It hides." → "…which
+  actually makes it worse: the bug hides, and only shows up once in a while."; 1:14 → "What
+  you need is a simple rule: only one task at a time is allowed to change total." Rules added
+  to `SCRIPT.md` ("Sound like a teacher, not a list"). As built: 5:59 (358.6 s). The
+  per-line tables below are v1; `VO` in `timeline.ts` is the script as built.
+
+# v1
+
+- **As built:** 5:04 (304.5 s), 10 scenes. Wording changed for the voice / Whisper:
+  work_a / work_b are spoken "Work-A" / "Work-B"; "adds" → "counts" (heard as "ads");
+  r1 ends "It's short and simple." (the ✓); m3 "…then hands it back"; t2 "straight away";
+  `semphr.h` is spoken "semaphore dot H" (on screen: `semphr = semaphore`); s2 "Keep your
+  own count, in a variable called mine."; x2 "So you put a break inside the locked part."
+- The race and mutex runs are shown on a static picture plus the real log (no real-time
+  clock): the runs take ~0 s and ~23.5 s in QEMU, said once, labelled "recorded in QEMU · a
+  board's times differ".
+- The code scene's two cursors are an illustration of who holds the key (not a trace).
 
 - Slug `freertos-mutexes`, composition `FreeRTOSMutexes`, output
   `out/2-freertos/freertos-mutexes.mp4`, about 6 min. After `freertos-queues`; next:
