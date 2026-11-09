@@ -1,0 +1,98 @@
+Adding SPI flash device
+ets Jul 29 2019 12:21:46
+rst:0x1 (POWERON_RESET),boot:0x12 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0040,len:6272
+load:0x40078000,len:15820
+load:0x40080400,len:3920
+entry 0x40080644
+I (707) boot: ESP-IDF v6.0.2 2nd stage bootloader
+I (708) boot: compile time Nov 10 2026 08:30:39
+I (708) boot: Multicore bootloader
+I (759) boot: chip revision: v0.0
+I (761) boot.esp32: SPI Speed      : 40MHz
+I (761) boot.esp32: SPI Mode       : DIO
+I (762) boot.esp32: SPI Flash Size : 2MB
+I (769) boot: Enabling RNG early entropy source...
+I (782) boot: Partition Table:
+I (782) boot: ## Label            Usage          Type ST Offset   Length
+I (782) boot:  0 nvs              WiFi data        01 02 00009000 00006000
+I (783) boot:  1 phy_init         RF data          01 01 0000f000 00001000
+I (783) boot:  2 factory          factory app      00 00 00010000 00100000
+I (787) boot: End of partition table
+I (851) esp_image: segment 0: paddr=00010020 vaddr=3f400020 size=08528h ( 34088) map
+I (873) esp_image: segment 1: paddr=00018550 vaddr=3ffb0000 size=029fch ( 10748) load
+I (890) esp_image: segment 2: paddr=0001af54 vaddr=40080000 size=050c4h ( 20676) load
+I (923) esp_image: segment 3: paddr=00020020 vaddr=400d0020 size=0bfa0h ( 49056) map
+I (965) esp_image: segment 4: paddr=0002bfc8 vaddr=400850c4 size=05acch ( 23244) load
+I (984) esp_image: segment 5: paddr=00031a9c vaddr=50000000 size=00028h (    40) load
+I (1082) boot: Loaded app from partition at offset 0x10000
+I (1082) boot: Disabling RNG early entropy source...
+I (1101) cpu_start: Multicore app
+I (1904) cpu_start: GPIO 3 and 1 are used as console UART I/O pins
+I (1910) cpu_start: Pro cpu start user code
+I (1913) cpu_start: cpu freq: 160000000 Hz
+I (1913) app_init: Application information:
+I (1913) app_init: Project name:     two_cores
+I (1913) app_init: App version:      bbf8c1c-dirty
+I (1913) app_init: Compile time:     Nov 10 2026 08:30:34
+I (1914) app_init: ELF file SHA256:  b9e1bfa99...
+I (1914) app_init: ESP-IDF:          v6.0.2
+I (1914) efuse_init: Min chip rev:     v0.0
+I (1917) efuse_init: Max chip rev:     v3.99 
+I (1917) efuse_init: Chip rev:         v0.0
+I (1918) heap_init: Initializing. RAM available for dynamic allocation:
+I (1920) heap_init: At 3FFAE6E0 len 00001920 (6 KiB): DRAM
+I (1921) heap_init: At 3FFB33A0 len 0002CC60 (179 KiB): DRAM
+I (1921) heap_init: At 3FFE0440 len 00003AE0 (14 KiB): D/IRAM
+I (1921) heap_init: At 3FFE4350 len 0001BCB0 (111 KiB): D/IRAM
+I (1921) heap_init: At 4008AB90 len 00015470 (85 KiB): IRAM
+I (1950) spi_flash: detected chip: gd
+I (1954) spi_flash: flash io: dio
+W (1958) spi_flash: Detected size(4096k) larger than the size in the binary image header(2048k). Using the size in the binary image header.
+I (1967) main_task: Started on CPU0
+I (1967) main_task: Calling app_main()
+I (1967) main_task: Returned from app_main()
+I (1967) cores: work_a on core 1
+I (1977) cores: work_b on core 1
+I (2377) cores: work_a on core 1
+I (2387) cores: work_b on core 1
+I (2777) cores: work_a on core 1
+I (2797) cores: work_b on core 1
+I (3177) cores: work_a on core 1
+I (3197) cores: work_b on core 1
+I (3587) cores: work_a on core 1
+I (3607) cores: work_b on core 1
+I (3997) cores: work_a on core 1
+I (4017) cores: work_b on core 1
+I (4407) cores: work_a on core 1
+I (4427) cores: work_b on core 1
+I (4817) cores: work_a on core 1
+I (4837) cores: work_b on core 1
+I (5227) cores: work_a on core 1
+I (5247) cores: work_b on core 1
+I (5637) cores: work_a on core 1
+I (5657) cores: work_b on core 1
+I (6047) cores: work_a on core 1
+I (6067) cores: work_b on core 1
+I (6457) cores: work_a on core 1
+I (6477) cores: work_b on core 1
+I (6867) cores: work_a on core 1
+I (6887) cores: work_b on core 1
+I (7277) cores: work_a on core 1
+I (7297) cores: work_b on core 1
+I (7687) cores: work_a on core 1
+I (7707) cores: work_b on core 1
+I (8087) cores: work_a on core 1
+I (8107) cores: work_b on core 1
+I (8497) cores: work_a on core 1
+I (8517) cores: work_b on core 1
+I (8897) cores: work_a on core 1
+I (8917) cores: work_b on core 1
+I (9307) cores: work_a on core 1
+I (9327) cores: work_b on core 1
+I (9717) cores: work_a on core 1
+I (9737) cores: work_b on core 1
+qemu-system-xtensa: terminating on signal 15 from pid 364802 (timeout)

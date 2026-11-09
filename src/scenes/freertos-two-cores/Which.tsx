@@ -49,12 +49,14 @@ const NameView: React.FC<{ t: number }> = ({ t }) => (
 
 const ms2 = (ms: number) => ms + 331;
 
+/** QEMU, lab/logs/v0.log: the workers pinned to core 1 */
+const PINNED_LOG = ["I (1967) cores: work_a on core 1", "I (1977) cores: work_b on core 1", "I (2377) cores: work_a on core 1", "I (2387) cores: work_b on core 1", "I (2777) cores: work_a on core 1", "I (2797) cores: work_b on core 1"];
+
 const PinnedLog: React.FC<{ t: number }> = ({ t }) => {
-  const starts = simPinned().starts.slice(0, 6);
   const t0 = S.always - 0.6;
   return (
     <div style={{ position: 'absolute', inset: 0, display: 'grid', alignContent: 'start', gap: 16, paddingTop: 20 }}>
-      <SerialLog t={t} size={21} label="pinned to core 1 · worked out from the rules" lines={starts.map((s, i) => ({ at: t0 + i * 0.32, text: `I (${ms2(s.t)}) cores: ${s.task} on core ${s.core}`, color: i % 2 ? '#b9c6ff' : '#e0c8ff' }))} />
+      <SerialLog t={t} size={21} label="pinned to core 1 · recorded in QEMU" lines={PINNED_LOG.map((l, i) => ({ at: t0 + i * 0.32, text: l, color: i % 2 ? '#b9c6ff' : '#e0c8ff' }))} />
       <div style={{ ...mono(24, GREEN, { fontWeight: 700 }), opacity: after(t, S.always) }}>always core 1 ✓</div>
     </div>
   );

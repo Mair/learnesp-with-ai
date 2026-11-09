@@ -119,9 +119,9 @@ const WrongView: React.FC<{ t: number }> = ({ t }) => (
       <SerialLog
         t={t}
         size={24}
-        label="idf.py monitor"
+        label="recorded in QEMU"
         lines={[
-          { at: S.assert, text: 'assert failed: xTaskCreatePinnedToCore …', color: RED },
+          { at: S.assert, text: 'assert failed: xTaskCreatePinnedToCore freertos_tasks_c_additions.h:161 …', color: RED },
           { at: S.assert + 0.9, text: '(the program stops)', color: C.muted },
         ]}
       />

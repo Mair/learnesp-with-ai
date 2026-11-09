@@ -50,7 +50,7 @@ export const Demo: React.FC = () => {
           </Panel>
         </div>
         <div style={{ position: 'absolute', left: 944, top: 116, width: 816, height: 370 }}>
-          <SerialLog t={t} size={21} label="idf.py monitor" lines={shown} />
+          <SerialLog t={t} size={21} label="illustration · worked out from the rules" lines={shown} />
         </div>
         <div style={{ position: 'absolute', left: 160, top: 504, width: 1600, height: 424, opacity: after(t, D.flash) }}>
           <Panel label="the last 4 seconds" accent={t >= D.free ? GREEN : C.amber} right="real time · worked out from the rules · LED slivers drawn wider">

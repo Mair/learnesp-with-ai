@@ -1,3 +1,8 @@
+> **v2 (narration pass):** VO rewritten to `SCRIPT.md` "Sound like a teacher, not a list"; opens
+> "Let's say you want the LEDs from the scheduler video to keep their beat…"; the pinned log and
+> the core-2 assert are real QEMU output; the model's logs are labelled illustrations. As built:
+> 3:26 (206.4 s).
+
 # FreeRTOS two cores: storyboard v1 (simple English, as built)
 
 - **As built:** VO lines are in `timeline.ts` (`VO`), timed by `scripts/vo-plan.ts`; 3:17. Wording changed where the voice or Whisper needed it: h1 "Which core should the workers use?" ("pick" → heard "course"), a3/t5 "A task you pin…" ("a pinned task" was heard "a pin task"), e5 "One pins the task to core 1", c7 "With pinning, they always say core 1", t6 "Only pin a task when you have a reason", z1 "…That's how you use both cores." ("That's two cores" was heard "too coarse"). The scenes' slugs: problem, answer, home, pin, which, demo, price, payoff.

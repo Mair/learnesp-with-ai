@@ -24,6 +24,19 @@ priorities take turns a tick at a time, the idle task per core, the task watchdo
 pinned to CPU 0 at priority 1 (freertos-tasks); `ESP_LOGI` (gpio-input);
 `esp_timer_get_time()` and the busy worker (freertos-scheduler).
 
+
+## Lab (v2, narration pass)
+
+`lab/main/main.c`, ESP-IDF v6.0.2, Espressif QEMU `esp_develop_9.2.2_20250817`; logs in
+`lab/logs/`.
+
+- v0, the workers pinned to core 1, printing their core each loop: `I (1967) cores: work_a on core
+  1` / `I (1977) cores: work_b on core 1` / `I (2377) …` — shown in the "which core" view.
+- v1, `xTaskCreatePinnedToCore(…, 2)`: `assert failed: xTaskCreatePinnedToCore
+  freertos_tasks_c_additions.h:161 (…xCoreID… < 2 …)` → reboot.
+- The unpinned lanes and log, and the demo's log, stay **worked out from the rules** (`sim.ts`) and
+  are labelled so: QEMU keeps unpinned busy tasks on core 0 (see `freertos-scheduler/FACTS.md`).
+
 ## The program
 
 The scheduler video's program without the button: the same two LED tasks (GPIO 2

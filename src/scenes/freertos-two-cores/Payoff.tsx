@@ -18,7 +18,7 @@ export const Payoff: React.FC = () => {
   return (
     <Scene durationInFrames={Math.round(sceneDur('payoff') * FPS)}>
       <AbsoluteFill style={{ display: 'grid', placeItems: 'center', alignContent: 'center', gap: 26 }}>
-        <div style={{ fontSize: 50, fontWeight: 700, color: C.ink, opacity: first, transform: `translateY(${(1 - first) * 14}px)` }}>Pin a task when you have a reason. Otherwise, let FreeRTOS choose.</div>
+        <div style={{ fontSize: 50, fontWeight: 700, color: C.ink, opacity: first, transform: `translateY(${(1 - first) * 14}px)` }}>Only pin a task when you have a reason. Otherwise, let FreeRTOS choose.</div>
         <div style={{ ...GRAD_TEXT, fontSize: 104, fontWeight: 800, letterSpacing: '.01em', opacity: hit, transform: `scale(${0.92 + 0.08 * hit})` }}>That's how you use both cores.</div>
         <div style={{ display: 'grid', gap: 10, marginTop: 10 }}>
           {P.recap.map((r) => {
