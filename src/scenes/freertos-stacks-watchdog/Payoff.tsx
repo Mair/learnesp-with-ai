@@ -18,7 +18,7 @@ export const Payoff: React.FC = () => {
   return (
     <Scene durationInFrames={Math.round(sceneDur('payoff') * FPS)}>
       <AbsoluteFill style={{ display: 'grid', placeItems: 'center', alignContent: 'center', gap: 26 }}>
-        <div style={{ fontSize: 46, fontWeight: 700, color: C.ink, opacity: first, transform: `translateY(${(1 - first) * 14}px)` }}>Measure your stacks. Let the watchdog watch the tasks that matter.</div>
+        <div style={{ fontSize: 46, fontWeight: 700, color: C.ink, opacity: first, transform: `translateY(${(1 - first) * 14}px)` }}>Measure your stacks, and let the watchdog watch the tasks that matter.</div>
         <div style={{ ...GRAD_TEXT, fontSize: 104, fontWeight: 800, letterSpacing: '.01em', opacity: hit, transform: `scale(${0.92 + 0.08 * hit})` }}>That's stacks and the watchdog.</div>
         <div style={{ display: 'grid', gap: 10, marginTop: 10 }}>
           {P.recap.map((r) => {

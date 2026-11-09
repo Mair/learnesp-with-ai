@@ -1,3 +1,8 @@
+> **v2 (narration pass):** VO revised to `SCRIPT.md` "Sound like a teacher, not a list"; opens
+> "Let's say you want to give each task just the stack it needs."; fragment lines ("Don't guess.
+> Measure it.", "Stack overflow. The chip restarts.", "Looks fine.") became whole sentences. Logs
+> were already real (`lab/`). As built: 5:44 (343.7 s).
+
 # FreeRTOS stacks & watchdog: storyboard v1 (simple English, as built)
 
 - **As built:** 5:33. VO lines are in `timeline.ts` (`VO`), timed by `scripts/vo-plan.ts`.
