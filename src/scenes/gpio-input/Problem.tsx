@@ -1,6 +1,6 @@
 /**
  * 1 · THE PROBLEM
- * "Last time, the ESP32 drove an LED. Now let's go the other way, and let it listen to a button."
+ * "Let's say you want your program to know when someone presses a button." (v3: opens on the want)
  * "Wire the button from a pin to ground. Press it, and the pin is tied to zero volts. The program reads zero."
  * "But let go, and the pin is connected to nothing at all. It floats. …"
  * "So how do you give a pin a level when nothing is driving it?"
@@ -46,7 +46,7 @@ export const Problem: React.FC = () => {
       <AbsoluteFill>
         <div style={{ position: 'absolute', top: 40, width: '100%', display: 'grid', placeItems: 'center' }}>
           <Kicker delay={0.1} accent="amber">
-            The problem
+            Let's say you want…
           </Kicker>
         </div>
 

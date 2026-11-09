@@ -15,7 +15,7 @@ import { useCurrentFrame, useVideoConfig } from 'remotion';
 import { GREEN, mono, RED } from '../../components/Explainer';
 import { C, FONT, hexA } from '../../theme/palette';
 import { after, BIG_H, BIG_W, Pill, SerialLog, ViewStage } from './parts';
-import { bounceLow, COUNT as S, countFalls, FPS, sceneDur, TICK_MS } from './timeline';
+import { bounceLow, COUNT as S, countFalls, FPS, LOG_PRESS, sceneDur, TICK_MS } from './timeline';
 
 export const Count: React.FC = () => {
   const frame = useCurrentFrame();
@@ -127,7 +127,7 @@ const EdgeView: React.FC<{ t: number }> = ({ t }) => {
           <span style={mono(34, GREEN, { fontWeight: 800 })}>presses = 1 ✓</span>
         </div>
         <div style={{ opacity: falls, width: 700 }}>
-          <SerialLog t={t} lines={[{ at: e.falls + 0.2, text: 'I (5230) button: presses: 1', color: GREEN }]} size={22} label="idf.py monitor" />
+          <SerialLog t={t} lines={[{ at: e.falls + 0.2, text: LOG_PRESS, color: GREEN }]} size={22} label="recorded in QEMU · the press is simulated" />
         </div>
       </div>
     </div>

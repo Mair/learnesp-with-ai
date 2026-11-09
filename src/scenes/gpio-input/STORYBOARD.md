@@ -1,3 +1,9 @@
+> **v3 (narration pass):** VO rewritten to `SCRIPT.md` "Sound like a teacher, not a list";
+> opens on the want ("Let's say you want your program to know when someone presses a button.")
+> and the obvious first try (a button to ground, no pull → it floats); log lines are real QEMU
+> output (`lab/`); cues are `vo-plan` word cues. Scenes and visuals unchanged. As built: 6:26
+> (385.7 s). `VO` in `timeline.ts` is the script as built.
+
 # GPIO input — storyboard v1 (as built)
 
 > **Course order change:** `pwm` now sits between `gpio` and this video, so "last time" no longer means the GPIO output video. r1 and s4 were reworded to not depend on it, and the payoff's "next:" now points to the FreeRTOS section.

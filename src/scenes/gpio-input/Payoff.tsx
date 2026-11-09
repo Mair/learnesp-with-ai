@@ -1,5 +1,5 @@
 /**
- * 12 · PAYOFF — "Make it an input. Give it a pull. Read its level. That's a GPIO input."
+ * 12 · PAYOFF — "So: make the pin an input, give it a pull, and read its level. That's a GPIO input."
  * + the recap, ending on polling's limit, which the interrupts video picks up.
  */
 import React from 'react';
@@ -15,9 +15,9 @@ export const Payoff: React.FC = () => {
   const t = frame / fps;
   const hit = after(t, P.line, 0.5);
   const words = [
-    { at: P.input, s: 'Make it an input.' },
-    { at: P.pull, s: 'Give it a pull.' },
-    { at: P.level, s: 'Read its level.' },
+    { at: P.input, s: 'Make the pin an input,' },
+    { at: P.pull, s: 'give it a pull,' },
+    { at: P.level, s: 'and read its level.' },
   ];
   return (
     <Scene durationInFrames={Math.round(sceneDur('payoff') * FPS)}>

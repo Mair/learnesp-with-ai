@@ -16,6 +16,18 @@ instead of `SOC_GPIO_SUPPORT_RTC_INDEPENDENT`. Fixed while re-checking: the
 `PIN_FUNC_GPIO` = 2, so pin 18 prints `FuncSel: 2 (GPIO)`.
 Facts already proven in `src/scenes/gpio/FACTS.md` (output video) are referenced, not repeated.
 
+
+## Lab: the log lines on screen are real (v3, narration pass)
+
+`lab/main/main.c`, ESP-IDF v6.0.2 (target `esp32`, defaults), Espressif QEMU
+`esp_develop_9.2.2_20250817`. Raw logs: `lab/logs/`. QEMU has no button: variant 2 scripts one
+press (down 2000–2100 ms after the scheduler started).
+
+- v1, `gpio_set_pull_mode(GPIO_NUM_34, GPIO_PULLUP_ONLY)`, return value printed:
+  `E (1583) gpio: gpio_pullup_en(88): GPIO number error (input-only pad has no internal PU)` /
+  `I (1583) lab: gpio_set_pull_mode returned ESP_OK` → logs an error, returns ESP_OK anyway.
+- v2, the count loop with one simulated press: `I (5085) button: presses: 1`.
+
 ## The program
 
 ```c

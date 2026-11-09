@@ -13,7 +13,7 @@ import { useCurrentFrame, useVideoConfig } from 'remotion';
 import { Explainer, GREEN, mono, RED, VIEW_H as H } from '../../components/Explainer';
 import { C, FONT, hexA } from '../../theme/palette';
 import { after, clamp01, InputPin, Pill, pinState, Verdict } from './parts';
-import { FPS, PULL as S, PULL_UA, sceneDur } from './timeline';
+import { FPS, LOG_PULL_34, PULL as S, PULL_UA, sceneDur } from './timeline';
 
 const ARG_COLOR = [C.pink, C.amber];
 
@@ -36,7 +36,7 @@ export const Pull: React.FC = () => {
         { at: V.modes, component: ModesView, active: [1], label: 'gpio_pull_mode_t · inside the pin', accent: C.amber, right: () => 'hal/gpio_types.h' },
         { at: V.current, component: CurrentView, active: [1], label: 'how strong is a pull-up?', accent: C.amber, right: () => 'datasheet · RPU ≈ 45 kΩ' },
         { at: V.already, component: AlreadyView, active: [0, 1], label: 'reset already did this — so why?', accent: C.cyan, right: () => 'gpio.c · gpio_reset_pin' },
-        { at: V.gpio34, component: Gpio34View, active: [0], label: 'GPIO 34–39 have no pull resistors', accent: RED, right: () => 'idf.py monitor' },
+        { at: V.gpio34, component: Gpio34View, active: [0], label: 'GPIO 34–39 have no pull resistors', accent: RED, right: () => 'recorded in QEMU' },
       ]}
     />
   );
@@ -171,8 +171,8 @@ const Gpio34View: React.FC<{ t: number }> = ({ t }) => {
         </div>
         <div style={{ opacity: none, fontSize: 22, color: C.muted }}>GPIO 34–39: input only — no pull resistors in the pad</div>
         <div style={{ ...box('rgba(255,255,255,.14)'), opacity: log }}>
-          <div style={mono(15, C.muted, { letterSpacing: '.14em', marginBottom: 8 })}>IDF.PY MONITOR</div>
-          <div style={mono(18, RED)}>E (…) gpio: gpio_pullup_en(88): GPIO number error (input-only pad has no internal PU)</div>
+          <div style={mono(15, C.muted, { letterSpacing: '.14em', marginBottom: 8 })}>RECORDED IN QEMU</div>
+          <div style={mono(18, RED)}>{LOG_PULL_34}</div>
         </div>
         <div style={{ opacity: ok, ...mono(28, C.ink) }}>
           …then returns <b style={{ color: C.amber }}>ESP_OK</b> <span style={{ color: C.muted, fontSize: 22 }}>(gpio_set_pull_mode ignores it)</span>
