@@ -43,7 +43,12 @@
     "vscode-spike": "npm run vscode-spike:audio && remotion render VSCodeSpike out/spikes/vscode-spike.mp4",
     "install-esp-idf:take": "node --disable-warning=ExperimentalWarning capture/takes/install-esp-idf.ts",
     "install-esp-idf:audio": "node --disable-warning=ExperimentalWarning scripts/install-esp-idf-audio.ts",
-    "install-esp-idf": "npm run install-esp-idf:audio && remotion render InstallESPIDF out/0-setup/install-esp-idf.mp4"
+    "install-esp-idf": "npm run install-esp-idf:audio && remotion render InstallESPIDF out/0-setup/install-esp-idf.mp4",
+    "first-project:take": "node --disable-warning=ExperimentalWarning capture/takes/first-project.ts",
+    "first-project:audio": "node --disable-warning=ExperimentalWarning scripts/first-project-audio.ts",
+    "first-project": "npm run first-project:audio && remotion render FirstProject out/0-setup/first-project.mp4",
+    "freertos-priority-inversion:audio": "node --disable-warning=ExperimentalWarning scripts/freertos-priority-inversion-audio.ts",
+    "freertos-priority-inversion": "npm run freertos-priority-inversion:audio && remotion render FreeRTOSPriorityInversion out/2-freertos/freertos-priority-inversion.mp4"
   },
   "dependencies": {
     "@remotion/cli": "^4.0.535",

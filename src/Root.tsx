@@ -10,6 +10,7 @@ import { CORES_FRAMES, FreeRTOSTwoCores } from './scenes/FreeRTOSTwoCores';
 import { FreeRTOSStacksWatchdog, STACKS_FRAMES } from './scenes/FreeRTOSStacksWatchdog';
 import { FreeRTOSQueues, QUEUES_FRAMES } from './scenes/FreeRTOSQueues';
 import { FreeRTOSMutexes, MUTEXES_FRAMES } from './scenes/FreeRTOSMutexes';
+import { FreeRTOSPriorityInversion, INVERSION_FRAMES } from './scenes/FreeRTOSPriorityInversion';
 import { GPIOInterrupts, IRQ_FRAMES } from './scenes/GPIOInterrupts';
 import { PWM, PWM_FRAMES } from './scenes/PWM';
 import { BasicGPIOIntro, BASIC_INTRO_FRAMES } from './scenes/BasicGPIOIntro';
@@ -17,6 +18,7 @@ import { FreeRTOSIntro, FREERTOS_INTRO_FRAMES } from './scenes/FreeRTOSIntro';
 import { AdvancedGPIOIntro, ADVANCED_INTRO_FRAMES } from './scenes/AdvancedGPIOIntro';
 import { VSCodeSpike, SPIKE_FRAMES } from './scenes/vscode-spike/VSCodeSpike';
 import { InstallESPIDF, INSTALL_FRAMES } from './scenes/install-esp-idf/InstallESPIDF';
+import { FirstProject, FIRST_FRAMES } from './scenes/first-project/FirstProject';
 
 const W = 1920;
 const H = 1080;
@@ -234,6 +236,18 @@ export const RemotionRoot: React.FC = () => (
       width={W}
       height={H}
     />
+    <Composition
+      id="FreeRTOSPriorityInversion"
+      component={() => (
+        <Stage floor={false}>
+          <FreeRTOSPriorityInversion />
+        </Stage>
+      )}
+      durationInFrames={INVERSION_FRAMES}
+      fps={FPS}
+      width={W}
+      height={H}
+    />
     {/* Setup: install VS Code, the ESP-IDF extension and ESP-IDF (recorded take, capture/takes/install-esp-idf.ts) */}
     <Composition
       id="InstallESPIDF"
@@ -243,6 +257,19 @@ export const RemotionRoot: React.FC = () => (
         </Stage>
       )}
       durationInFrames={INSTALL_FRAMES}
+      fps={FPS}
+      width={W}
+      height={H}
+    />
+    {/* Setup: a first project that prints Hello world (recorded take, capture/takes/first-project.ts) */}
+    <Composition
+      id="FirstProject"
+      component={() => (
+        <Stage screen>
+          <FirstProject />
+        </Stage>
+      )}
+      durationInFrames={FIRST_FRAMES}
       fps={FPS}
       width={W}
       height={H}
