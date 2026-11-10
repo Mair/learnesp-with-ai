@@ -83,6 +83,17 @@ export type StageOptions = {
   settings?: string;
   /** Extra VS Code command-line arguments. */
   args?: string[];
+  /**
+   * With `home`: put the workspace copy in the home folder (a fresh copy each
+   * run), so VS Code shows it as /home/learner/<name> in paths and dialogs.
+   */
+  workspaceInHome?: boolean;
+  /**
+   * Extension global state to start with (key = extension id), e.g. to mark
+   * the ESP-IDF extension's changelog as seen so its "just got updated" toast
+   * doesn't pop up mid-take.
+   */
+  globalState?: Record<string, Record<string, unknown>>;
 };
 
 export async function startStage(opts: StageOptions): Promise<Stage> {
@@ -98,12 +109,26 @@ export async function startStage(opts: StageOptions): Promise<Stage> {
   const extDir = join(run, 'extensions');
   mkdirSync(join(userData, 'User'), { recursive: true });
   mkdirSync(extDir, { recursive: true });
+  if (opts.globalState) {
+    // VS Code keeps extension global state in a SQLite file.
+    const db = join(userData, 'User/globalStorage/state.vscdb');
+    mkdirSync(join(userData, 'User/globalStorage'), { recursive: true });
+    const rows = Object.entries(opts.globalState).map(([k, v]) => [k, JSON.stringify(v)]);
+    execFileSync('python3', ['-c', `import sqlite3,sys,json
+c=sqlite3.connect(sys.argv[1])
+c.execute('CREATE TABLE IF NOT EXISTS ItemTable (key TEXT UNIQUE ON CONFLICT REPLACE, value BLOB)')
+c.executemany('INSERT INTO ItemTable VALUES (?,?)', json.loads(sys.argv[2]))
+c.commit()`, db, JSON.stringify(rows)]);
+  }
   const settingsFile = opts.settings ? resolve(opts.settings) : join(root, 'profile/settings.json');
   const settings = readFileSync(settingsFile, 'utf8').replaceAll('${capture}', root);
   writeFileSync(join(userData, 'User/settings.json'), settings);
   // Work on a copy so a take (or an agent) never edits the template project.
   // A workspace path that doesn't exist opens as a new, empty folder.
-  const workspace = join(run, 'workspace', basename(resolve(opts.workspace)));
+  const wsName = basename(resolve(opts.workspace));
+  const inHome = !!(opts.home && opts.workspaceInHome);
+  const workspace = inHome ? join(resolve(opts.home!), wsName) : join(run, 'workspace', wsName);
+  if (inHome) rmSync(workspace, { recursive: true, force: true });
   if (existsSync(resolve(opts.workspace))) cpSync(resolve(opts.workspace), workspace, { recursive: true });
   else mkdirSync(workspace, { recursive: true });
   for (const e of opts.extensions ?? EXTENSIONS) {
@@ -135,7 +160,7 @@ export async function startStage(opts: StageOptions): Promise<Stage> {
     '--no-sandbox',
     '--new-window',
     ...(opts.args ?? []),
-    workspace,
+    inHome ? join(LEARNER_HOME, wsName) : workspace,
   ];
   let cmd = CODE;
   let args = codeArgs;
@@ -153,8 +178,20 @@ export async function startStage(opts: StageOptions): Promise<Stage> {
     // / as is, but /home replaced by an empty tmpfs holding only the learner's
     // home and the repo (which the profile, extensions and workspace live in).
     const repo = resolve(root, '..');
-    cmd = 'bwrap';
-    args = ['--dev-bind', '/', '/', '--tmpfs', '/home', '--bind', home, LEARNER_HOME, '--bind', repo, repo,
+    // The extension prints PATH into its Output channel: keep personal folders
+    // out of it. The hideBins dir is shown as /usr/local/bin.
+    const mine = homedir() + '/';
+    const bin = join(run, 'bin');
+    const binds: string[] = [];
+    if (opts.hideBins?.length) binds.push('--ro-bind', bin, '/usr/local/bin');
+    env.PATH = (env.PATH ?? '')
+      .split(':')
+      .filter((p) => p && p !== '/usr/local/bin' && (!p.startsWith(mine) || p === bin))
+      .map((p) => (p === bin ? '/usr/local/bin' : p))
+      .join(':');
+    // Resolved on the host's PATH: the child's PATH below points inside the sandbox.
+    cmd = execFileSync('which', ['bwrap'], { encoding: 'utf8' }).trim();
+    args = ['--dev-bind', '/', '/', '--tmpfs', '/home', '--bind', home, LEARNER_HOME, '--bind', repo, repo, ...binds,
       '--chdir', LEARNER_HOME, '--', CODE, ...codeArgs];
   }
   const code = spawn(cmd, args, { env, stdio: 'ignore', detached: true });
