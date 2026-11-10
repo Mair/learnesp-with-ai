@@ -72,9 +72,13 @@ a `FACTS.md` cites comes from **ESP-IDF v6.0 or later**, never v5.x or older.
 ## Course order — use only what's been taught
 
 A video may only use APIs and concepts that earlier videos taught.
-The course is in three sections, in this order. **Every section opens with a
-short intro video** (`<section>-intro`, see the explainer-video skill,
-`SCRIPT.md` "Section intro").
+The course starts with a setup section, then three sections, in this order.
+**Every section opens with a short intro video** (`<section>-intro`, see the
+explainer-video skill, `SCRIPT.md` "Section intro"); the setup section doesn't.
+
+**0. Setup** (screen recordings, `vs-code-recording` skill; `out/0-setup/`)
+1. `install-esp-idf`: VS Code, the ESP-IDF extension, ESP-IDF (via EIM)
+2. a first project: create an empty project that prints Hello World (not made yet)
 
 **1. Basic GPIO**
 0. `basic-gpio-intro`: what GPIO is, what this section builds

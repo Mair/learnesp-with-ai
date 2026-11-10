@@ -16,16 +16,26 @@ import { BasicGPIOIntro, BASIC_INTRO_FRAMES } from './scenes/BasicGPIOIntro';
 import { FreeRTOSIntro, FREERTOS_INTRO_FRAMES } from './scenes/FreeRTOSIntro';
 import { AdvancedGPIOIntro, ADVANCED_INTRO_FRAMES } from './scenes/AdvancedGPIOIntro';
 import { VSCodeSpike, SPIKE_FRAMES } from './scenes/vscode-spike/VSCodeSpike';
+import { InstallESPIDF, INSTALL_FRAMES } from './scenes/install-esp-idf/InstallESPIDF';
 
 const W = 1920;
 const H = 1080;
 const FPS = 30;
 
 /** Every composition shares the backdrop + grade sandwich. */
-const Stage: React.FC<{ children: React.ReactNode; floor?: boolean }> = ({ children, floor }) => (
+const Stage: React.FC<{ children: React.ReactNode; floor?: boolean; screen?: boolean }> = ({ children, floor, screen }) => (
   <AbsoluteFill style={{ background: '#000' }}>
-    <Backdrop floor={floor} />
-    {children}
+    {screen ? (
+      // Screen recordings: keep the whole backdrop (its scrim and noise layers
+      // have z-indexes) in its own layer behind the recording. Otherwise the
+      // scrim's radial gradient sits on top as a dark oval in the middle.
+      <AbsoluteFill style={{ zIndex: 0, isolation: 'isolate' }}>
+        <Backdrop floor={false} />
+      </AbsoluteFill>
+    ) : (
+      <Backdrop floor={floor} />
+    )}
+    {screen ? <AbsoluteFill style={{ zIndex: 1 }}>{children}</AbsoluteFill> : children}
     <Grade />
   </AbsoluteFill>
 );
@@ -224,11 +234,24 @@ export const RemotionRoot: React.FC = () => (
       width={W}
       height={H}
     />
+    {/* Setup: install VS Code, the ESP-IDF extension and ESP-IDF (recorded take, capture/takes/install-esp-idf.ts) */}
+    <Composition
+      id="InstallESPIDF"
+      component={() => (
+        <Stage screen>
+          <InstallESPIDF />
+        </Stage>
+      )}
+      durationInFrames={INSTALL_FRAMES}
+      fps={FPS}
+      width={W}
+      height={H}
+    />
     {/* Spike: recorded VS Code take (capture/) + event-driven camera */}
     <Composition
       id="VSCodeSpike"
       component={() => (
-        <Stage floor={false}>
+        <Stage screen>
           <VSCodeSpike />
         </Stage>
       )}

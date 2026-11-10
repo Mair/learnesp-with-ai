@@ -40,7 +40,10 @@
     "freertos-mutexes": "npm run freertos-mutexes:audio && remotion render FreeRTOSMutexes out/2-freertos/freertos-mutexes.mp4",
     "vscode-spike:take": "node --disable-warning=ExperimentalWarning capture/takes/spike.ts",
     "vscode-spike:audio": "node --disable-warning=ExperimentalWarning scripts/vscode-spike-audio.ts",
-    "vscode-spike": "npm run vscode-spike:audio && remotion render VSCodeSpike out/spikes/vscode-spike.mp4"
+    "vscode-spike": "npm run vscode-spike:audio && remotion render VSCodeSpike out/spikes/vscode-spike.mp4",
+    "install-esp-idf:take": "node --disable-warning=ExperimentalWarning capture/takes/install-esp-idf.ts",
+    "install-esp-idf:audio": "node --disable-warning=ExperimentalWarning scripts/install-esp-idf-audio.ts",
+    "install-esp-idf": "npm run install-esp-idf:audio && remotion render InstallESPIDF out/0-setup/install-esp-idf.mp4"
   },
   "dependencies": {
     "@remotion/cli": "^4.0.535",

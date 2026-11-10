@@ -63,16 +63,25 @@ export async function textBox(page: Page, loc: Locator, pad = 0): Promise<Box> {
   ];
 }
 
-export async function runCommand(page: Page, title: string, onOpen?: () => void) {
+/**
+ * Open the command palette and enter a command title.
+ * `instant`: insert the whole title at once. Typing it shows the in-between
+ * filter states, and VS Code's "similar commands" can list anything on the
+ * way (e.g. an Arduino command, which this course never shows).
+ */
+export async function runCommand(page: Page, title: string, onOpen?: () => void, opts: { instant?: boolean } = {}) {
   await page.keyboard.press('Control+Shift+P');
   const input = page.locator('.quick-input-widget input');
   await input.waitFor();
   await pause(page, 0.4);
   onOpen?.();
-  await typeHuman(page, title);
+  if (opts.instant) await page.keyboard.insertText(title);
+  else await typeHuman(page, title);
   await page
     .locator('.quick-input-list .monaco-list-row.focused', { hasText: title })
     .waitFor({ timeout: 10_000 });
+  const rows = (await page.locator('.quick-input-list .monaco-list-row').allInnerTexts()).join(' | ');
+  if (/arduino/i.test(rows)) throw new Error(`palette shows an Arduino command: ${rows}`);
   await pause(page, 0.5);
 }
 

@@ -18,7 +18,12 @@ npx remotion render VSCodeSpike out/spikes/vscode-spike.mp4
    copied in with `HIDE_COMMANDS` removed from the palette (no Arduino on
    screen). The demo project is copied too, so a take never edits
    `demo-project/`. The ESP-IDF terminal uses `profile/bashrc` (short prompt,
-   no history, no `(venv)`). `lib/xfill.py` sizes the window to the screen.
+   no history, no `(venv)`). `lib/xwin.py` sizes/raises/centers windows.
+   Options for a "fresh machine" take (see `takes/install-esp-idf/config.ts`):
+   no extensions, a private home shown as `/home/learner` (bubblewrap), tools
+   hidden from PATH, extra env.
+   Web pages: `lib/browser.ts` (distrobox Playwright Chromium, CDP). Other apps
+   with a WebKitGTK UI (EIM): `lib/webkit.ts` (WebKit remote inspector).
 2. **Driver**: Playwright (`playwright-core`, no browsers) connects over CDP
    (`--remote-debugging-port`); `lib/actions.ts` types at a human pace,
    runs palette commands, waits for terminal text (the DOM renderer is on, so
