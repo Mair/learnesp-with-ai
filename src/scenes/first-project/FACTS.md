@@ -4,15 +4,16 @@
 installs; local copy in the take's home, `capture/.devhome/.espressif/v6.1/esp-idf`,
 `git describe` → `v6.1`) · ESP-IDF extension **2.3.0** · VS Code 1.145.0 (Linux) · demo
 machine: Fedora (Nobara), x86-64. **Board on the take: an ESP32-S3** (`esptool chip-id`: "ESP32-S3
-(QFN56) (revision v0.1) … USB mode: USB-Serial/JTAG", MAC f4:12:fa:e2:29:38, `/dev/ttyACM2`). The
-course's other videos use the original ESP32; the VO says so in the chip step (the course author
-chose to record this video with the S3, 2026-11-11). The take itself is a source: anything it shows is what
+(QFN56) (revision v0.1) … USB mode: USB-Serial/JTAG", MAC f4:12:fa:e2:29:38, `/dev/ttyACM2`). The VO
+says to choose the chip on your own board and doesn't tie the course to one chip (the course
+author: the S3 will be used a lot in this course, 2026-11-11). The take itself is a source: anything it shows is what
 that setup really does (event ids in `take.json`).
 
 | # | Claim | Source |
 |---|---|---|
+| 1a | Two ways in: the Espressif icon in the activity bar opens the extension's view, whose Commands list has **Advanced → New Project Wizard** (`espIdf.newProject.start`), which makes a project from "ESP-IDF Templates" or "ESP-IDF Examples"; and the command palette | extension 2.3.0 `package.json` `viewsContainers.activitybar` `idfViewController` → view `idfCommands` ("Commands"); take `cmds`, `adv`, `wizard` (row "New Project Wizard" under "Advanced"); the wizard's tree (dev run 2026-11-10: "ESP-IDF Templates" sample_project / sample_project_cpp, "ESP-IDF Examples") |
 | 1 | Command palette → `ESP-IDF: Create New Empty Project` asks for a name, then a folder, creates the project and offers "Open <name>" | extension 2.3.0 `dist/extension.js`, `espIdf.createNewProject`: `showInputBox({placeHolder:"Enter ESP-IDF project name"})` → `showOpenDialog({canSelectFolders:true})` → copies `templates/template-app` → `showInformationMessage("ESP-IDF project {name} has been created", "Open {name}")` → `vscode.openFolder(…, true)` (a new window). Take: `name`, `folder`, `created`, `open-click`, `win2` |
-| 2 | In an empty folder the extension asks to activate first ("Activate Anyway"); it asks every time, it isn't remembered | `dist/extension.js` activation check: the prompt is shown whenever no workspace folder has a root `CMakeLists.txt` with `include($ENV{IDF_PATH}/tools/cmake/project.cmake)` and `idf.extensionActivationMode` is `detect` (default); nothing is stored. Take: `activate` |
+| 2 | In an empty folder the extension asks to activate first ("Activate Anyway"), here on clicking its icon; it asks every time, it isn't remembered | `dist/extension.js` activation check: the prompt is shown whenever no workspace folder has a root `CMakeLists.txt` with `include($ENV{IDF_PATH}/tools/cmake/project.cmake)` and `idf.extensionActivationMode` is `detect` (default); nothing is stored. Take: `activate` |
 | 3 | The folder picker starts in the open folder (`/home/learner/esp32/`) | take `folder` (text `/home/learner/esp32/`). The take uses VS Code's own folder picker (`files.simpleDialog.enable`); on a learner's machine the same step is the system's folder dialog |
 | 4 | The project opens in a new VS Code window | `vscode.openFolder(uri, true)` (forceNewWindow); take `win2` (title `hello_world`) |
 | 5 | The new project: `CMakeLists.txt`, `main/CMakeLists.txt`, `main/main.c` = `#include <stdio.h>` + empty `void app_main(void) {}` (plus `.devcontainer`, `.clangd`, `.gitignore` the extension adds) | extension `templates/template-app/` (3 files, verbatim); take `win2`, `editor` |
@@ -24,7 +25,7 @@ that setup really does (event ids in `take.json`).
 | 11 | "Target ESP32S3 Set Successfully." a few seconds later | take `target-done` (16.5 s after the click here; the extension runs `idf.py set-target`) |
 | 12 | Wrench icon = "Build Project"; the build ends with "Build Successful" and the size summary ("Total image size: 142115 bytes") | take `build-item` (aria-label "symbol-property, Build Project"), `build-done` (toast "Build Successful": `to.infoNotify("Build Successful")` in `dist/extension.js`), `build-size` |
 | 13 | The first build took about a minute here (61 s for the S3; ≈ 50 s for esp32 the day before); it compiles ESP-IDF's components with your code (≈ 1000 build steps); later builds only redo what changed | take `build-click` → `build-done`; extension output log `[1035/1035]` (esp32); ninja rebuilds only out-of-date targets |
-| 14 | The course's chip is the original ESP32 (target `esp32`) | `AGENTS.md` (QEMU machine `esp32`, DAC on GPIO 25/26 in section 3) |
+| 14 | Choose the chip on your board (`esp32s3` for the S3 on the take; other chips have their own entry in the list) | take `target-pick` (the list: esp32, esp32s2, esp32c3, esp32s3, …) |
 | 15 | Plug icon = "Select Port to Use (COM, tty, usbserial)"; the list shows the board as `/dev/ttyACM2 ESP32-S3` | take `port-item`, `port-row` (the extension asks each port for its chip, `idf.enableSerialPortChipIdRequest` default true). This machine also has five ESP32-C5 boards of another project attached; the take hides them (`serialPorts` in the stage config → `capture/lib/udevadm-filter.py`), as a learner with one board would see |
 | 16 | Port names: Linux `/dev/tty…` (`/dev/ttyUSB0`, `/dev/ttyACM0`), Windows `COM…`, Mac `/dev/cu.…` | ESP-IDF v6.1 docs get-started/establish-serial-connection.rst 190–206 (`COM3`, `/dev/ttyUSB0`, `/dev/cu.usbserial-1401`), 248 (`ls /dev/cu.*`) |
 | 17 | Lightning icon = "Flash Device"; the first time it asks "Select flash method" (JTAG / UART / DFU); UART flashes over the same USB cable; "Flash Done ⚡️" a few seconds later | take `flash-item` (aria-label "zap, Flash Device"), `method` (placeholder "Select flash method, you can modify the choice later from 'settings.json' (idf.flashType)"), `flash-done` (3.8 s after the click); extension string `"Flash Done ⚡️"` |
@@ -32,7 +33,10 @@ that setup really does (event ids in `take.json`).
 | 19 | Ctrl+] stops the monitor | ESP-IDF v6.1 docs api-guides/tools/idf-monitor.rst ("Ctrl-]" → "Exit the program", 24, 66); take `monitor-exit` → the terminal returns to the prompt |
 | 20 | Next video: Basic GPIO (its intro) | `AGENTS.md` course order: the last video of a section points to the next section's intro |
 
-**Not used:** the extension's `ESP-IDF: New Project` wizard. In 2.3.0 its template list offers
-`sample_project`, but selecting it shows no "Create project" button (the button only appears for
-templates/examples with a README; `sample_project` has none), so the empty project is made with
-`Create New Empty Project` instead.
+**The wizard is shown, not used:** in 2.3.0 the New Project Wizard can't make an empty project.
+Its template list offers `sample_project`, but selecting it shows no "Create project" button: for
+a template without a README, `getTemplateDetail` posts `set_example_detail` instead of the
+`setExampleDetail` the webview listens for (`dist/extension.js`), so the button never appears.
+Examples with a README work. So the VO says the wizard "starts a project from one of
+Espressif's templates or examples" and makes the empty project with the palette command (the
+course author chose this, 2026-11-11).

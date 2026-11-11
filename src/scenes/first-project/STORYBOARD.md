@@ -13,19 +13,21 @@ extension and ESP-IDF v6.1 from `install-esp-idf` (home `capture/.devhome` shown
 
 **Status (v2, 2026-11-11):** the whole flow in one take on an **ESP32-S3** (`BOARD=/dev/ttyACM2
 TARGET=esp32s3 npm run first-project:take`); the course author chose the S3 for this video. The
-chip step says so: "The one I have here is an ESP32-S3 … The rest of this course uses the
-original ESP32, which is the one called esp32." Only the S3's port shows in the picker.
+chip step: "Choose the chip on your board. The one I have here is an ESP32-S3, so I choose
+esp32s3. If your board has a different chip, choose that one instead." (v3: no claim about which
+chip the rest of the course uses; the debug list: "Choose the first entry", no claim about
+debuggers. v4: both ways in shown, the Espressif icon and the command palette.) Only the S3's port shows in the picker.
 
 | # | Beat | Take events | VO (gist) | Visual |
 |---|---|---|---|---|
 | 0 | intro | `begin` → `palette` | last video installed it; now the first program, prints Hello world; the five steps; start in the empty esp32 folder | card: five steps; sidebar zoom |
-| 1 | new1–2 | `palette` → `palette-enter` | Step one: create the project. Ctrl+Shift+P; run ESP-IDF: Create New Empty Project | palette zoom, callout Mac ⇧⌘P |
-| 1 | act1–3 | → `name` | the folder is still empty, so it asks again; Activate Anyway; next it asks for a name | toast, button spot |
+| 1 | way1, act2–3, adv | `icon` → `wizard` | Step one: create the project, two ways to start. The first: the Espressif icon; the folder is still empty, so it asks to turn the extension on; Activate Anyway; it lists its commands; under Advanced, the New Project Wizard (from templates or examples) | sidebar, toast, Advanced / wizard rows |
+| 1 | new1–2, askname | `wizard` → `name` | for an empty project, the second way: Ctrl+Shift+P; run ESP-IDF: Create New Empty Project; it asks for a name | palette zoom, callout Mac ⇧⌘P |
 | 1 | name, folder | → `folder-click` | type hello_world, Enter; it starts in esp32, click OK | input, OK spot |
 | 1 | created, win2 | → `open-click`, `win2` | creates it, offers to open it; Open hello_world; opens in a new window | toast, button |
 | 1 | tour1–3 | `cmake` → `type-start` | same shape every time: CMakeLists = a project; code in main → main.c; an include and an empty app_main; app_main is where your program starts (ESP-IDF sets up, then calls it) | spots on rows and lines |
 | 2 | code1–3 | `type-start` → `target-item` | step two: type this printf; printf sends text down the USB cable, \n ends the line; Ctrl+S | typed line spot, callouts |
-| 3 | chip1–5 | `target-item` → `build-item` | step three: which chip; chip icon; choose your chip: mine is an ESP32-S3 → esp32s3, the course uses the original ESP32 (esp32); debug list: not used, the first entry (S3 via built-in USB-JTAG); Target ESP32S3 Set Successfully | status icon, list rows, toast |
+| 3 | chip1–5 | `target-item` → `build-item` | step three: which chip; chip icon; choose your chip: mine is an ESP32-S3 → esp32s3, otherwise yours; debug list: not used, the first entry (S3 via built-in USB-JTAG); Target ESP32S3 Set Successfully | status icon, list rows, toast |
 | 4 | build1–3 | `build-item` → `end` | step four: build; wrench = Build Project; first build ~1 min (compiles ESP-IDF too), later only what changed; Build Successful + size | icon, panel ×N, toast, size line |
 | 5 | port1–2 | `port-item` → `port-done` | step five: plug the board in; plug icon, pick its port | status icon, port row |
 | 5 | flash1–4 | `flash-item` → `flash-done` | lightning = Flash Device; (first time: UART); Flash Done | icon, toast |

@@ -150,8 +150,19 @@ export function voClip(voice: string, id: string, say: string) {
   return join(VO_CACHE, `${id}-${key}.mp3`);
 }
 
+/**
+ * House pronunciations, applied to every line of every video before it is voiced.
+ * "ESP-IDF" as written comes out as "ESP EDF" / "ESP ADF" / "ESPN EF" now and then; spelled
+ * as letters it is clear every time (tested in three sentences: 3/3 heard as ESP-IDF, against
+ * 1/3 for "ESP-IDF"). SCRIPT.md "ESP-IDF, said clearly".
+ */
+export function speakable(say: string) {
+  return say.replace(/\bESP-IDF\b/g, 'E S P I D F').replace(/\bESP IDF\b/g, 'E S P I D F');
+}
+
 /** generate the clip if it isn't cached; returns its path */
-export function ensureClip(voice: string, id: string, say: string) {
+export function ensureClip(voice: string, id: string, sayAsWritten: string) {
+  const say = speakable(sayAsWritten);
   mkdirSync(VO_CACHE, { recursive: true });
   const mp3 = voClip(voice, id, say);
   if (!existsSync(mp3)) {

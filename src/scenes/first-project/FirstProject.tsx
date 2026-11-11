@@ -17,20 +17,27 @@ const union = (...bs: Box[]): Box => {
 };
 // VS Code's left side (activity bar + sidebar), at a readable zoom.
 const LEFT: Box = [0, 0, 1700, 956];
+// The Espressif view's Commands list, with Advanced open (New Project Wizard near its bottom).
+const CMDS: Box = [0, 60, 1500, 1260];
 // The six lines of main.c (the take's boxes: #include … the typed printf).
 // The "Total image size: … bytes" line at the top of the build output's last screen.
 const SIZE: Box = [470, 1885, 1100, 52];
 // The monitor's lines (left part of the panel) and the "Returned from app_main()" row under "Hello world!".
 // The Flash Done toast moves once the clip plays on (other toasts go away): spot it during the hold only.
-const A_FLASH4_LEAD = sceneStart('flash4') + (SCENES.find((x) => x.id === 'flash4')!.clip.lead ?? 0);
+const leadEnd = (id: string) => sceneStart(id) + (SCENES.find((x) => x.id === id)!.clip.lead ?? 0);
+const A_FLASH4_LEAD = leadEnd('flash4');
+// Same for the target and build toasts: they're cleared soon after, while the clip plays on.
+const A_CHIP5_LEAD = leadEnd('chip5');
+const A_BUILD3_LEAD = leadEnd('build3');
 const MON: Box = [453, 1817, 1700, 286];
 const RET: Box = [479, 1975, 720, 58];
 const CODE: Box = union(box('include'), box('app-main'), box('typed'), [581, 110, 900, 330]);
 
 const shots: Shot[] = [
-  { at: CUE.folder - 0.5, box: LEFT },
-  { at: CUE.palette - 0.4, box: box('palette-row'), pad: 1.7 },
+  { at: CUE.icon - 0.4, box: LEFT },
   { at: CUE.activate - 0.4, box: box('activate'), pad: 1.7 },
+  { at: CUE.cmds - 0.4, box: CMDS },
+  { at: CUE.palette - 0.4, box: box('palette-row'), pad: 1.7 },
   { at: CUE.name - 0.3, box: box('name'), pad: 1.7 },
   { at: CUE.folderBox - 0.3, box: box('folder'), pad: 1.7 },
   { at: CUE.created - 0.3, box: box('created'), pad: 1.7 },
@@ -42,10 +49,12 @@ const shots: Shot[] = [
   { at: CUE.ocd - 0.3, box: box('ocd'), pad: 1.25 },
   { at: sceneStart('chip4'), box: null },
   { at: CUE.targetDone - 0.4, box: box('target-done'), pad: 2.2 },
+  { at: A_CHIP5_LEAD, box: null },
   { at: CUE.buildIcon - 0.4, box: box('build-item'), pad: 8, maxZoom: 2.2 },
   { at: CUE.building - 0.3, box: null },
   { at: CUE.buildDone - 0.3, box: box('build-done'), pad: 2.2 },
   { at: CUE.size - 0.5, box: SIZE, pad: 1.5, maxZoom: 2.4 },
+  { at: A_BUILD3_LEAD, box: null },
   { at: CUE.plug - 0.4, box: box('port-item'), pad: 8, maxZoom: 2.2 },
   { at: CUE.portPick - 0.3, box: box('port-pick'), pad: 1.4 },
   { at: CUE.portDone - 0.2, box: box('port-done'), pad: 8, maxZoom: 2.2 },
@@ -61,8 +70,11 @@ const shots: Shot[] = [
 
 const S = (from: number, to: number, id: string): Spot => ({ from, to, box: box(id) });
 const spots: Spot[] = [
-  S(CUE.paletteRow, sceneStart('act1'), 'palette-row'),
+  S(CUE.icon, sceneStart('act2'), 'icon'),
   S(CUE.activateBtn, sceneStart('act3'), 'activate-btn'),
+  S(CUE.adv, CUE.wizard - 0.2, 'adv'),
+  S(CUE.wizard, sceneStart('new1'), 'wizard'),
+  S(CUE.paletteRow, sceneStart('askname'), 'palette-row'),
   S(CUE.nameTyped - 0.6, sceneStart('folder'), 'name-typed'),
   S(CUE.folderOk, sceneStart('created'), 'folder-ok'),
   S(CUE.openBtn, sceneStart('win2'), 'open-btn'),
@@ -76,10 +88,10 @@ const spots: Spot[] = [
   S(CUE.chipIcon, sceneStart('chip2'), 'target-item'),
   S(CUE.targetRow, CUE.targetClick + 0.2, 'target-row'),
   S(CUE.ocdRow - 0.6, CUE.ocdRow + 0.2, 'ocd-row'),
-  S(CUE.targetDone, sceneStart('build1'), 'target-done'),
+  S(CUE.targetDone, A_CHIP5_LEAD, 'target-done'),
   S(CUE.buildIcon, sceneStart('build2'), 'build-item'),
   S(CUE.buildDone, CUE.size - 0.5, 'build-done'),
-  { from: CUE.size + 0.3, to: sceneStart('port1'), box: SIZE },
+  { from: CUE.size + 0.3, to: A_BUILD3_LEAD, box: SIZE },
   S(CUE.plug, sceneStart('port2'), 'port-item'),
   S(CUE.portRow, CUE.portClick + 0.2, 'port-row'),
   S(CUE.portDone, sceneStart('flash1'), 'port-done'),
@@ -94,8 +106,10 @@ const spots: Spot[] = [
 const w3 = (t: number) => t - 0.6;
 const C = (from: number, to: number, id: string, text: string, side: Callout['side'] = 'right'): Callout => ({ from, to, box: box(id), text, side });
 const callouts: Callout[] = [
-  C(CUE.palette + 0.6, CUE.paletteRow - 0.2, 'palette-row', 'Mac: ⇧⌘P', 'below'),
+  C(CUE.icon + 0.3, sceneStart('act2'), 'icon', 'the Espressif icon'),
   C(CUE.activateBtn + 0.3, sceneStart('act3'), 'activate-btn', 'Activate Anyway', 'left'),
+  C(CUE.wizard + 0.3, sceneStart('new1'), 'wizard', 'projects from templates and examples'),
+  C(CUE.palette + 0.6, CUE.paletteRow - 0.2, 'palette-row', 'Mac: ⇧⌘P', 'below'),
   C(CUE.nameTyped, sceneStart('folder'), 'name-typed', 'hello_world', 'below'),
   C(CUE.folderOk + 0.3, sceneStart('created'), 'folder', 'your esp32 folder → OK', 'below'),
   C(CUE.cmake + 0.3, CUE.main - 0.2, 'cmake', 'this folder is a project'),
@@ -105,9 +119,9 @@ const callouts: Callout[] = [
   C(CUE.save + 0.3, sceneStart('chip1'), 'saved', 'Mac: ⌘S', 'right'),
   C(CUE.chipIcon + 0.3, sceneStart('chip2'), 'target-item', 'Set Espressif Device Target', 'above'),
   C(CUE.targetRow + 0.3, CUE.targetClick + 0.2, 'target-row', 'my board: ESP32-S3', 'below'),
-  C(w3(CUE.ocdRow), CUE.ocdRow + 0.2, 'ocd-row', 'not used in this course', 'below'),
+  C(w3(CUE.ocdRow), CUE.ocdRow + 0.2, 'ocd-row', 'first entry', 'below'),
   C(CUE.buildIcon + 0.3, sceneStart('build2'), 'build-item', 'Build Project', 'above'),
-  { from: CUE.size + 0.4, to: sceneStart('port1'), box: SIZE, text: 'how big your program is', side: 'above' },
+  { from: CUE.size + 0.4, to: A_BUILD3_LEAD, box: SIZE, text: 'how big your program is', side: 'above' },
   C(CUE.plug + 0.3, sceneStart('port2'), 'port-item', 'Select Port to Use', 'above'),
   C(CUE.portRow + 0.4, CUE.portClick + 0.2, 'port-row', 'Linux /dev/tty… · Windows COM… · Mac /dev/cu.…', 'below'),
   C(CUE.flashIcon + 0.3, sceneStart('flash2'), 'flash-item', 'Flash Device', 'above'),

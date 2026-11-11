@@ -1,6 +1,7 @@
 // Take: a first ESP-IDF project in VS Code. Picks up where install-esp-idf
 // left off (VS Code open on the empty "esp32" folder, ESP-IDF v6.1 installed):
-// ESP-IDF: Create New Empty Project → hello_world → open it → type one
+// the Espressif icon (activate, its commands, the New Project Wizard) → ESP-IDF: Create
+// New Empty Project → hello_world → open it → type one
 // printf → set the target (esp32) → build. With BOARD=<port> it then selects
 // the port, flashes and opens the monitor to show "Hello world!".
 //
@@ -56,13 +57,14 @@ try {
   await pause(page, 2);
 
   // ── 1. a new, empty project ──────────────────────────────────────────────
-  mark('palette');
-  await runCommand(page, 'ESP-IDF: Create New Empty Project', () => rec!.mark('palette-typing'), { instant: true });
-  mark('palette-row', { box: await screenBox(page, quickInput(), 4) });
-  await pause(page, 0.6);
-  mark('palette-enter');
-  await page.keyboard.press('Enter');
-  // An empty folder: the extension asks before it starts (as in install-esp-idf).
+  // Two ways in. First the Espressif icon on the left: in an empty folder it asks
+  // to activate the extension (as in install-esp-idf), then lists its commands;
+  // under Advanced is the New Project Wizard (projects from templates/examples).
+  const espIcon = page.locator('.activitybar .action-item').filter({ has: page.locator('[aria-label*="ESP-IDF"]') }).first();
+  mark('icon', { box: await screenBox(page, espIcon, 4) });
+  await pause(page, 1.2);
+  mark('icon-click');
+  await espIcon.click();
   const activate = toastButton('Activate Anyway');
   await activate.waitFor({ timeout: 30_000 });
   await pause(page, 0.8);
@@ -71,6 +73,29 @@ try {
   await pause(page, 1.2);
   mark('activate-click');
   await activate.click();
+  const sideRow = (text: string | RegExp) => page.locator('.part.sidebar .monaco-list-row', { hasText: text }).first();
+  await sideRow(/^Build Project$/).waitFor({ timeout: 120_000 });
+  await status('ESP-IDF v6').waitFor({ timeout: 120_000 });
+  await pause(page, 1.5);
+  await clearToasts();
+  mark('cmds', { box: await screenBox(page, page.locator('.part.sidebar')) });
+  await pause(page, 1);
+  mark('adv', { box: await screenBox(page, sideRow(/^Advanced$/), 2) });
+  await pause(page, 1.2);
+  mark('adv-click');
+  await sideRow(/^Advanced$/).click();
+  await sideRow(/^New Project Wizard$/).waitFor({ timeout: 10_000 });
+  await pause(page, 1);
+  mark('wizard', { box: await screenBox(page, sideRow(/^New Project Wizard$/), 2) });
+  await pause(page, 2);
+
+  // The second way, the one used here: the command palette.
+  mark('palette');
+  await runCommand(page, 'ESP-IDF: Create New Empty Project', () => rec!.mark('palette-typing'), { instant: true });
+  mark('palette-row', { box: await screenBox(page, quickInput(), 4) });
+  await pause(page, 0.6);
+  mark('palette-enter');
+  await page.keyboard.press('Enter');
   const nameInput = page.locator('.quick-input-widget input');
   await page.locator('.quick-input-widget', { hasText: 'Press \'Enter\' to confirm' }).waitFor({ timeout: 120_000 });
   await pause(page, 1);

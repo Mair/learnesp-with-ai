@@ -47,6 +47,22 @@ beginner follows every line the first time.
 - **Research still goes all the way down** (driver source, TRM) so every claim
   is true, but it stays in `FACTS.md`; it doesn't go on screen.
 
+## The course is organic: assume nothing about what it will include
+
+The course is built as it goes, one instruction at a time. Its structure, topics, tools
+and hardware can change at any point. So nothing on screen, in the VO or in the docs may
+assume or promise what the course will or won't contain:
+
+- **No claims about the rest of the course**: never "this course doesn't use a debugger",
+  "we won't need X", "the rest of the course uses the original ESP32", "you'll never …",
+  "later we'll always …". If a step offers a choice the video doesn't explain, say what to
+  pick for now (or what you picked) and move on: "Choose the first entry."
+- **No assumptions when building**: don't leave something out (or put it in) because you
+  expect a later video to cover it, or not to. Do what the instruction asks; if the scope is
+  unclear, ask.
+- The only forward reference allowed is the next video in the course order below ("Next
+  up: …"), which the course author sets.
+
 ## ESP-IDF v6.0 or later. Always.
 
 Every API, default, file path, line number and log message a video shows or
@@ -78,7 +94,7 @@ explainer-video skill, `SCRIPT.md` "Section intro"); the setup section doesn't.
 
 **0. Setup** (screen recordings, `vs-code-recording` skill; `out/0-setup/`)
 1. `install-esp-idf`: VS Code, the ESP-IDF extension, ESP-IDF (via EIM)
-2. `first-project`: create an empty project that prints Hello World (recorded on an ESP32-S3; the VO points to the original ESP32 for the rest of the course)
+2. `first-project`: create an empty project that prints Hello World (recorded on an ESP32-S3; the VO says to choose the chip on your own board)
 
 **1. Basic GPIO**
 0. `basic-gpio-intro`: what GPIO is, what this section builds

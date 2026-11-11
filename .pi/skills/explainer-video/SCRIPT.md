@@ -105,6 +105,23 @@ The voice reads every line at one even pace unless you shape it. Shape every lin
 - **Look at it, don't guess:** `scripts/vo-plan.ts` prints every line with the silence before it (`+1.00`) and every pause the voice makes inside it (`‖0.52`, measured from the audio). Read the sheet after every wording change: a key word with no pause before it, or a list said in one breath, shows up there.
 - A `...` changes how Whisper hears the line (it can merge or mishear words around it: "Here... five" → "Heater 5"). Re-check the cue words after adding one.
 
+### No promises about the course
+
+Never say what the course will or won't cover beyond the next video ("this course doesn't use
+a debugger", "the rest of the course uses …", "we won't need …"). The course grows as it's
+made (`AGENTS.md`, "The course is organic"). For a choice the video doesn't explain, say what
+to pick and move on.
+
+### ESP-IDF, said clearly
+
+Every "ESP-IDF" the voice says must come out as the letters E-S-P-I-D-F, never "ESP EDF",
+"ESP ADF", "ESPN EF" or "ESPDF". `scripts/lib/audio.ts` `speakable()` does it for every line of
+every video: it voices "ESP-IDF" as `E S P I D F` (heard right 3 times out of 3, against 1 in 3
+for the plain spelling). Write `ESP-IDF` in `text` and `say` as usual; don't hand-spell it, and
+don't add other spellings that bypass it. Check the transcript for it anyway. The change alters
+the clips of every line that contains ESP-IDF: re-run `vo-plan.ts` before an audio build of
+any older video.
+
 ### `text` vs `say`
 `text` is the script as written (code names in code form: `gpio_set_level`, `ledc_update_duty`). `say` is what the TTS reads — set it whenever they differ:
 
@@ -112,7 +129,7 @@ The voice reads every line at one even pace unless you shape it. Shape every lin
 |---|---|
 | `GPIO set level`, `LED-C set duty` | `gpio_set_level`, `ledc_set_duty` (spelled letters "L E D C" stall) |
 | `V task delay`, `P D M S to ticks` | `vTaskDelay`, `pdMS_TO_TICKS` — check the transcript |
-| `ESP-IDF` | the framework |
+| `ESP-IDF` | the framework (voiced as letters by `speakable()`, see above) |
 | `P W M` (spaced) | letters that must land one by one |
 | `two thirty`, `a thousand hertz`, `two to the eighth`, `two hundred and fifty-six` | numbers — always words |
 

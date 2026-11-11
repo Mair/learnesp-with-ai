@@ -5,7 +5,7 @@
  * VS Code on the empty esp32 folder → ESP-IDF: Create New Empty Project →
  * hello_world opens in a new window → one printf → target esp32 → build.
  * Then port → flash → monitor ("Hello world!") on the board (an ESP32-S3 here, BOARD=/dev/ttyACM2
- * TARGET=esp32s3; the course's later videos use the original ESP32, and the VO says so).
+ * TARGET=esp32s3; the VO says to choose the chip on your own board).
  *
  *   beat length = max(narration + tail, lead + take stretch ÷ maxRate)
  *   video       = holds its first frame until `lead`, plays (faster up to
@@ -21,40 +21,44 @@ export const SECTION = '0-setup';
 export const VOICE = 'en-US-AndrewMultilingualNeural';
 
 // ── generated: VO plan (node scripts/vo-plan.ts first-project) — do not edit by hand ──
-export const VO_AT: Record<string, number> = {"i1":0.8,"i2":8.18,"i3":13.88,"n1a":0.8,"n1b":3.18,"n1c":0.3,"n2a":0.3,"n2b":0.3,"n3a":0.3,"n3b":0.3,"n4":0.3,"n5a":0.3,"n5b":4.64,"n6":0.3,"t1":0.5,"t2":0.4,"t3":0.4,"t4":6.62,"k1a":0.8,"k1b":3.04,"k2":0.4,"k3":0.4,"g1a":0.8,"g1b":5.08,"g2":0.3,"g3a":0.3,"g3b":6.62,"g4":0.3,"b1a":0.8,"b1b":3.06,"b2":0.3,"b3":0.3,"r1a":0.8,"r1b":6.22,"r2":0.3,"r3":0.3,"r4a":0.3,"r4b":2.72,"r5":0.3,"r6":0.3,"r7":0.3,"r8":0.5,"r9":0.3,"z1":0.6};
-export const SCENE_DUR: Record<string, number> = {"intro":20.3,"new1":6.36,"new2":5.36,"act1":6.22,"act2":2.04,"act3":2.74,"name":3.44,"folder":7.64,"created":6.08,"win2":3.6,"tour1":8.62,"tour2":4.62,"tour3":14.38,"code1":5.74,"code2":7.98,"code3":3.08,"chip1":7.52,"chip2":16.08,"chip3":13.72,"chip5":7.6,"build1":6.2,"build2":10.24,"build3":7.6,"port1":10.74,"port2":11.7,"flash1":3.5,"flash2":7.6,"flash4":5.5,"mon1":4.52,"mon2":7,"mon3":8.02,"mon4":4.82,"outro":15.92};
+export const VO_AT: Record<string, number> = {"i1":0.8,"i2":9.08,"i3":14.78,"n0a":0.8,"n0b":4.72,"n2a":0.3,"n2b":5.78,"n2c":0.3,"n2d":0.3,"n1a":0.6,"n1b":5.18,"n1c":0.3,"n3a":0.3,"n3b":0.3,"n4":0.3,"n5a":0.3,"n5b":4.64,"n6":0.3,"t1":0.5,"t2":0.4,"t3":0.4,"t4":6.62,"k1a":0.8,"k1b":3.04,"k2":0.4,"k3":0.4,"g1a":0.8,"g1b":6.48,"g2":0.3,"g3a":0.3,"g3b":2.98,"g4":0.3,"b1a":0.8,"b1b":3.06,"b2":0.3,"b3":0.3,"r1a":0.8,"r1b":6.22,"r2":0.3,"r3":0.3,"r4a":0.3,"r4b":2.72,"r5":0.3,"r6":0.3,"r7":0.3,"r8":0.5,"r9":0.3,"z1":0.6};
+export const SCENE_DUR: Record<string, number> = {"intro":21.2,"way1":8.66,"act2":7.52,"act3":3.4,"adv":6.82,"new1":8,"new2":5.5,"askname":2.74,"name":3.44,"folder":7.64,"created":6.08,"win2":3.6,"tour1":10.72,"tour2":4.62,"tour3":15.16,"code1":5.74,"code2":7.98,"code3":3.08,"chip1":8.92,"chip2":12.24,"chip3":10.08,"chip5":7.6,"build1":6.2,"build2":11.6,"build3":7.6,"port1":10.74,"port2":11.7,"flash1":3.5,"flash2":7.6,"flash4":5.5,"mon1":4.52,"mon2":7.98,"mon3":8.02,"mon4":4.82,"outro":16.8};
 export const VO_WORDS: Record<string, [string, number][]> = {
-  i1: [["In",0],["the",0.2],["last",0.3],["video,",0.52],["you",1.34],["installed",1.48],["ESB",2.02],["-IDF.",2.62],["Now",3.72],["it's",3.82],["time",3.96],["for",4.1],["your",4.26],["first",4.36],["program.",4.62],["One",5.52],["that",5.74],["prints",5.9],["hello",6.22],["world.",6.48]],
+  i1: [["In",0],["the",0.22],["last",0.3],["video,",0.5],["you",1.36],["installed",1.54],["ESP",2.02],["-IDF.",2.72],["Now",4.6],["it's",4.7],["time",4.86],["for",5.02],["your",5.18],["first",5.28],["program,",5.54],["One",6.54],["That",6.64],["Prints",6.78],["Hello",7.22],["World.",7.38]],
   i2: [["You'll",0],["create",0.28],["the",0.46],["project,",0.6],["write",1.36],["one",1.44],["line",1.64],["of",1.84],["code,",1.96],["pick",2.6],["your",2.78],["chip,",2.94],["build",3.52],["it,",3.72],["and",4.24],["then",4.34],["run",4.44],["it",4.6],["on",4.7],["the",4.8],["board.",4.9]],
   i3: [["We'll",0],["start",0.3],["in",0.56],["VS",0.86],["Code",1.26],["in",1.64],["the",2.14],["empty",2.3],["ESP32",2.62],["folder",4.2],["from",4.6],["last",4.88],["time.",5.12]],
-  n1a: [["Step",0],["1",0.36],["is",0.72],["to",1.06],["create",1.2],["the",1.42],["project.",1.6]],
-  n1b: [["Press",0],["Ctrl",0.32],["Shift",0.64],["P",0.96],["to",1.32],["open",1.78],["the",2.08],["Command",2.2],["Palette.",2.46]],
-  n1c: [["then",0],["run",0.32],["the",0.56],["command.",0.7],["Yes",1.9],["BIDF.",1.96],["Create",3.32],["new",3.52],["empty",3.92],["project.",4.2]],
-  n2a: [["The",0],["folder",0.24],["is",0.62],["still",0.96],["empty,",1.32],["so",2.32],["VSCode",2.56],["asks",3.28],["again",3.7],["whether",4.02],["it",4.3],["should",4.5],["turn",4.68],["the",4.9],["extension",5.02],["on.",5.3]],
+  n0a: [["Step",0],["1",0.38],["is",0.64],["to",0.76],["create",0.92],["the",1.16],["project,",1.34],["and",2.22],["there",2.28],["are",2.4],["two",2.52],["ways",2.72],["to",2.98],["start.",3.22]],
+  n0b: [["The",0],["first",0.24],["is",0.5],["the",0.9],["Espressif",1.04],["icon",1.68],["on",1.94],["the",2.3],["left.",2.42],["Click",3.28],["it.",3.38]],
+  n2a: [["The",0],["folder",0.24],["is",0.52],["still",0.76],["empty,",1.04],["so",2.2],["VS",2.26],["Code",2.6],["asks",3.02],["whether",3.58],["it",3.88],["should",4.04],["turn",4.22],["the",4.44],["extension",4.54],["on.",4.86]],
   n2b: [["Click",0],["Activate",0.32],["anyway.",0.84]],
+  n2c: [["The",0],["extension",0.24],["starts",0.6],["up",1.06],["and",1.44],["lists",1.94],["its",2.22],["commands.",2.4]],
+  n2d: [["Under",0],["Advanced,",0.32],["there's",1.14],["the",1.26],["New",1.38],["Project",1.6],["Wizard.",1.98],["It",2.84],["starts",2.92],["a",3.14],["project",3.36],["from",3.74],["one",4.04],["of",4.18],["Espressif's",4.28],["templates",4.9],["or",5.18],["examples.",5.6]],
+  n1a: [["For",0],["an",0.28],["empty",0.38],["project",0.62],["like",1],["this",1.18],["one,",1.4],["use",2.2],["the",2.42],["second",2.58],["way,",2.84],["the",3.62],["command",3.66],["palette.",3.98]],
+  n1b: [["Press",0],["Ctrl",0.32],["Shift",0.66],["P",1.06],["to",1.48],["open",1.9],["it.",2.18]],
+  n1c: [["Then",0],["run",0.36],["the",0.62],["command",0.78],["ESPIDF",1.2],["create",3.16],["new",3.7],["empty",4.1],["project",4.36]],
   n3a: [["Next,",0],["it",0.76],["asks",0.84],["for",1],["a",1.18],["name",1.3],["for",1.44],["your",1.66],["project.",1.78]],
   n3b: [["Type",0],["hello",0.32],["underscore",0.62],["world",1],["and",1.46],["press",2.04],["enter.",2.32]],
   n4: [["Then",0],["it",0.22],["asks",0.3],["where",0.52],["to",0.7],["put",0.8],["the",0.9],["project.",1.04],["It",1.98],["starts",2.04],["in",2.28],["your",2.48],["ESP32",2.62],["folder,",4.06],["which",4.8],["is",5],["what",5.1],["you",5.2],["want,",5.28],["so",6],["click",6.3],["OK.",6.62]],
   n5a: [["The",0],["extension",0.24],["creates",0.56],["the",1.04],["project",1.22],["and",1.66],["asks",2.34],["whether",2.8],["you",3.08],["want",3.22],["to",3.32],["open",3.4],["it.",3.56]],
   n5b: [["Click",0],["Open",0.26],["Hello",0.46],["World.",0.72]],
   n6: [["The",0],["project",0.24],["opens",0.56],["in",0.9],["a",1.18],["new",1.34],["VS",1.58],["Code",2.08],["window.",2.38]],
-  t1: [["Every",0],["ESP",0.36],["-IDF",0.62],["project",1.06],["has",1.44],["the",1.96],["same",2.12],["shape.",2.38],["The",3.34],["CMake",3.36],["list",3.68],["file",3.9],["at",4.2],["the",4.38],["top",4.5],["tells",4.66],["ESP",5],["-IDF",5.42],["that",6.12],["this",6.26],["folder",6.44],["is",6.82],["a",7.24],["project.",7.36]],
+  t1: [["Every",0],["ESP",0.42],["-IDF",0.92],["project",2.2],["has",2.58],["the",3.04],["same",3.22],["shape.",3.44],["The",4.38],["CMake",4.42],["list",4.76],["file",5.06],["at",5.4],["the",5.58],["top",5.68],["tells",5.9],["ESP",6.28],["-IDF",7.04],["that",8.1],["this",8.28],["folder",8.42],["is",8.86],["a",9.36],["project.",9.46]],
   t2: [["Your",0],["code",0.22],["goes",0.44],["in",0.7],["the",0.84],["main",0.92],["folder,",1.04],["so",1.82],["open",2.08],["it",2.38],["and",2.6],["click",2.88],["main",3.02],[".c.",3.18]],
   t3: [["For",0],["now,",0.28],["the",0.98],["whole",1.18],["program",1.34],["is",1.76],["one",2.08],["include",2.42],["line",2.82],["and",3.26],["an",3.88],["empty",4],["function",4.26],["called",4.66],["AppMain.",4.98]],
-  t4: [["App",0],["Main",0.34],["is",0.6],["where",1.02],["your",1.16],["program",1.28],["starts.",1.54],["When",2.66],["the",2.74],["chip",2.86],["boots,",3.04],["ESBIDF",4.1],["sets",4.62],["everything",4.82],["up",5.14],["and",5.52],["then",6.02],["it",6.1],["calls",6.22],["App",6.46],["Main.",6.72]],
+  t4: [["App",0],["main",0.34],["is",0.58],["where",0.92],["your",1.06],["program",1.2],["starts.",1.44],["When",2.54],["the",2.6],["chip",2.72],["boots,",2.9],["ESP",3.8],["-IDF",4.04],["sets",5.42],["everything",5.64],["up",6.04],["and",6.36],["then",6.84],["it",6.92],["calls",7.02],["App",7.26],["main.",7.52]],
   k1a: [["Step",0],["2",0.36],["is",0.68],["your",1.02],["one",1.18],["line",1.38],["of",1.58],["code.",1.72]],
   k1b: [["Inside",0],["App",0.48],["Main,",0.7],["type",1.4],["this",1.64],["printf.",1.84]],
   k2: [["Print",0],["F",0.38],["sends",0.7],["text",1.14],["down",1.46],["the",1.84],["USB",2.02],["cable",2.4],["to",2.76],["your",2.94],["computer",3.06],["and",3.44],["the",4.1],["backslash",4.24],["N",4.92],["at",5.24],["the",5.44],["end",5.58],["finishes",5.96],["the",6.48],["line.",6.72]],
   k3: [["Press",0],["Ctrl",0.34],["S",0.72],["to",1.12],["save",1.42],["the",1.68],["file.",1.84]],
-  g1a: [["Step",0],["3",0.36],["is",0.76],["to",1.12],["tell",1.3],["ESP",1.5],["-IDF",1.82],["which",2.52],["chip",2.8],["is",3.14],["on",3.56],["your",3.7],["board.",3.8]],
+  g1a: [["Step",0],["three",0.38],["is",0.8],["to",1.2],["tell",1.36],["ESP",1.62],["-IDF",2.34],["which",3.86],["chip",4.14],["is",4.54],["on",4.96],["your",5.1],["board.",5.18]],
   g1b: [["Click",0],["the",0.28],["chip",0.42],["icon",0.6],["in",1.02],["the",1.32],["status",1.42],["bar.",1.66]],
-  g2: [["Choose",0],["the",0.34],["chip",0.5],["on",0.66],["your",0.82],["board.",0.92],["The",1.68],["one",1.7],["I",1.82],["have",2],["here",2.22],["is",2.54],["an",2.8],["ESP32S3,",2.98],["so",5.22],["I",5.52],["choose",5.84],["ESP32S3.",6.16],["The",8.72],["rest",8.84],["of",9],["this",9.2],["course",9.36],["uses",9.64],["the",10.06],["original",10.28],["ESP32,",10.68],["which",12.88],["is",12.98],["the",13.12],["one",13.26],["called",13.48],["ESP32.",13.78]],
-  g3a: [["Next,",0],["it",0.96],["asks",1.1],["how",1.3],["you",1.46],["would",1.54],["debug",1.64],["the",1.96],["board.",2.14],["This",2.88],["course",3.06],["doesn't",3.36],["use",3.74],["a",3.9],["debugger,",4.04],["so",4.72],["it",5],["doesn't",5.1],["matter",5.34],["much.",5.48]],
+  g2: [["Choose",0],["the",0.34],["chip",0.52],["on",0.68],["your",0.84],["board.",0.96],["The",1.64],["one",1.72],["I",1.84],["have",2.04],["here",2.26],["is",2.6],["an",2.88],["ESP32S3,",3.04],["so",5.38],["I",5.66],["choose",5.98],["ESP32S3.",6.3],["If",8.9],["your",9],["board",9.12],["has",9.34],["a",9.54],["different",9.64],["chip,",9.86],["choose",10.68],["that",10.76],["one",11],["instead.",11.12]],
+  g3a: [["Next,",0],["it",0.78],["asks",0.86],["how",1.06],["you",1.24],["would",1.32],["debug",1.4],["the",1.68],["board.",1.88]],
   g3b: [["Choose",0],["the",0.32],["first",0.5],["entry,",0.82],["ESP32",1.92],["-S3",2.94],["chip",3.94],["via",4.36],["built",4.96],["-in",5.28],["USB",5.5],["JTAG.",5.96]],
   g4: [["A",0],["few",0.22],["seconds",0.36],["later,",0.64],["it",1.54],["says",1.56],["target",1.92],["ESP32S3",2.78],["set",5],["successfully.",5.64]],
   b1a: [["Step",0],["four",0.34],["is",0.7],["to",1.08],["build",1.24],["the",1.44],["program.",1.6]],
   b1b: [["Click",0],["the",0.28],["wrench",0.46],["icon,",0.74],["which",1.76],["is",1.92],["build",2.08],["project.",2.26]],
-  b2: [["The",0],["first",0.24],["build",0.46],["takes",0.74],["a",1],["while,",1.18],["about",1.9],["a",1.98],["minute",2.1],["on",2.36],["this",2.58],["computer,",2.72],["because",3.48],["it",3.72],["compiles",3.86],["ESP",4.38],["-IDF",4.66],["along",5.4],["with",5.76],["your",6],["one",6.08],["line.",6.26],["After",7.02],["that,",7.22],["it",7.94],["only",8.08],["rebuilds",8.32],["what",9],["you",9.08],["change.",9.18]],
+  b2: [["The",0],["first",0.24],["build",0.52],["takes",0.86],["a",1.12],["while,",1.32],["about",1.98],["a",2.12],["minute",2.26],["on",2.5],["this",2.7],["computer,",2.84],["because",3.56],["it",3.82],["compiles",3.96],["ESP",4.52],["-IDF",5.24],["along",6.64],["with",7.08],["your",7.34],["one",7.44],["line.",7.62],["After",8.4],["that,",8.58],["it",9.26],["only",9.42],["rebuilds",9.68],["what",10.4],["you",10.48],["change.",10.6]],
   b3: [["When",0],["it",0.22],["finishes,",0.3],["it",1.32],["says",1.34],["Build",1.66],["Successful,",2.24],["and",3.56],["the",3.76],["output",3.88],["shows",4.16],["how",4.54],["big",4.96],["the",5.44],["program",5.64],["is.",5.88]],
   r1a: [["Step",0],["five",0.36],["is",0.72],["to",1.18],["run",1.34],["it",1.52],["on",1.6],["your",1.68],["board.",1.8],["Plug",2.66],["the",2.68],["board",2.84],["into",3.04],["your",3.22],["computer",3.36],["with",3.76],["a",4.26],["USB",4.38],["cable.",4.68]],
   r1b: [["Then",0],["click",0.24],["the",0.4],["plug",0.56],["icon",0.72],["in",1.1],["the",1.3],["status",1.38],["bar,",1.62],["which",2.44],["picks",2.56],["the",2.8],["serial",3.02],["port",3.36],["to",3.62],["use.",3.82]],
@@ -64,10 +68,10 @@ export const VO_WORDS: Record<string, [string, number][]> = {
   r4b: [["Choose",0],["UART,",0.34],["which",1.8],["flashes",2.06],["over",2.66],["the",3.02],["same",3.2],["USB",3.54],["cable.",4.04]],
   r5: [["A",0],["few",0.22],["seconds",0.34],["later,",0.64],["it",1.46],["says",1.54],["flash",1.82],["done.",2.24],["Your",3.1],["program",3.2],["is",3.58],["now",3.92],["on",4.18],["the",4.34],["board.",4.38]],
   r6: [["To",0],["see",0.2],["what",0.36],["the",0.48],["board",0.58],["prints,",0.86],["click",1.66],["the",1.8],["monitor",1.96],["icon,",2.26],["the",3.28],["little",3.36],["screen.",3.5]],
-  r7: [["The",0],["board",0.24],["restarts,",0.46],["ESPDF",1.58],["starts",2.14],["up,",2.4],["and",3.02],["an",3.08],["app",3.2],["main",3.48],["runs",3.78],["and",4.12],["prints.",4.76],["Hello",5.78],["world.",6.06]],
+  r7: [["The",0],["board",0.24],["restarts,",0.46],["ESP,",1.56],["IDF",2.56],["starts",3.14],["up,",3.38],["and",4.2],["then",4.24],["App",4.34],["main",4.6],["runs",4.84],["and",5.16],["prints.",5.78],["Hello",6.76],["world.",7.04]],
   r8: [["Right",0],["after",0.28],["that,",0.54],["app",1.46],["main",1.48],["returns,",1.68],["and",2.66],["the",2.74],["log",2.84],["says",3.08],["so.",3.38],["That's",4.24],["fine.",4.46],["Your",5.24],["program",5.34],["has",5.64],["done",5.84],["its",6],["one",6.14],["job.",6.38]],
   r9: [["to",0],["stop",0.22],["the",0.44],["monitor,",0.6],["press",1.44],["control",1.56],["at",2],["the",2.6],["right",2.72],["square",2.9],["bracket.",3.2]],
-  z1: [["That's",0],["your",0.34],["first",0.44],["ESP",0.78],["-IDF",1.18],["program.",1.76],["One",2.66],["line",2.82],["of",2.98],["code,",3.12],["built,",3.66],["flashed,",4.24],["and",5.12],["running",5.16],["on",5.38],["a",5.5],["Rayall",5.6],["board.",5.9],["Next",6.72],["up",6.82],["is",7.06],["Basic",7.34],["GPIO,",7.8],["where",8.9],["the",9.08],["board",9.24],["starts",9.54],["switching",9.9],["in",10.38],["LED",10.72],["and",11.08],["reading",11.8],["a",12.02],["button.",12.18]],
+  z1: [["That's",0],["your",0.32],["first",0.44],["ESP",0.74],["-IDF",1.38],["program.",2.52],["One",3.52],["line",3.72],["of",3.9],["code,",4.02],["built,",4.62],["flashed,",5.34],["and",6.3],["running",6.36],["on",6.58],["a",6.7],["Rayall",6.78],["board.",7.06],["Next",7.88],["up",7.98],["is",8.18],["basic",8.42],["GPIO,",8.9],["where",10.14],["the",10.26],["board",10.38],["starts",10.64],["switching",10.96],["in",11.44],["LED",11.74],["and",12.1],["reading",12.66],["a",12.9],["button.",13.06]],
 };
 // ── end generated ──
 
@@ -111,13 +115,15 @@ type Clip = { from: string; to: string; maxRate?: number; lead?: number };
 /** Lead that lands take event `click` (played at 1×) on scene time `word`. */
 const land = (word: number, from: string, click: string) => +(word - (tk(click) - tk(from))).toFixed(2);
 const BEATS: { id: string; clip: Clip }[] = [
-  { id: 'intro', clip: { from: 'BEGIN', to: 'palette' } },
-  // The palette opens and the title goes in at once (the full command list shows for ~0.5 s only).
-  { id: 'new1', clip: { from: 'palette', to: 'palette-row', lead: w('n1b', 'ctrl', 0, -0.1) } },
-  { id: 'new2', clip: { from: 'palette-row', to: 'palette-enter' } },
-  { id: 'act1', clip: { from: 'palette-enter', to: 'activate', maxRate: 2 } },
+  { id: 'intro', clip: { from: 'BEGIN', to: 'icon' } },
+  { id: 'way1', clip: { from: 'icon', to: 'activate', lead: land(w('n0b', 'click'), 'icon', 'icon-click') } },
   { id: 'act2', clip: { from: 'activate', to: 'activate-click', lead: land(w('n2b', 'activate'), 'activate', 'activate-click') } },
-  { id: 'act3', clip: { from: 'activate-click', to: 'name', maxRate: 3 } },
+  { id: 'act3', clip: { from: 'activate-click', to: 'cmds', maxRate: 3 } },
+  { id: 'adv', clip: { from: 'cmds', to: 'wizard', lead: land(w('n2d', 'advanced'), 'cmds', 'adv-click') } },
+  // The palette opens and the title goes in at once (the full command list shows for ~0.5 s only).
+  { id: 'new1', clip: { from: 'wizard', to: 'palette-row', lead: land(w('n1b', 'ctrl'), 'wizard', 'palette') } },
+  { id: 'new2', clip: { from: 'palette-row', to: 'palette-enter' } },
+  { id: 'askname', clip: { from: 'palette-enter', to: 'name' } },
   { id: 'name', clip: { from: 'name', to: 'name-enter', lead: land(w('n3b', 'type'), 'name', 'name-typing') } },
   { id: 'folder', clip: { from: 'name-enter', to: 'folder-click', lead: land(w('n4', 'ok'), 'name-enter', 'folder-click') } },
   { id: 'created', clip: { from: 'folder-click', to: 'open-click', lead: land(w('n5b', 'open'), 'folder-click', 'open-click') } },
@@ -132,10 +138,10 @@ const BEATS: { id: string; clip: Clip }[] = [
   { id: 'chip2', clip: { from: 'target-pick', to: 'ocd', lead: land(end('g2') - 0.2, 'target-pick', 'target-row-click') } },
   { id: 'chip3', clip: { from: 'ocd', to: 'ocd-click', lead: land(w('g3b', 'choose'), 'ocd', 'ocd-click') } },
   { id: 'chip4', clip: { from: 'ocd-click', to: 'target-done', maxRate: 6 } },
-  { id: 'chip5', clip: { from: 'target-done', to: 'build-item', maxRate: 8 } }, // static after the toast
+  { id: 'chip5', clip: { from: 'target-done', to: 'build-item', maxRate: 8, lead: end('g4') } }, // holds on the toast while it's read, then static
   { id: 'build1', clip: { from: 'build-item', to: 'build-click', lead: land(w('b1b', 'click'), 'build-item', 'build-click') } },
   { id: 'build2', clip: { from: 'build-click', to: 'build-done', maxRate: 8 } },
-  { id: 'build3', clip: { from: 'build-done', to: 'port-item', maxRate: 6 } }, // static after the toast
+  { id: 'build3', clip: { from: 'build-done', to: 'port-item', maxRate: 6, lead: end('b3') } }, // holds on the toast and size line, then static
   { id: 'port1', clip: { from: 'port-item', to: 'port-pick', lead: land(w('r1b', 'click'), 'port-item', 'port-click') } },
   { id: 'port2', clip: { from: 'port-pick', to: 'port-done', lead: land(end('r2') - 0.2, 'port-pick', 'port-row-click') } },
   { id: 'flash1', clip: { from: 'port-done', to: 'method', lead: land(w('r3', 'click'), 'port-done', 'flash-click') } },
@@ -149,7 +155,7 @@ const BEATS: { id: string; clip: Clip }[] = [
   { id: 'outro', clip: { from: 'END', to: 'END' } },
 ];
 export const TAIL: Record<string, number> = {
-  intro: 1.0, new1: 0.3, new2: 0.4, act1: 0.3, act2: 0.4, act3: 0.3, name: 0.5, folder: 0.5, created: 0.4,
+  intro: 1.0, way1: 0.4, act2: 0.4, act3: 0.4, adv: 0.6, new1: 0.3, new2: 0.4, askname: 0.3, name: 0.5, folder: 0.5, created: 0.4,
   win2: 0.6, tour1: 0.4, tour2: 0.6, tour3: 0.8, code1: 0.5, code2: 0.6, code3: 0.5,
   chip1: 0.4, chip2: 0.5, chip3: 0.4, chip4: 0.3, chip5: 0.8, build1: 0.4, build2: 0.4, build3: 1.0,
   port1: 0.4, port2: 0.6, flash1: 0.4, flash2: 0.4, flash3: 0.3, flash4: 0.6, mon1: 0.4, mon2: 0.4, mon3: 0.8, mon4: 1.0, outro: 3.0,
@@ -222,12 +228,16 @@ export const VO: VoLine[] = [
   L('i2', 'intro', "You'll create the project, write one line of code, pick your chip, build it, and then run it on the board."),
   L('i3', 'intro', "We'll start in VS Code, in the empty esp32 folder from last time.", "We'll start in V S Code, in the empty E S P 32 folder from last time."),
 
-  L('n1a', 'new1', 'Step one is to create the project.', undefined, 0.8),
-  L('n1b', 'new1', 'Press Ctrl+Shift+P to open the command palette.', 'Press Control Shift P to open the command palette.', 0.4),
-  L('n1c', 'new2', 'Then run the command ESP-IDF: Create New Empty Project.', 'Then run the command: ESP-IDF, create new empty project.', 0.3),
-  L('n2a', 'act1', 'The folder is still empty, so VS Code asks again whether it should turn the extension on.', undefined, 0.3),
+  L('n0a', 'way1', 'Step one is to create the project, and there are two ways to start.', undefined, 0.8),
+  L('n0b', 'way1', 'The first is the Espressif icon on the left. Click it.', undefined, 0.4),
+  L('n2a', 'act2', 'The folder is still empty, so VS Code asks whether it should turn the extension on.', undefined, 0.3),
   L('n2b', 'act2', 'Click Activate Anyway.', undefined, 0.3),
-  L('n3a', 'act3', 'Next, it asks for a name for your project.', undefined, 0.3),
+  L('n2c', 'act3', 'The extension starts up, and lists its commands.', undefined, 0.3),
+  L('n2d', 'adv', "Under Advanced, there's the New Project Wizard. It starts a project from one of Espressif's templates or examples.", undefined, 0.3),
+  L('n1a', 'new1', 'For an empty project like this one, use the second way, the command palette.', undefined, 0.6),
+  L('n1b', 'new1', 'Press Ctrl+Shift+P to open it.', 'Press Control Shift P to open it.', 0.3),
+  L('n1c', 'new2', 'Then run the command ESP-IDF: Create New Empty Project.', 'Then run the command: ESP-IDF, create new empty project.', 0.3),
+  L('n3a', 'askname', 'Next, it asks for a name for your project.', undefined, 0.3),
   L('n3b', 'name', 'Type hello_world, and press Enter.', 'Type hello underscore world, and press Enter.', 0.3),
   L('n4', 'folder', "Then it asks where to put the project. It starts in your esp32 folder, which is what you want, so click OK.", "Then it asks where to put the project. It starts in your E S P 32 folder, which is what you want, so click OK.", 0.3),
   L('n5a', 'created', 'The extension creates the project, and asks whether you want to open it.', undefined, 0.3),
@@ -246,8 +256,8 @@ export const VO: VoLine[] = [
 
   L('g1a', 'chip1', 'Step three is to tell ESP-IDF which chip is on your board.', undefined, 0.8),
   L('g1b', 'chip1', 'Click the chip icon in the status bar.', undefined, 0.3),
-  L('g2', 'chip2', 'Choose the chip on your board. The one I have here is an ESP32-S3, so I choose esp32s3. The rest of this course uses the original ESP32, which is the one called esp32.', 'Choose the chip on your board. The one I have here is an ESP32 S3, so I choose E S P 32 S3. The rest of this course uses the original ESP32, which is the one called E S P 32.', 0.3),
-  L('g3a', 'chip3', "Next, it asks how you would debug the board. This course doesn't use a debugger, so it doesn't matter much.", undefined, 0.3),
+  L('g2', 'chip2', 'Choose the chip on your board. The one I have here is an ESP32-S3, so I choose esp32s3. If your board has a different chip, choose that one instead.', 'Choose the chip on your board. The one I have here is an ESP32 S3, so I choose E S P 32 S3. If your board has a different chip, choose that one instead.', 0.3),
+  L('g3a', 'chip3', 'Next, it asks how you would debug the board.', undefined, 0.3),
   L('g3b', 'chip3', 'Choose the first entry: ESP32-S3 chip, via built-in USB-JTAG.', 'Choose the first entry: ESP32 S3 chip, via built-in U S B J TAG.'),
   L('g4', 'chip5', 'A few seconds later, it says Target ESP32S3 Set Successfully.', 'A few seconds later, it says: target ESP32 S3 set successfully.', 0.3),
 
@@ -278,10 +288,14 @@ export const CUE = {
   steps: A('intro', w('i2', 'create')),
   stepsOut: A('intro', end('i2') + 0.6),
   folder: A('intro', w('i3', 'empty')),
-  palette: A('new1', w('n1b', 'ctrl')),
-  paletteRow: A('new2', w('n1c', 'create')),
+  icon: A('way1', w('n0b', 'espressif')),
   activate: whenTake('activate'),
   activateBtn: A('act2', w('n2b', 'activate')),
+  cmds: A('act3', w('n2c', 'lists')),
+  adv: A('adv', w('n2d', 'advanced')),
+  wizard: A('adv', w('n2d', 'new')),
+  palette: A('new1', w('n1b', 'ctrl')),
+  paletteRow: A('new2', w('n1c', 'create')),
   name: whenTake('name'),
   nameTyped: A('name', w('n3b', 'enter')),
   folderBox: whenTake('folder'),
@@ -332,7 +346,7 @@ export const CUE = {
 
 /** Step pills: [first beat, label]. Each lasts until the next one starts. */
 const STEP_BEATS: [SceneId, string][] = [
-  ['new1', 'Step 1 · Create the project'],
+  ['way1', 'Step 1 · Create the project'],
   ['code1', 'Step 2 · Write the code'],
   ['chip1', 'Step 3 · Pick the chip'],
   ['build1', 'Step 4 · Build'],
@@ -346,7 +360,7 @@ export const CHAPTERS = STEP_BEATS.map(([b, text], i) => ({
 
 /** SFX, cued from the same values as the visuals they belong to. */
 export const SOUND: { t: number; kind: 'tick' | 'thump' | 'blip'; f?: number; amp?: number }[] = [
-  ...[CUE.paletteRow, CUE.activateBtn, CUE.folderOk, CUE.openBtn, CUE.cmake, CUE.mainc, CUE.appMain, CUE.chipIcon,
+  ...[CUE.icon, CUE.wizard, CUE.paletteRow, CUE.activateBtn, CUE.folderOk, CUE.openBtn, CUE.cmake, CUE.mainc, CUE.appMain, CUE.chipIcon,
     CUE.targetRow, CUE.ocdRow, CUE.buildIcon, CUE.plug, CUE.portRow, CUE.flashIcon, CUE.uart, CUE.monIcon]
     .map((t) => ({ t, kind: 'tick' as const, f: 3100, amp: 0.05 })),
   { t: CUE.steps, kind: 'tick', f: 2000, amp: 0.09 },
