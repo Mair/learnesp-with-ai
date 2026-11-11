@@ -16,11 +16,14 @@ import { startRecording } from '../lib/recorder.ts';
 import { editorLine, pause, runCommand, screenBox, terminal, terminalRow, textBox, typeHuman, unionBox, waitTerminal } from '../lib/actions.ts';
 import { stageOptions } from './first-project/config.ts';
 
-const SLUG = 'first-project';
+// TAKE_SLUG: write the take somewhere else (a trial run) instead of over the real one.
+const SLUG = process.env.TAKE_SLUG ?? 'first-project';
 const FPS = 30;
 const raw = 'capture/.run/take.mkv';
 const STOP_AT = process.env.STOP_AT;
 const BOARD = process.env.BOARD;
+// The chip on the board (the course uses the original ESP32). TARGET=esp32s3 etc. for a trial run.
+const TARGET = process.env.TARGET ?? 'esp32';
 const PROJECT = 'hello_world';
 
 const stage = await startStage(stageOptions);
@@ -179,7 +182,7 @@ try {
   await pause(page, 1.2);
   mark('target-click');
   await target.click();
-  const esp32 = row(/^esp32$/);
+  const esp32 = row(new RegExp(`^${TARGET}$`));
   await esp32.waitFor({ timeout: 30_000 });
   await pause(page, 1);
   mark('target-pick', { box: await screenBox(page, quickInput(), 4) });
@@ -187,7 +190,9 @@ try {
   await pause(page, 1.2);
   mark('target-row-click');
   await esp32.click();
-  const prog = row('ESP32 chip (via ESP-PROG)');
+  // No debug adapter in this course: the plain-chip entry (ESP-PROG for the original ESP32,
+  // the built-in USB-JTAG for chips that have one).
+  const prog = row(TARGET === 'esp32' ? 'ESP32 chip (via ESP-PROG)' : /builtin USB-JTAG/);
   await prog.waitFor({ timeout: 30_000 });
   await pause(page, 1);
   mark('ocd', { box: await screenBox(page, quickInput(), 4), text: await nameInput.getAttribute('placeholder') ?? '' });
@@ -300,7 +305,7 @@ try {
     console.log('encoding take.mp4…');
     execFileSync('ffmpeg', ['-y', '-loglevel', 'error', '-i', raw, '-c:v', 'libx264', '-preset', 'medium', '-crf', '17',
       '-g', '60', '-pix_fmt', 'yuv420p', '-movflags', '+faststart', join('public', SLUG, 'take.mp4')]);
-    const take = { fps: FPS, size: [W, H], duration: +dur.toFixed(3), board: BOARD ?? null, events: rec.events, ...(failure ? { failed: failure.message } : {}) };
+    const take = { fps: FPS, size: [W, H], duration: +dur.toFixed(3), board: BOARD ?? null, target: TARGET, events: rec.events, ...(failure ? { failed: failure.message } : {}) };
     writeFileSync(join('src/scenes', SLUG, 'take.json'), JSON.stringify(take, null, 2) + '\n');
     console.log(`wrote public/${SLUG}/take.mp4 (${dur.toFixed(1)} s) + src/scenes/${SLUG}/take.json`);
   }

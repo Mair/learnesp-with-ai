@@ -12,6 +12,7 @@ A **VS Code recording** shows the real tool doing the real thing: the learner se
 | File | What it shows |
 |---|---|
 | `capture/lib/stage.ts` | Xvfb + clean VS Code profile + CDP connection; `HIDE_COMMANDS`; window sizing; options: `extensions: []` (fresh VS Code), `home` (bubblewrap sandbox showing a private home as `/home/learner`, own `TMPDIR`), `hideBins` (e.g. hide `eim` from PATH), `env`, `settings`, `args` |
+| `capture/takes/first-project.ts` + `first-project/config.ts` | a take that opens a second window, builds, flashes and monitors a real board (`BOARD`, `TARGET`, `TAKE_SLUG` for trial runs); `serialPorts` shows only that board |
 | `capture/lib/xwin.py` | windows on the WM-less display by title: `list` / `fill` / `raise` / `center` / `geom` / `move` |
 | `capture/lib/browser.ts` | web pages: the distrobox Playwright Chromium on the take's display, driven over CDP from the host; `box(locator)`, `urlBox()` |
 | `capture/lib/webkit.ts` | WebKitGTK/Tauri apps (EIM) through WebKit's remote inspector (`WEBKIT_INSPECTOR_HTTP_SERVER`): `eval`, `waitFor`, `click(text)`, `box(text)` |

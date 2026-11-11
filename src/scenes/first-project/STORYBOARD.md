@@ -11,10 +11,10 @@ then flashes it and sees "Hello world!" in the monitor, clicking along.
 extension and ESP-IDF v6.1 from `install-esp-idf` (home `capture/.devhome` shown as
 `/home/learner`), workspace `/home/learner/esp32` (empty). Step pills top left.
 
-**Status:** steps 1–4 recorded and cut (preview ends with the build). Step 5 (port → flash →
-monitor) needs an original ESP32 plugged into this machine: `BOARD=/dev/ttyUSB0 npm run
-first-project:take` records it in the same take; then add its beats and VO (below) and replace
-the preview outro.
+**Status (v2, 2026-11-11):** the whole flow in one take on an **ESP32-S3** (`BOARD=/dev/ttyACM2
+TARGET=esp32s3 npm run first-project:take`); the course author chose the S3 for this video. The
+chip step says so: "The one I have here is an ESP32-S3 … The rest of this course uses the
+original ESP32, which is the one called esp32." Only the S3's port shows in the picker.
 
 | # | Beat | Take events | VO (gist) | Visual |
 |---|---|---|---|---|
@@ -25,12 +25,11 @@ the preview outro.
 | 1 | created, win2 | → `open-click`, `win2` | creates it, offers to open it; Open hello_world; opens in a new window | toast, button |
 | 1 | tour1–3 | `cmake` → `type-start` | same shape every time: CMakeLists = a project; code in main → main.c; an include and an empty app_main; app_main is where your program starts (ESP-IDF sets up, then calls it) | spots on rows and lines |
 | 2 | code1–3 | `type-start` → `target-item` | step two: type this printf; printf sends text down the USB cable, \n ends the line; Ctrl+S | typed line spot, callouts |
-| 3 | chip1–5 | `target-item` → `build-item` | step three: which chip; chip icon; the original ESP32 → esp32 (else your chip); debug adapter list: not used, ESP32 chip via ESP-PROG; Target ESP32 Set Successfully | status icon, list rows, toast |
+| 3 | chip1–5 | `target-item` → `build-item` | step three: which chip; chip icon; choose your chip: mine is an ESP32-S3 → esp32s3, the course uses the original ESP32 (esp32); debug list: not used, the first entry (S3 via built-in USB-JTAG); Target ESP32S3 Set Successfully | status icon, list rows, toast |
 | 4 | build1–3 | `build-item` → `end` | step four: build; wrench = Build Project; first build ~1 min (compiles ESP-IDF too), later only what changed; Build Successful + size | icon, panel ×N, toast, size line |
-| 5 | (to record) port | `port-item` → `port-done` | step five: plug the board in; plug icon, pick its port | status icon, port row |
-| 5 | (to record) flash | `flash-item` → `flash-done` | lightning = Flash Device; (first time: UART); Flash Done | icon, toast |
-| 5 | (to record) monitor | `monitor-item` → `monitor-exit` | monitor icon; the board restarts and prints its boot messages, then Hello world!; app_main returns; Ctrl+] stops the monitor | terminal, "Hello world!" spot |
+| 5 | port1–2 | `port-item` → `port-done` | step five: plug the board in; plug icon, pick its port | status icon, port row |
+| 5 | flash1–4 | `flash-item` → `flash-done` | lightning = Flash Device; (first time: UART); Flash Done | icon, toast |
+| 5 | mon1–4 | `monitor-item` → `monitor-exit` | monitor icon; the board restarts and prints its boot messages, then Hello world!; app_main returns; Ctrl+] stops the monitor | terminal, "Hello world!" spot |
 | 6 | outro | | that's your first program; next: Basic GPIO | full view |
 
-Preview outro (until step 5 is recorded): "Next, you plug in your board, flash the program onto
-it, and watch it print Hello world."
+Port names per OS are said once (Linux /dev/tty…, Windows COM…, Mac /dev/cu.…) with a callout.

@@ -4,7 +4,8 @@
  * One recorded take (capture/takes/first-project.ts → take.json + take.mp4):
  * VS Code on the empty esp32 folder → ESP-IDF: Create New Empty Project →
  * hello_world opens in a new window → one printf → target esp32 → build.
- * With a board on the take (BOARD=…): port → flash → monitor ("Hello world!").
+ * Then port → flash → monitor ("Hello world!") on the board (an ESP32-S3 here, BOARD=/dev/ttyACM2
+ * TARGET=esp32s3; the course's later videos use the original ESP32, and the VO says so).
  *
  *   beat length = max(narration + tail, lead + take stretch ÷ maxRate)
  *   video       = holds its first frame until `lead`, plays (faster up to
@@ -20,8 +21,8 @@ export const SECTION = '0-setup';
 export const VOICE = 'en-US-AndrewMultilingualNeural';
 
 // ── generated: VO plan (node scripts/vo-plan.ts first-project) — do not edit by hand ──
-export const VO_AT: Record<string, number> = {"i1":0.8,"i2":8.18,"i3":13.88,"n1a":0.8,"n1b":3.18,"n1c":0.3,"n2a":0.3,"n2b":0.3,"n3a":0.3,"n3b":0.3,"n4":0.3,"n5a":0.3,"n5b":4.64,"n6":0.3,"t1":0.5,"t2":0.4,"t3":0.4,"t4":6.62,"k1a":0.8,"k1b":3.04,"k2":0.4,"k3":0.4,"g1a":0.8,"g1b":5.08,"g2":0.3,"g3a":0.3,"g3b":7.02,"g4":0.3,"b1a":0.8,"b1b":3.06,"b2":0.3,"b3":0.3,"z1":0.6};
-export const SCENE_DUR: Record<string, number> = {"intro":20.3,"new1":6.36,"new2":5.36,"act1":6.22,"act2":2.04,"act3":2.74,"name":3.44,"folder":7.64,"created":6.08,"win2":3.6,"tour1":8.62,"tour2":4.62,"tour3":14.38,"code1":5.74,"code2":7.98,"code3":3.08,"chip1":7.52,"chip2":12.52,"chip3":11.9,"chip5":6.98,"build1":6.2,"build2":10.24,"build3":7.6,"outro":8.48};
+export const VO_AT: Record<string, number> = {"i1":0.8,"i2":8.18,"i3":13.88,"n1a":0.8,"n1b":3.18,"n1c":0.3,"n2a":0.3,"n2b":0.3,"n3a":0.3,"n3b":0.3,"n4":0.3,"n5a":0.3,"n5b":4.64,"n6":0.3,"t1":0.5,"t2":0.4,"t3":0.4,"t4":6.62,"k1a":0.8,"k1b":3.04,"k2":0.4,"k3":0.4,"g1a":0.8,"g1b":5.08,"g2":0.3,"g3a":0.3,"g3b":6.62,"g4":0.3,"b1a":0.8,"b1b":3.06,"b2":0.3,"b3":0.3,"r1a":0.8,"r1b":6.22,"r2":0.3,"r3":0.3,"r4a":0.3,"r4b":2.72,"r5":0.3,"r6":0.3,"r7":0.3,"r8":0.5,"r9":0.3,"z1":0.6};
+export const SCENE_DUR: Record<string, number> = {"intro":20.3,"new1":6.36,"new2":5.36,"act1":6.22,"act2":2.04,"act3":2.74,"name":3.44,"folder":7.64,"created":6.08,"win2":3.6,"tour1":8.62,"tour2":4.62,"tour3":14.38,"code1":5.74,"code2":7.98,"code3":3.08,"chip1":7.52,"chip2":16.08,"chip3":13.72,"chip5":7.6,"build1":6.2,"build2":10.24,"build3":7.6,"port1":10.74,"port2":11.7,"flash1":3.5,"flash2":7.6,"flash4":5.5,"mon1":4.52,"mon2":7,"mon3":8.02,"mon4":4.82,"outro":15.92};
 export const VO_WORDS: Record<string, [string, number][]> = {
   i1: [["In",0],["the",0.2],["last",0.3],["video,",0.52],["you",1.34],["installed",1.48],["ESB",2.02],["-IDF.",2.62],["Now",3.72],["it's",3.82],["time",3.96],["for",4.1],["your",4.26],["first",4.36],["program.",4.62],["One",5.52],["that",5.74],["prints",5.9],["hello",6.22],["world.",6.48]],
   i2: [["You'll",0],["create",0.28],["the",0.46],["project,",0.6],["write",1.36],["one",1.44],["line",1.64],["of",1.84],["code,",1.96],["pick",2.6],["your",2.78],["chip,",2.94],["build",3.52],["it,",3.72],["and",4.24],["then",4.34],["run",4.44],["it",4.6],["on",4.7],["the",4.8],["board.",4.9]],
@@ -47,15 +48,26 @@ export const VO_WORDS: Record<string, [string, number][]> = {
   k3: [["Press",0],["Ctrl",0.34],["S",0.72],["to",1.12],["save",1.42],["the",1.68],["file.",1.84]],
   g1a: [["Step",0],["3",0.36],["is",0.76],["to",1.12],["tell",1.3],["ESP",1.5],["-IDF",1.82],["which",2.52],["chip",2.8],["is",3.14],["on",3.56],["your",3.7],["board.",3.8]],
   g1b: [["Click",0],["the",0.28],["chip",0.42],["icon",0.6],["in",1.02],["the",1.32],["status",1.42],["bar.",1.66]],
-  g2: [["This",0],["course",0.28],["uses",0.52],["the",0.88],["original",1.06],["ESP32,",1.52],["so",3.42],["choose",3.66],["ESP32.",4.16],["If",6.7],["your",6.8],["board",6.94],["has",7.16],["a",7.36],["different",7.48],["chip,",7.7],["like",8.46],["an",8.52],["ESP32",8.68],["S3,",9.9],["pick",10.86],["that",11.02],["one",11.24],["instead.",11.36]],
-  g3a: [["Next,",0],["it",0.94],["asks",1.02],["which",1.24],["debug",1.46],["adapter",1.84],["you",2.16],["use.",2.44],["This",3.3],["course",3.42],["doesn't",3.68],["use",4.18],["one,",4.4],["so",5.1],["it",5.36],["doesn't",5.46],["matter",5.7],["much.",5.86]],
-  g3b: [["Choose",0],["ESP32",0.42],["chip",1.82],["via",2.32],["ESPProg.",2.9]],
-  g4: [["A",0],["few",0.22],["seconds",0.36],["later,",0.66],["it",1.54],["says,",1.6],["target",2.46],["ESP32",2.82],["set",4.5],["successfully.",5.16]],
+  g2: [["Choose",0],["the",0.34],["chip",0.5],["on",0.66],["your",0.82],["board.",0.92],["The",1.68],["one",1.7],["I",1.82],["have",2],["here",2.22],["is",2.54],["an",2.8],["ESP32S3,",2.98],["so",5.22],["I",5.52],["choose",5.84],["ESP32S3.",6.16],["The",8.72],["rest",8.84],["of",9],["this",9.2],["course",9.36],["uses",9.64],["the",10.06],["original",10.28],["ESP32,",10.68],["which",12.88],["is",12.98],["the",13.12],["one",13.26],["called",13.48],["ESP32.",13.78]],
+  g3a: [["Next,",0],["it",0.96],["asks",1.1],["how",1.3],["you",1.46],["would",1.54],["debug",1.64],["the",1.96],["board.",2.14],["This",2.88],["course",3.06],["doesn't",3.36],["use",3.74],["a",3.9],["debugger,",4.04],["so",4.72],["it",5],["doesn't",5.1],["matter",5.34],["much.",5.48]],
+  g3b: [["Choose",0],["the",0.32],["first",0.5],["entry,",0.82],["ESP32",1.92],["-S3",2.94],["chip",3.94],["via",4.36],["built",4.96],["-in",5.28],["USB",5.5],["JTAG.",5.96]],
+  g4: [["A",0],["few",0.22],["seconds",0.36],["later,",0.64],["it",1.54],["says",1.56],["target",1.92],["ESP32S3",2.78],["set",5],["successfully.",5.64]],
   b1a: [["Step",0],["four",0.34],["is",0.7],["to",1.08],["build",1.24],["the",1.44],["program.",1.6]],
   b1b: [["Click",0],["the",0.28],["wrench",0.46],["icon,",0.74],["which",1.76],["is",1.92],["build",2.08],["project.",2.26]],
   b2: [["The",0],["first",0.24],["build",0.46],["takes",0.74],["a",1],["while,",1.18],["about",1.9],["a",1.98],["minute",2.1],["on",2.36],["this",2.58],["computer,",2.72],["because",3.48],["it",3.72],["compiles",3.86],["ESP",4.38],["-IDF",4.66],["along",5.4],["with",5.76],["your",6],["one",6.08],["line.",6.26],["After",7.02],["that,",7.22],["it",7.94],["only",8.08],["rebuilds",8.32],["what",9],["you",9.08],["change.",9.18]],
   b3: [["When",0],["it",0.22],["finishes,",0.3],["it",1.32],["says",1.34],["Build",1.66],["Successful,",2.24],["and",3.56],["the",3.76],["output",3.88],["shows",4.16],["how",4.54],["big",4.96],["the",5.44],["program",5.64],["is.",5.88]],
-  z1: [["Next,",0],["you",0.62],["plug",0.68],["in",0.86],["your",0.96],["board,",1.06],["flash",1.86],["the",2],["program",2.2],["onto",2.5],["it,",2.8],["and",3.44],["watch",3.62],["it",3.84],["print",4.04],["Hello",4.3],["World.",4.56]],
+  r1a: [["Step",0],["five",0.36],["is",0.72],["to",1.18],["run",1.34],["it",1.52],["on",1.6],["your",1.68],["board.",1.8],["Plug",2.66],["the",2.68],["board",2.84],["into",3.04],["your",3.22],["computer",3.36],["with",3.76],["a",4.26],["USB",4.38],["cable.",4.68]],
+  r1b: [["Then",0],["click",0.24],["the",0.4],["plug",0.56],["icon",0.72],["in",1.1],["the",1.3],["status",1.38],["bar,",1.62],["which",2.44],["picks",2.56],["the",2.8],["serial",3.02],["port",3.36],["to",3.62],["use.",3.82]],
+  r2: [["Choose",0],["your",0.34],["board's",0.5],["port.",0.8],["On",1.56],["Linux,",1.64],["it's",2.14],["called",2.24],["slash",2.42],["dev",2.84],["slash",3.3],["ttysomething.",3.94],["On",5.58],["Windows,",5.74],["it's",6.6],["a",6.82],["com",6.88],["port,",7.1],["and",7.78],["on",7.84],["a",8.02],["Mac,",8.12],["it",8.78],["starts",8.9],["with",9.16],["slash",9.36],["dev",9.78],["slash",10.1],["cu.",10.52]],
+  r3: [["Now",0],["click",0.28],["the",0.48],["lightning",0.66],["icon,",0.92],["which",1.92],["is",2],["flash",2.14],["device.",2.4]],
+  r4a: [["The",0],["first",0.22],["time,",0.4],["it",1.1],["asks",1.28],["how",1.46],["you",1.62],["want",1.7],["to",1.8],["flash.",1.88]],
+  r4b: [["Choose",0],["UART,",0.34],["which",1.8],["flashes",2.06],["over",2.66],["the",3.02],["same",3.2],["USB",3.54],["cable.",4.04]],
+  r5: [["A",0],["few",0.22],["seconds",0.34],["later,",0.64],["it",1.46],["says",1.54],["flash",1.82],["done.",2.24],["Your",3.1],["program",3.2],["is",3.58],["now",3.92],["on",4.18],["the",4.34],["board.",4.38]],
+  r6: [["To",0],["see",0.2],["what",0.36],["the",0.48],["board",0.58],["prints,",0.86],["click",1.66],["the",1.8],["monitor",1.96],["icon,",2.26],["the",3.28],["little",3.36],["screen.",3.5]],
+  r7: [["The",0],["board",0.24],["restarts,",0.46],["ESPDF",1.58],["starts",2.14],["up,",2.4],["and",3.02],["an",3.08],["app",3.2],["main",3.48],["runs",3.78],["and",4.12],["prints.",4.76],["Hello",5.78],["world.",6.06]],
+  r8: [["Right",0],["after",0.28],["that,",0.54],["app",1.46],["main",1.48],["returns,",1.68],["and",2.66],["the",2.74],["log",2.84],["says",3.08],["so.",3.38],["That's",4.24],["fine.",4.46],["Your",5.24],["program",5.34],["has",5.64],["done",5.84],["its",6],["one",6.14],["job.",6.38]],
+  r9: [["to",0],["stop",0.22],["the",0.44],["monitor,",0.6],["press",1.44],["control",1.56],["at",2],["the",2.6],["right",2.72],["square",2.9],["bracket.",3.2]],
+  z1: [["That's",0],["your",0.34],["first",0.44],["ESP",0.78],["-IDF",1.18],["program.",1.76],["One",2.66],["line",2.82],["of",2.98],["code,",3.12],["built,",3.66],["flashed,",4.24],["and",5.12],["running",5.16],["on",5.38],["a",5.5],["Rayall",5.6],["board.",5.9],["Next",6.72],["up",6.82],["is",7.06],["Basic",7.34],["GPIO,",7.8],["where",8.9],["the",9.08],["board",9.24],["starts",9.54],["switching",9.9],["in",10.38],["LED",10.72],["and",11.08],["reading",11.8],["a",12.02],["button.",12.18]],
 };
 // ── end generated ──
 
@@ -117,19 +129,30 @@ const BEATS: { id: string; clip: Clip }[] = [
   { id: 'code2', clip: { from: 'typed', to: 'save' } },
   { id: 'code3', clip: { from: 'save', to: 'target-item', lead: w('k3', 'ctrl', 0, -0.1) } },
   { id: 'chip1', clip: { from: 'target-item', to: 'target-pick', lead: land(w('g1b', 'click'), 'target-item', 'target-click') } },
-  { id: 'chip2', clip: { from: 'target-pick', to: 'ocd', lead: land(w('g2', 'instead'), 'target-pick', 'target-row-click') } },
+  { id: 'chip2', clip: { from: 'target-pick', to: 'ocd', lead: land(end('g2') - 0.2, 'target-pick', 'target-row-click') } },
   { id: 'chip3', clip: { from: 'ocd', to: 'ocd-click', lead: land(w('g3b', 'choose'), 'ocd', 'ocd-click') } },
   { id: 'chip4', clip: { from: 'ocd-click', to: 'target-done', maxRate: 6 } },
   { id: 'chip5', clip: { from: 'target-done', to: 'build-item', maxRate: 8 } }, // static after the toast
   { id: 'build1', clip: { from: 'build-item', to: 'build-click', lead: land(w('b1b', 'click'), 'build-item', 'build-click') } },
   { id: 'build2', clip: { from: 'build-click', to: 'build-done', maxRate: 8 } },
-  { id: 'build3', clip: { from: 'build-done', to: 'end' } },
+  { id: 'build3', clip: { from: 'build-done', to: 'port-item', maxRate: 6 } }, // static after the toast
+  { id: 'port1', clip: { from: 'port-item', to: 'port-pick', lead: land(w('r1b', 'click'), 'port-item', 'port-click') } },
+  { id: 'port2', clip: { from: 'port-pick', to: 'port-done', lead: land(end('r2') - 0.2, 'port-pick', 'port-row-click') } },
+  { id: 'flash1', clip: { from: 'port-done', to: 'method', lead: land(w('r3', 'click'), 'port-done', 'flash-click') } },
+  { id: 'flash2', clip: { from: 'method', to: 'flashing', lead: land(w('r4b', 'choose'), 'method', 'method-click') } },
+  { id: 'flash3', clip: { from: 'flashing', to: 'flash-done', maxRate: 2 } },
+  { id: 'flash4', clip: { from: 'flash-done', to: 'monitor-item', maxRate: 12, lead: w('r5', 'your') } }, // holds on the toast, then static
+  { id: 'mon1', clip: { from: 'monitor-item', to: 'monitor-click', lead: land(w('r6', 'click'), 'monitor-item', 'monitor-click') } },
+  { id: 'mon2', clip: { from: 'monitor-click', to: 'hello', lead: w('r7', 'restarts', 0, -0.2) } },
+  { id: 'mon3', clip: { from: 'hello', to: 'monitor-exit' } },
+  { id: 'mon4', clip: { from: 'monitor-exit', to: 'end', lead: w('r9', 'control', 0, -0.1) } },
   { id: 'outro', clip: { from: 'END', to: 'END' } },
 ];
 export const TAIL: Record<string, number> = {
   intro: 1.0, new1: 0.3, new2: 0.4, act1: 0.3, act2: 0.4, act3: 0.3, name: 0.5, folder: 0.5, created: 0.4,
   win2: 0.6, tour1: 0.4, tour2: 0.6, tour3: 0.8, code1: 0.5, code2: 0.6, code3: 0.5,
-  chip1: 0.4, chip2: 0.5, chip3: 0.4, chip4: 0.3, chip5: 0.8, build1: 0.4, build2: 0.4, build3: 1.0, outro: 3.0,
+  chip1: 0.4, chip2: 0.5, chip3: 0.4, chip4: 0.3, chip5: 0.8, build1: 0.4, build2: 0.4, build3: 1.0,
+  port1: 0.4, port2: 0.6, flash1: 0.4, flash2: 0.4, flash3: 0.3, flash4: 0.6, mon1: 0.4, mon2: 0.4, mon3: 0.8, mon4: 1.0, outro: 3.0,
 };
 
 const span = (c: Clip) => tk(c.to) - tk(c.from);
@@ -223,17 +246,28 @@ export const VO: VoLine[] = [
 
   L('g1a', 'chip1', 'Step three is to tell ESP-IDF which chip is on your board.', undefined, 0.8),
   L('g1b', 'chip1', 'Click the chip icon in the status bar.', undefined, 0.3),
-  L('g2', 'chip2', 'This course uses the original ESP32, so choose esp32. If your board has a different chip, like an ESP32-S3, pick that one instead.', 'This course uses the original ESP32, so choose E S P 32. If your board has a different chip, like an ESP32 S3, pick that one instead.', 0.3),
-  L('g3a', 'chip3', "Next, it asks which debug adapter you use. This course doesn't use one, so it doesn't matter much.", undefined, 0.3),
-  L('g3b', 'chip3', 'Choose ESP32 chip, via ESP-PROG.', 'Choose E S P 32 chip, via E S P prog.'),
-  L('g4', 'chip5', 'A few seconds later, it says Target ESP32 Set Successfully.', 'A few seconds later, it says: target E S P 32 set successfully.', 0.3),
+  L('g2', 'chip2', 'Choose the chip on your board. The one I have here is an ESP32-S3, so I choose esp32s3. The rest of this course uses the original ESP32, which is the one called esp32.', 'Choose the chip on your board. The one I have here is an ESP32 S3, so I choose E S P 32 S3. The rest of this course uses the original ESP32, which is the one called E S P 32.', 0.3),
+  L('g3a', 'chip3', "Next, it asks how you would debug the board. This course doesn't use a debugger, so it doesn't matter much.", undefined, 0.3),
+  L('g3b', 'chip3', 'Choose the first entry: ESP32-S3 chip, via built-in USB-JTAG.', 'Choose the first entry: ESP32 S3 chip, via built-in U S B J TAG.'),
+  L('g4', 'chip5', 'A few seconds later, it says Target ESP32S3 Set Successfully.', 'A few seconds later, it says: target ESP32 S3 set successfully.', 0.3),
 
   L('b1a', 'build1', 'Step four is to build the program.', undefined, 0.8),
   L('b1b', 'build1', 'Click the wrench icon, which is Build Project.', undefined, 0.3),
   L('b2', 'build2', 'The first build takes a while, about a minute on this computer, because it compiles ESP-IDF along with your one line. After that, it only rebuilds what you change.', undefined, 0.3),
   L('b3', 'build3', 'When it finishes, it says Build Successful, and the output shows how big the program is.', undefined, 0.3),
 
-  L('z1', 'outro', 'Next, you plug in your board, flash the program onto it, and watch it print Hello world.', undefined, 0.6),
+  L('r1a', 'port1', 'Step five is to run it on your board. Plug the board into your computer with a USB cable.', undefined, 0.8),
+  L('r1b', 'port1', 'Then click the plug icon in the status bar, which picks the serial port to use.', undefined, 0.3),
+  L('r2', 'port2', "Choose your board's port. On Linux, it's called slash dev slash tty something. On Windows, it's a COM port, and on a Mac, it starts with slash dev slash cu.", "Choose your board's port. On Linux, it's called slash dev slash T T Y something. On Windows, it's a com port, and on a Mac, it starts with slash dev slash C U.", 0.3),
+  L('r3', 'flash1', 'Now click the lightning icon, which is Flash Device.', undefined, 0.3),
+  L('r4a', 'flash2', 'The first time, it asks how you want to flash.', undefined, 0.3),
+  L('r4b', 'flash2', 'Choose UART, which flashes over the same USB cable.', 'Choose U A R T, which flashes over the same USB cable.', 0.3),
+  L('r5', 'flash4', 'A few seconds later, it says Flash Done. Your program is now on the board.', undefined, 0.3),
+  L('r6', 'mon1', 'To see what the board prints, click the monitor icon, the little screen.', undefined, 0.3),
+  L('r7', 'mon2', 'The board restarts, ESP-IDF starts up, and then app_main runs and prints Hello world.', 'The board restarts, ESP-IDF starts up, and then app main runs, and prints: Hello world.', 0.3),
+  L('r8', 'mon3', "Right after that, app_main returns, and the log says so. That's fine: your program has done its one job.", "Right after that, app main returns, and the log says so. That's fine. Your program has done its one job."),
+  L('r9', 'mon4', 'To stop the monitor, press Ctrl and the right square bracket.', 'To stop the monitor, press Control, and the right square bracket.', 0.3),
+  L('z1', 'outro', "That's your first ESP-IDF program: one line of code, built, flashed, and running on a real board. Next up is Basic GPIO, where the board starts switching an LED and reading a button.", undefined, 0.6),
 ];
 
 // ── cues (absolute seconds) ────────────────────────────────────────────────
@@ -270,8 +304,8 @@ export const CUE = {
   saved: whenTake('saved'),
   chipIcon: A('chip1', w('g1b', 'chip')),
   targetPick: whenTake('target-pick'),
-  targetRow: A('chip2', w('g2', 'choose')),
-  targetClick: A('chip2', w('g2', 'instead')),
+  targetRow: A('chip2', w('g2', 'choose', 1)),
+  targetClick: A('chip2', end('g2') - 0.2),
   ocd: whenTake('ocd'),
   ocdRow: A('chip3', w('g3b', 'choose')),
   targetDone: A('chip5', w('g4', 'target')),
@@ -279,6 +313,20 @@ export const CUE = {
   building: whenTake('building'),
   buildDone: whenTake('build-done'),
   size: A('build3', w('b3', 'output')),
+  plug: A('port1', w('r1b', 'plug')),
+  portPick: whenTake('port-pick'),
+  portRow: A('port2', w('r2', 'choose')),
+  portClick: A('port2', end('r2') - 0.2),
+  portDone: whenTake('port-done'),
+  flashIcon: A('flash1', w('r3', 'lightning')),
+  method: whenTake('method'),
+  uart: A('flash2', w('r4b', 'choose')),
+  flashDone: whenTake('flash-done'),
+  monIcon: A('mon1', w('r6', 'monitor')),
+  monitor: whenTake('monitor-click'),
+  hello: A('mon2', w('r7', 'hello')),
+  returned: A('mon3', w('r8', 'returns')),
+  exit: A('mon4', w('r9', 'control')),
   outro: A('outro', 0.2),
 };
 
@@ -288,6 +336,7 @@ const STEP_BEATS: [SceneId, string][] = [
   ['code1', 'Step 2 · Write the code'],
   ['chip1', 'Step 3 · Pick the chip'],
   ['build1', 'Step 4 · Build'],
+  ['port1', 'Step 5 · Run it on the board'],
 ];
 export const CHAPTERS = STEP_BEATS.map(([b, text], i) => ({
   from: sceneStart(b),
@@ -298,10 +347,12 @@ export const CHAPTERS = STEP_BEATS.map(([b, text], i) => ({
 /** SFX, cued from the same values as the visuals they belong to. */
 export const SOUND: { t: number; kind: 'tick' | 'thump' | 'blip'; f?: number; amp?: number }[] = [
   ...[CUE.paletteRow, CUE.activateBtn, CUE.folderOk, CUE.openBtn, CUE.cmake, CUE.mainc, CUE.appMain, CUE.chipIcon,
-    CUE.targetRow, CUE.ocdRow, CUE.buildIcon]
+    CUE.targetRow, CUE.ocdRow, CUE.buildIcon, CUE.plug, CUE.portRow, CUE.flashIcon, CUE.uart, CUE.monIcon]
     .map((t) => ({ t, kind: 'tick' as const, f: 3100, amp: 0.05 })),
   { t: CUE.steps, kind: 'tick', f: 2000, amp: 0.09 },
   { t: CUE.typed, kind: 'thump', amp: 0.16 },
   { t: CUE.targetDone, kind: 'blip', amp: 0.06 },
   { t: CUE.buildDone, kind: 'blip', amp: 0.07 },
+  { t: CUE.flashDone, kind: 'blip', amp: 0.07 },
+  { t: CUE.hello, kind: 'thump', amp: 0.2 },
 ];

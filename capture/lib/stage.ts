@@ -77,6 +77,12 @@ export type StageOptions = {
   keepHome?: boolean;
   /** /usr/bin programs to hide from PATH (e.g. ['eim']). */
   hideBins?: string[];
+  /**
+   * Serial ports the take may show (e.g. ['/dev/ttyACM2']); every other /dev/ttyACM*,
+   * ttyUSB*, ttyS* is left out of `udevadm info -e`, which the extension's port picker
+   * reads (lib/udevadm-filter.py stands in for udevadm on PATH). Needs a sandboxed home.
+   */
+  serialPorts?: string[];
   /** Extra environment for VS Code and its children. */
   env?: Record<string, string>;
   /** Settings template (default profile/settings.json); `${capture}` is replaced by `root`. */
@@ -146,7 +152,12 @@ c.commit()`, db, JSON.stringify(rows)]);
   delete env.WAYLAND_DISPLAY;
   delete env.VSCODE_IPC_HOOK_CLI; // don't hand the folder to the user's running VS Code
   delete env.ELECTRON_RUN_AS_NODE;
-  if (opts.hideBins?.length) env.PATH = pathWithout(join(run, 'bin'), opts.hideBins, env.PATH ?? '');
+  const hide = [...(opts.hideBins ?? []), ...(opts.serialPorts ? ['udevadm'] : [])];
+  if (hide.length) env.PATH = pathWithout(join(run, 'bin'), hide, env.PATH ?? '');
+  if (opts.serialPorts) {
+    symlinkSync(join(root, 'lib/udevadm-filter.py'), join(run, 'bin', 'udevadm'));
+    env.TAKE_SERIAL_PORTS = opts.serialPorts.join(' ');
+  }
 
   const codeArgs = [
     '--ozone-platform=x11',
@@ -183,7 +194,7 @@ c.commit()`, db, JSON.stringify(rows)]);
     const mine = homedir() + '/';
     const bin = join(run, 'bin');
     const binds: string[] = [];
-    if (opts.hideBins?.length) binds.push('--ro-bind', bin, '/usr/local/bin');
+    if (hide.length) binds.push('--ro-bind', bin, '/usr/local/bin');
     env.PATH = (env.PATH ?? '')
       .split(':')
       .filter((p) => p && p !== '/usr/local/bin' && (!p.startsWith(mine) || p === bin))

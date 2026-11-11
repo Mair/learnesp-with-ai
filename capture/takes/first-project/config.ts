@@ -14,5 +14,7 @@ export const stageOptions: StageOptions = {
   workspaceInHome: true, // /home/learner/esp32 in paths and dialogs
   args: ['--force-device-scale-factor=1'],
   // The learner has run the extension before (install-esp-idf): no "just got updated" toast.
+  // The port picker shows only the take's board (this machine has other boards attached).
+  serialPorts: process.env.BOARD ? [process.env.BOARD] : undefined,
   globalState: { 'espressif.esp-idf-extension': { 'esp.extension.version': '2.3.0' } },
 };

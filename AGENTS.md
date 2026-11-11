@@ -78,7 +78,7 @@ explainer-video skill, `SCRIPT.md` "Section intro"); the setup section doesn't.
 
 **0. Setup** (screen recordings, `vs-code-recording` skill; `out/0-setup/`)
 1. `install-esp-idf`: VS Code, the ESP-IDF extension, ESP-IDF (via EIM)
-2. `first-project`: create an empty project that prints Hello World (steps 1–4 recorded; flash + monitor need an original ESP32 on the take machine)
+2. `first-project`: create an empty project that prints Hello World (recorded on an ESP32-S3; the VO points to the original ESP32 for the rest of the course)
 
 **1. Basic GPIO**
 0. `basic-gpio-intro`: what GPIO is, what this section builds
